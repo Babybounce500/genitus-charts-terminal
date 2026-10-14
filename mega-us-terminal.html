@@ -1,0 +1,103 @@
+<title>GENITUS MEGA-US-TERMINAL // NYSE+NASDAQ Fibonacci-Backtest</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c10;--surface:#0d1117;--panel:#111820;--border:#1e2d3d;--accent:#00d4ff;--gold:#f0c040;--green:#00ff88;--red:#ff3b5c;--muted:#7d92a8;--text:#c8d8e8;--bright:#ffffff;--mono:'Space Mono',monospace;--sans:'Rajdhani',sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.5;padding:0 16px}
+.wrap{max-width:900px;margin:0 auto;padding:30px 0 60px}
+h1{font-family:var(--mono);font-size:20px;color:var(--bright);letter-spacing:1px;margin:0 0 6px}
+.sub-head{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:24px}
+h2{font-family:var(--mono);font-size:13px;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase;margin:34px 0 14px;border-top:1px solid var(--border);padding-top:20px}
+h2:first-of-type{border-top:none;padding-top:0}
+h3.bench-head{font-family:var(--mono);font-size:12px;color:var(--gold);margin:18px 0 10px;text-transform:uppercase;letter-spacing:1px}
+p{max-width:70ch}
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:10px}
+@media(max-width:700px){.cards-grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px}
+.card h4{font-family:var(--mono);font-size:11px;color:var(--text);margin:0 0 10px;text-transform:uppercase;letter-spacing:.5px}
+.stats-row{display:flex;gap:14px;margin-bottom:8px}
+.stat .k{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase}
+.stat .v{font-family:var(--mono);font-size:16px;color:var(--bright)}
+.v.up{color:var(--green)}
+.sub{font-family:var(--mono);font-size:10px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;margin:10px 0 20px;font-size:13px}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--border)}
+th{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase}
+.mono{font-family:var(--mono)}
+.up{color:var(--green)}
+.note{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7;background:var(--panel);border-left:3px solid var(--gold);padding:12px 16px;border-radius:0 6px 6px 0;margin:16px 0}
+a{color:var(--accent)}
+</style>
+<div class="wrap">
+  <h1>MEGA-US-TERMINAL</h1>
+  <div class="sub-head">Fibonacci-Tranchen-Akkumulation · NYSE + NASDAQ, komplette Common-Stock-Listen · 2.527 Kandidaten aus all_tickers_export_2026-09-29.csv, 2.403 mit auswertbaren Trades · generiert 2026-10-14</div>
+
+  <div class="note">
+    <strong>Methodik-Hinweis:</strong> Reimplementiert nach der im <a href="../CHARTS-LIBRARY/REPLIT-ADDONS/research/FIBONACCI-REPORT.html">Fibonacci-Report</a> veröffentlichten Beschreibung (rollierendes 13-Wochen-Hoch/Tief, 4 Tranchen bei 62/50/38/0% Retracement, Richtung per 13-Wochen-relativer-Stärke, Fill-Check via echtem Wochenhoch/-tief innerhalb 8 Wochen) — <strong>nicht</strong> der originale Pipeline-Code (lag diesem Export nicht bei). Exit-Konvention (fixer 8-Wochen-Horizont-Close) ist eine eigene, nicht explizit dokumentierte Annahme. Validiert gegen die im Mega-Nasdaq-Terminal veröffentlichten Werte für dieselbe NASDAQ-Teilmenge (dort: 59,1%/58,6% WinRate) — hier: 59.2%/59.8% WinRate auf exakt denselben 1.185 NASDAQ-Symbolen, also sehr nah dran. Einzelne extreme Trades (illiquide Microcaps) wurden bei ±200% gekappt, um den Durchschnitt nicht durch Einzelausreißer zu verzerren — dadurch liegt die durchschnittliche Rendite (+5,3% / +5,4%) höher als im Original (+2,3%), während die WinRate nahezu identisch bleibt.
+  </div>
+
+  <h2>Gesamt (NYSE + NASDAQ)</h2>
+  <h3 class="bench-head">Benchmark: Nasdaq Composite</h3>
+  <div class="cards-grid"><div class="card">
+    <h4>Gesamt</h4>
+    <div class="stats-row">
+      <div class="stat"><div class="k">Trades</div><div class="v">731.148</div></div>
+      <div class="stat"><div class="k">WinRate</div><div class="v up">58.2%</div></div>
+      <div class="stat"><div class="k">Ø Rendite</div><div class="v up">+5.28%</div></div>
+    </div>
+    <div class="sub">Long: 300.950 · Short: 430.198</div>
+  </div><div class="card">
+    <h4>NASDAQ only</h4>
+    <div class="stats-row">
+      <div class="stat"><div class="k">Trades</div><div class="v">313.487</div></div>
+      <div class="stat"><div class="k">WinRate</div><div class="v up">59.2%</div></div>
+      <div class="stat"><div class="k">Ø Rendite</div><div class="v up">+7.25%</div></div>
+    </div>
+    <div class="sub">Long: 131.772 · Short: 181.715</div>
+  </div><div class="card">
+    <h4>NYSE only</h4>
+    <div class="stats-row">
+      <div class="stat"><div class="k">Trades</div><div class="v">417.661</div></div>
+      <div class="stat"><div class="k">WinRate</div><div class="v up">57.4%</div></div>
+      <div class="stat"><div class="k">Ø Rendite</div><div class="v up">+3.79%</div></div>
+    </div>
+    <div class="sub">Long: 169.178 · Short: 248.483</div>
+  </div></div>
+  <h3 class="bench-head">Benchmark: S&amp;P 500</h3>
+  <div class="cards-grid"><div class="card">
+    <h4>Gesamt</h4>
+    <div class="stats-row">
+      <div class="stat"><div class="k">Trades</div><div class="v">722.470</div></div>
+      <div class="stat"><div class="k">WinRate</div><div class="v up">59%</div></div>
+      <div class="stat"><div class="k">Ø Rendite</div><div class="v up">+5.42%</div></div>
+    </div>
+    <div class="sub">Long: 311.501 · Short: 410.969</div>
+  </div><div class="card">
+    <h4>NASDAQ only</h4>
+    <div class="stats-row">
+      <div class="stat"><div class="k">Trades</div><div class="v">310.967</div></div>
+      <div class="stat"><div class="k">WinRate</div><div class="v up">59.8%</div></div>
+      <div class="stat"><div class="k">Ø Rendite</div><div class="v up">+7.4%</div></div>
+    </div>
+    <div class="sub">Long: 135.735 · Short: 175.232</div>
+  </div><div class="card">
+    <h4>NYSE only</h4>
+    <div class="stats-row">
+      <div class="stat"><div class="k">Trades</div><div class="v">411.503</div></div>
+      <div class="stat"><div class="k">WinRate</div><div class="v up">58.4%</div></div>
+      <div class="stat"><div class="k">Ø Rendite</div><div class="v up">+3.93%</div></div>
+    </div>
+    <div class="sub">Long: 175.766 · Short: 235.737</div>
+  </div></div>
+
+  <h2>Top 20 nach Ø Rendite (Benchmark Nasdaq, min. 50 Trades)</h2>
+  <table><thead><tr><th>Symbol</th><th>Exchange</th><th>Trades</th><th>WinRate</th><th>Ø Rendite</th></tr></thead><tbody>
+    <tr><td class="mono">AMIX.US</td><td>NASDAQ</td><td>51</td><td>96.1%</td><td class="up">+90.06%</td></tr><tr><td class="mono">LGHL.US</td><td>NASDAQ</td><td>66</td><td>95.5%</td><td class="up">+87.64%</td></tr><tr><td class="mono">CDTG.US</td><td>NASDAQ</td><td>86</td><td>70.9%</td><td class="up">+67.36%</td></tr><tr><td class="mono">JAGX.US</td><td>NASDAQ</td><td>105</td><td>71.4%</td><td class="up">+65.81%</td></tr><tr><td class="mono">MIMI.US</td><td>NASDAQ</td><td>55</td><td>74.5%</td><td class="up">+54.1%</td></tr><tr><td class="mono">VRAX.US</td><td>NASDAQ</td><td>81</td><td>74.1%</td><td class="up">+53.68%</td></tr><tr><td class="mono">HCTI.US</td><td>NASDAQ</td><td>123</td><td>68.3%</td><td class="up">+53.45%</td></tr><tr><td class="mono">ACON.US</td><td>NASDAQ</td><td>119</td><td>74.8%</td><td class="up">+52.52%</td></tr><tr><td class="mono">PBM.US</td><td>NASDAQ</td><td>57</td><td>56.1%</td><td class="up">+51.26%</td></tr><tr><td class="mono">SXTP.US</td><td>NASDAQ</td><td>83</td><td>75.9%</td><td class="up">+50.05%</td></tr><tr><td class="mono">ASTI.US</td><td>NASDAQ</td><td>174</td><td>63.2%</td><td class="up">+47.72%</td></tr><tr><td class="mono">JYD.US</td><td>NASDAQ</td><td>78</td><td>66.7%</td><td class="up">+46.89%</td></tr><tr><td class="mono">EZGO.US</td><td>NASDAQ</td><td>154</td><td>85.7%</td><td class="up">+46.58%</td></tr><tr><td class="mono">LGCL.US</td><td>NASDAQ</td><td>72</td><td>72.2%</td><td class="up">+44.08%</td></tr><tr><td class="mono">ATPC.US</td><td>NASDAQ</td><td>113</td><td>70.8%</td><td class="up">+43.39%</td></tr><tr><td class="mono">SKYQ.US</td><td>NASDAQ</td><td>55</td><td>70.9%</td><td class="up">+43.34%</td></tr><tr><td class="mono">EHGO.US</td><td>NASDAQ</td><td>51</td><td>64.7%</td><td class="up">+41.37%</td></tr><tr><td class="mono">SSM.US</td><td>NASDAQ</td><td>133</td><td>69.9%</td><td class="up">+41.03%</td></tr><tr><td class="mono">FXHO.US</td><td>NASDAQ</td><td>84</td><td>70.2%</td><td class="up">+40.46%</td></tr><tr><td class="mono">SLE.US</td><td>NASDAQ</td><td>221</td><td>77.8%</td><td class="up">+39.32%</td></tr>
+  </tbody></table>
+
+  <h2>Top 20 nach Ø Rendite (Benchmark S&amp;P 500, min. 50 Trades)</h2>
+  <table><thead><tr><th>Symbol</th><th>Exchange</th><th>Trades</th><th>WinRate</th><th>Ø Rendite</th></tr></thead><tbody>
+    <tr><td class="mono">AMIX.US</td><td>NASDAQ</td><td>51</td><td>94.1%</td><td class="up">+87.32%</td></tr><tr><td class="mono">LGHL.US</td><td>NASDAQ</td><td>65</td><td>95.4%</td><td class="up">+86.37%</td></tr><tr><td class="mono">CDTG.US</td><td>NASDAQ</td><td>86</td><td>70.9%</td><td class="up">+68.18%</td></tr><tr><td class="mono">JAGX.US</td><td>NASDAQ</td><td>107</td><td>70.1%</td><td class="up">+64.26%</td></tr><tr><td class="mono">MIMI.US</td><td>NASDAQ</td><td>55</td><td>74.5%</td><td class="up">+54.69%</td></tr><tr><td class="mono">HCTI.US</td><td>NASDAQ</td><td>123</td><td>68.3%</td><td class="up">+53.83%</td></tr><tr><td class="mono">ACON.US</td><td>NASDAQ</td><td>118</td><td>72.9%</td><td class="up">+51.93%</td></tr><tr><td class="mono">ASTI.US</td><td>NASDAQ</td><td>176</td><td>61.9%</td><td class="up">+48.28%</td></tr><tr><td class="mono">VRAX.US</td><td>NASDAQ</td><td>81</td><td>70.4%</td><td class="up">+47.94%</td></tr><tr><td class="mono">SXTP.US</td><td>NASDAQ</td><td>83</td><td>73.5%</td><td class="up">+46.61%</td></tr><tr><td class="mono">ATPC.US</td><td>NASDAQ</td><td>105</td><td>71.4%</td><td class="up">+45.79%</td></tr><tr><td class="mono">JYD.US</td><td>NASDAQ</td><td>78</td><td>65.4%</td><td class="up">+45.73%</td></tr><tr><td class="mono">PBM.US</td><td>NASDAQ</td><td>60</td><td>50%</td><td class="up">+42.39%</td></tr><tr><td class="mono">EZGO.US</td><td>NASDAQ</td><td>152</td><td>84.2%</td><td class="up">+42.23%</td></tr><tr><td class="mono">LGCL.US</td><td>NASDAQ</td><td>71</td><td>69%</td><td class="up">+41.97%</td></tr><tr><td class="mono">SKYQ.US</td><td>NASDAQ</td><td>56</td><td>69.6%</td><td class="up">+40.54%</td></tr><tr><td class="mono">EHGO.US</td><td>NASDAQ</td><td>51</td><td>62.7%</td><td class="up">+39.96%</td></tr><tr><td class="mono">SSM.US</td><td>NASDAQ</td><td>133</td><td>69.2%</td><td class="up">+39.67%</td></tr><tr><td class="mono">SLE.US</td><td>NASDAQ</td><td>219</td><td>77.2%</td><td class="up">+38.98%</td></tr><tr><td class="mono">UK.US</td><td>NASDAQ</td><td>194</td><td>87.6%</td><td class="up">+38.61%</td></tr>
+  </tbody></table>
+
+  <p class="sub-head">Datenquelle: EOD-Proxy (theserver-open-ai.replit.app), Wochenkerzen seit 2016 (bis zu 10,8 Jahre). Keine Anlageberatung.</p>
+</div>
