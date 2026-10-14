@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="icon"  type="image/svg+xml">
+<title>Fibonacci-Tranchen-Akkumulation · Forschungs-Report</title>
+<style>
+  :root {
+    --bg: #f5f4f1; --bg-elevated: #ffffff; --bg-sunken: #ebe9e4; --border: #ddd9d1;
+    --text: #232019; --text-dim: #6b6557; --text-faint: #a39c8a;
+    --accent: #9a5b2e; --accent-soft: #f0e3d6;
+    --mono: ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace;
+    --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg:#161310; --bg-elevated:#211c17; --bg-sunken:#130f0c; --border:#382f26; --text:#ece5da; --text-dim:#b3a897; --text-faint:#7c7160; --accent:#e0a35f; --accent-soft:#3a2c1c; color-scheme: dark; }
+  }
+  :root[data-theme="dark"] { --bg:#161310; --bg-elevated:#211c17; --bg-sunken:#130f0c; --border:#382f26; --text:#ece5da; --text-dim:#b3a897; --text-faint:#7c7160; --accent:#e0a35f; --accent-soft:#3a2c1c; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15.5px; line-height: 1.7; }
+  h1, h2, h3 { text-wrap: balance; }
+  header.top { position: sticky; top: 0; z-index: 10; background: var(--bg-elevated); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  header.top .icon { font-size: 20px; }
+  header.top .doctitle { font-family: var(--serif); font-size: 16px; font-weight: 700; }
+  header.top nav { margin-left: auto; display: flex; gap: 8px; }
+  header.top nav a { font-size: 12px; color: var(--accent); text-decoration: none; border: 1px solid var(--border); padding: 6px 12px; border-radius: 100px; transition: background .15s ease, border-color .15s ease; }
+  header.top nav a:hover { background: var(--accent-soft); border-color: var(--accent); }
+  main { max-width: 780px; margin: 0 auto; padding: 40px 24px 90px; }
+  main h1 { font-family: var(--serif); font-size: 30px; line-height: 1.2; margin: 0 0 20px; }
+  main h2 { font-family: var(--serif); font-size: 22px; margin: 42px 0 14px; padding-top: 6px; border-top: 1px solid var(--border); }
+  main h2:first-of-type { border-top: none; margin-top: 24px; }
+  main h3 { font-family: var(--serif); font-size: 17px; margin: 28px 0 10px; color: var(--accent); }
+  main p { color: var(--text); margin: 0 0 15px; }
+  main p:first-of-type em { color: var(--text-faint); font-size: 13.5px; }
+  main p.note { color: var(--text-dim); font-size: 13.5px; font-style: italic; border-left: 2px solid var(--accent); padding-left: 14px; margin: 18px 0; }
+  main strong { color: var(--text); font-weight: 700; }
+  main code { font-family: var(--mono); font-size: 13px; background: var(--bg-sunken); padding: 1px 5px; border-radius: 4px; }
+  main a { color: var(--accent); }
+  main ul { padding-left: 22px; margin: 0 0 16px; }
+  main li { margin-bottom: 8px; color: var(--text); }
+  main hr { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+  .table-wrap { overflow-x: auto; margin: 0 0 22px; border: 1px solid var(--border); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 9px 13px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  thead th { background: var(--bg-sunken); font-family: var(--sans); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); font-weight: 700; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--bg-sunken); }
+  td strong { color: var(--accent); }
+  footer { text-align: center; padding: 30px 20px calc(50px + env(safe-area-inset-bottom)); color: var(--text-faint); font-size: 11.5px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="icon">🌀</span>
+  <span class="doctitle">Fibonacci-Tranchen-Akkumulation</span>
+  <nav>
+    
+    <a href="../fibonacci-terminal.html">🌀 Live-Terminal</a>
+    <a href="../tech-terminal.html">💻 Tech-Terminal</a>
+    <a href="../index.html">🏠 Workshell</a>
+  </nav>
+</header>
+<main>
+
+<h1>Fibonacci-Tranchen-Akkumulation: gestaffelter Einstieg auf Retracement-Niveaus im Backtest</h1>
+<p><em>Generiert aus 489 Watchlist-Aktien + 107 health-gecheckten Nasdaq-Tech-Aktien, 10 Jahre EOD-Historie, 13-Wochen-Lookback, 8-Wochen-Fill-Fenster · keine Anlageberatung</em></p>
+
+<p>Zwei Tranchen-Schemata aus dem Original-Tradingplan, beide auf denselben Fibonacci-Niveaus des rollierenden 13-Wochen-Hoch/Tief aufgebaut: die <strong>Akkumulation</strong> (4 Tranchen: 62/50/38/0%, gewichtet 10/20/30/40%) und die <strong>3er-Pyramide</strong> (3 Tranchen: 62/50/38%, gewichtet 20/30/50%). In beiden Fällen sitzt die kleinste Tranche am teuersten Niveau, die größte Tranche am günstigsten — der Durchschnittseinstieg wird so systematisch Richtung des besten verfügbaren Preises gezogen.</p>
+
+<h2>Die Änderung gegenüber dem Original: Richtung per relativer Stärke</h2>
+<p>Das Original-Manuskript nutzt einen SMA20-Trendfilter auf dem 3-Monatschart, um Long/Short zu entscheiden. In diesem Backtest wurde das bewusst durch <strong>relative Stärke gegenüber dem Benchmark</strong> ersetzt: outperformt eine Aktie den Index über den 13-Wochen-Lookback, werden Long-Limit-Käufe auf dem Weg nach unten (Richtung Tief) gesetzt. Underperformt sie, werden Short-Limit-Verkäufe auf dem Weg nach oben (Richtung Hoch) gesetzt — Tranchen füllen sich in der Simulation nur, wenn der Kurs das jeweilige Niveau innerhalb des 8-Wochen-Fensters tatsächlich berührt; nicht gefüllte Tranchen zählen nicht mit.</p>
+
+<h2>Ergebnisse: gesamte Watchlist</h2>
+<div class="table-wrap">
+<table><thead><tr><th>Benchmark</th><th>Schema</th><th>Trades</th><th>Ø Rendite</th><th>Trefferquote</th></tr></thead><tbody>
+<tr><td>Nasdaq Composite</td><td>Akkumulation (4 Tranchen)</td><td>128.769</td><td><strong>+2,00%</strong></td><td>57,2%</td></tr>
+<tr><td>Nasdaq Composite</td><td>3er-Pyramide</td><td>121.167</td><td>+1,29%</td><td>55,4%</td></tr>
+<tr><td>S&amp;P 500</td><td>Akkumulation (4 Tranchen)</td><td>126.346</td><td><strong>+2,30%</strong></td><td>58,6%</td></tr>
+<tr><td>S&amp;P 500</td><td>3er-Pyramide</td><td>121.167</td><td>+1,54%</td><td>56,6%</td></tr>
+</tbody></table>
+</div>
+
+<h2>Ergebnisse: nur Nasdaq-Tech (107 health-gecheckte Symbole)</h2>
+<div class="table-wrap">
+<table><thead><tr><th>Benchmark</th><th>Schema</th><th>Trades</th><th>Ø Rendite</th><th>Trefferquote</th></tr></thead><tbody>
+<tr><td>Nasdaq Composite</td><td>Akkumulation (4 Tranchen)</td><td>33.641</td><td>+2,59%</td><td>57,6%</td></tr>
+<tr><td>Nasdaq Composite</td><td>3er-Pyramide</td><td>31.814</td><td>+1,73%</td><td>55,8%</td></tr>
+<tr><td>S&amp;P 500</td><td>Akkumulation (4 Tranchen)</td><td>32.944</td><td><strong>+2,89%</strong></td><td>58,9%</td></tr>
+<tr><td>S&amp;P 500</td><td>3er-Pyramide</td><td>31.814</td><td>+2,01%</td><td>56,8%</td></tr>
+</tbody></table>
+</div>
+
+<p>Das Tech-Universum performt in jeder Konstellation etwas besser als die gesamte Watchlist — konsistent mit dem, was man von einer volatileren, retracement-reicheren Aktiengruppe erwarten würde: mehr Kursbewegung bedeutet mehr Gelegenheiten, dass ein Fibonacci-Limit tatsächlich gefüllt wird, und im Mittel wurde diese zusätzliche Bewegung hier nicht durch mehr Fehlsignale aufgefressen.</p>
+
+<p class="note">Die 4-Tranchen-<strong>Akkumulation</strong> schlägt die 3er-<strong>Pyramide</strong> durchgehend, in allen vier Konstellationen. Naheliegende Erklärung: die zusätzliche vierte Tranche direkt am Tief/Hoch selbst (0%-Niveau, größte Gewichtung) verbessert den Durchschnittseinstieg genau dann am meisten, wenn der Kurs tatsächlich bis dorthin durchläuft — und genau das sind auch die Fälle mit der stärksten anschließenden Erholung.</p>
+
+<hr>
+
+<h2>Fazit</h2>
+<ul>
+<li>Beide Fibonacci-Schemata zeigen eine <strong>robuste, konsistent positive Erwartung</strong> über alle vier getesteten Konstellationen — deutlich überzeugender als die Dach/Boden- und Rotationssysteme im <a href="./dachboden-relstrength-report.html">Nachbar-Report</a>.</li>
+<li>Die 4-Tranchen-Akkumulation ist die bessere Variante der beiden — mehr Gewicht auf dem besten Preis zahlt sich aus.</li>
+<li>Tech-Aktien performen etwas besser als der breite Markt, konsistent mit höherer Volatilität = mehr Fill-Gelegenheiten.</li>
+<li>Live-Setups mit konkreten Limit-Preisen: <a href="../fibonacci-terminal.html">Fibonacci-Terminal</a> (alle Aktien) und <a href="../tech-terminal.html">Tech-Terminal</a> (nur Nasdaq-Tech).</li>
+</ul>
+
+</main>
+<footer>historic-charts.local · Forschungs-Report · generiert aus EOD-Kursdaten · keine Anlageberatung</footer>
+</body>
+</html>

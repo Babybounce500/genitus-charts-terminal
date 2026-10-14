@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="icon"  type="image/svg+xml">
+<title>Dach/Boden & Relative-Stärke-Rotation · Forschungs-Report</title>
+<style>
+  :root {
+    --bg: #f5f4f1; --bg-elevated: #ffffff; --bg-sunken: #ebe9e4; --border: #ddd9d1;
+    --text: #232019; --text-dim: #6b6557; --text-faint: #a39c8a;
+    --accent: #9a5b2e; --accent-soft: #f0e3d6;
+    --mono: ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace;
+    --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg:#161310; --bg-elevated:#211c17; --bg-sunken:#130f0c; --border:#382f26; --text:#ece5da; --text-dim:#b3a897; --text-faint:#7c7160; --accent:#e0a35f; --accent-soft:#3a2c1c; color-scheme: dark; }
+  }
+  :root[data-theme="dark"] { --bg:#161310; --bg-elevated:#211c17; --bg-sunken:#130f0c; --border:#382f26; --text:#ece5da; --text-dim:#b3a897; --text-faint:#7c7160; --accent:#e0a35f; --accent-soft:#3a2c1c; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15.5px; line-height: 1.7; }
+  h1, h2, h3 { text-wrap: balance; }
+  header.top { position: sticky; top: 0; z-index: 10; background: var(--bg-elevated); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  header.top .icon { font-size: 20px; }
+  header.top .doctitle { font-family: var(--serif); font-size: 16px; font-weight: 700; }
+  header.top nav { margin-left: auto; display: flex; gap: 8px; }
+  header.top nav a { font-size: 12px; color: var(--accent); text-decoration: none; border: 1px solid var(--border); padding: 6px 12px; border-radius: 100px; transition: background .15s ease, border-color .15s ease; }
+  header.top nav a:hover { background: var(--accent-soft); border-color: var(--accent); }
+  main { max-width: 780px; margin: 0 auto; padding: 40px 24px 90px; }
+  main h1 { font-family: var(--serif); font-size: 30px; line-height: 1.2; margin: 0 0 20px; }
+  main h2 { font-family: var(--serif); font-size: 22px; margin: 42px 0 14px; padding-top: 6px; border-top: 1px solid var(--border); }
+  main h2:first-of-type { border-top: none; margin-top: 24px; }
+  main h3 { font-family: var(--serif); font-size: 17px; margin: 28px 0 10px; color: var(--accent); }
+  main p { color: var(--text); margin: 0 0 15px; }
+  main p:first-of-type em { color: var(--text-faint); font-size: 13.5px; }
+  main p.note { color: var(--text-dim); font-size: 13.5px; font-style: italic; border-left: 2px solid var(--accent); padding-left: 14px; margin: 18px 0; }
+  main strong { color: var(--text); font-weight: 700; }
+  main code { font-family: var(--mono); font-size: 13px; background: var(--bg-sunken); padding: 1px 5px; border-radius: 4px; }
+  main a { color: var(--accent); }
+  main ul { padding-left: 22px; margin: 0 0 16px; }
+  main li { margin-bottom: 8px; color: var(--text); }
+  main hr { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+  .table-wrap { overflow-x: auto; margin: 0 0 22px; border: 1px solid var(--border); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 9px 13px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  thead th { background: var(--bg-sunken); font-family: var(--sans); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); font-weight: 700; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--bg-sunken); }
+  td strong { color: var(--accent); }
+  footer { text-align: center; padding: 30px 20px calc(50px + env(safe-area-inset-bottom)); color: var(--text-faint); font-size: 11.5px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="icon">🏠🏹</span>
+  <span class="doctitle">Dach/Boden & Relative-Stärke-Rotation</span>
+  <nav>
+    
+    <a href="../dachboden-terminal.html">🎯 Live-Terminal</a>
+    <a href="../index.html">🏠 Workshell</a>
+  </nav>
+</header>
+<main>
+
+<h1>Dach/Boden-Regime & Relative-Stärke-Rotation: zwei Systeme aus dem Original-Tradingplan im echten Backtest</h1>
+<p><em>Generiert aus 489 Watchlist-Aktien (Forex/Indizes ausgeschlossen), 10 Jahre EOD-Historie · keine Anlageberatung</em></p>
+
+<p>Dieser Report backtestet zwei chartbasierte Systeme aus dem handschriftlichen Tradingplan-Manuskript, beide gegen echte Kursdaten, nicht simuliert. Beide Systeme sind bewusst mechanisch und regelbasiert — keine Interpretation, keine Ausnahmen.</p>
+
+<h2>1. Das Dach/Boden-System</h2>
+<p>Ein <strong>Boden</strong> (Zwischentief) entsteht, wenn eine Kerze ein niedrigeres Tief hat als die Kerze davor <em>und</em> danach — Signal: <strong>Long</strong>. Ein <strong>Dach</strong> (Zwischenhoch) ist das Spiegelbild — höheres Hoch als beide Nachbarn — Signal: <strong>Short</strong>. Anders als im Original-Manuskript (das einen Anfangsstopp, Zeitstopp und Trailingstopp kombiniert) wird hier bewusst die reine Regime-Variante getestet: <strong>die Position bleibt bestehen, bis das entgegengesetzte Signal auftritt</strong> — ein reiner Trendfolge-Test ohne Stop-Overlay.</p>
+
+<div class="table-wrap">
+<table><thead><tr><th>Zeitebene</th><th>Trades</th><th>Ø Rendite/Trade</th><th>Trefferquote</th></tr></thead><tbody>
+<tr><td>Täglich</td><td>391.974</td><td>+0,03%</td><td>44,9%</td></tr>
+<tr><td>Wöchentlich</td><td>80.748</td><td>+0,004%</td><td>44,3%</td></tr>
+<tr><td>Monatlich</td><td>18.766</td><td>+0,40%</td><td>43,4%</td></tr>
+<tr><td>Jährlich</td><td>1.027</td><td><strong>-30,39%</strong></td><td>35,6%</td></tr>
+</tbody></table>
+</div>
+
+<p class="note">Die jährliche Zeitebene ist mit Vorsicht zu lesen: bei nur ~2 Jahreskerzen Pivot-Vorlauf pro Signal ist die Stichprobe pro Symbol extrem klein, und das mechanische 3-Bar-Pivot-Kriterium reagiert auf Jahresbasis sehr grob. Das negative Ergebnis wird hier bewusst nicht schöngerechnet — es zeigt eher, dass diese Systemvariante auf so groben Zeitrastern ungeeignet ist, nicht dass "Dach/Boden" grundsätzlich nicht funktioniert.</p>
+
+<p>Auf Tages- und Monatsbasis ist die durchschnittliche Rendite pro Trade knapp positiv, aber die Trefferquote liegt durchgehend unter 50% — das System lebt (wenn überhaupt) von wenigen großen Trendfolge-Trades, nicht von konstanter Trefferquote. Das ist typisch für reine Regime-Systeme ohne Stop: viele kleine Fehlsignale, wenige lange Trends, die den Unterschied machen.</p>
+
+<h2>2. Relative-Stärke-Rotation (Top-3 Long / Flop-3 Short)</h2>
+<p>Am Ende jeder Periode wird die relative Stärke jeder Aktie gegenüber dem Benchmark gemessen (eigene Rendite minus Benchmark-Rendite über dieselbe Periode). Die drei stärksten Werte werden <strong>Long</strong>, die drei schwächsten <strong>Short</strong> für die nächste Periode gehandelt — dann wird neu gerankt. Getestet gegen Nasdaq Composite und S&amp;P 500 auf vier Zeitebenen.</p>
+
+<div class="table-wrap">
+<table><thead><tr><th>Zeitebene</th><th>Rebalances</th><th>Ø Rendite/Trade</th><th>Trefferquote</th></tr></thead><tbody>
+<tr><td>Täglich</td><td>2.509</td><td>-0,26%</td><td>44,6%</td></tr>
+<tr><td>Wöchentlich</td><td>520</td><td>-0,34%</td><td>47,5%</td></tr>
+<tr><td>Monatlich</td><td>119</td><td><strong>+1,93%</strong></td><td>49,4%</td></tr>
+<tr><td>Jährlich</td><td>9</td><td>+1,81%</td><td>48,1%</td></tr>
+</tbody></table>
+</div>
+
+<p class="note"><strong>Eine mathematische Randnotiz, die beim Bau dieses Systems auffiel:</strong> die Top-3/Flop-3-Auswahl ist rechnerisch <em>identisch</em>, egal ob gegen Nasdaq Composite oder S&amp;P 500 gerankt wird. Grund: ein einzelner geteilter Benchmark-Wert wird von <em>jedem</em> Kandidaten derselben Periode abgezogen — eine Konstante verschiebt keine Rangfolge. Der Benchmark wirkt sich nur auf die <em>Bewertung</em> der realisierten Trades in Excess-Return-Terms aus, nicht auf die Auswahl selbst. Das ist keine Design-Schwäche, sondern eine Eigenschaft jeder Cross-Sectional-Rangfolge gegen einen einzelnen gemeinsamen Referenzwert.</p>
+
+<p>Auf Tages- und Wochenbasis ist die Rotation leicht negativ — bei so kurzen Perioden dominieren vermutlich Rauschen und Mean-Reversion-Effekte (die Top-3-Gewinner einer Woche sind nicht selten die Flop-Kandidaten der nächsten). Erst auf Monats- und Jahresbasis dreht das Bild ins Positive, wobei die Jahresebene nur 9 Rebalances umfasst — statistisch kaum belastbar, aber richtungsweisend.</p>
+
+<hr>
+
+<h2>Fazit</h2>
+<ul>
+<li><strong>Dach/Boden pur (ohne Stop-Overlay)</strong> zeigt auf Tages-/Monatsbasis eine schwache, aber positive Erwartung — die Trefferquote allein überzeugt nicht, das Original-Stop-System (Anfangs-, Zeit-, Trailingstopp) dürfte die tatsächliche Praxisvariante deutlich verbessern gegenüber dem reinen Regimewechsel-Test hier.</li>
+<li><strong>Relative-Stärke-Rotation</strong> braucht Zeit zum Wirken — auf Monats-/Jahresbasis positiv, auf Tages-/Wochenbasis eher Rauschen.</li>
+<li>Beide Systeme sind mechanisch reproduzierbar und live im <a href="../dachboden-terminal.html">Dach/Boden-Terminal</a> mit aktuellen Signalen hinterlegt.</li>
+</ul>
+
+</main>
+<footer>historic-charts.local · Forschungs-Report · generiert aus EOD-Kursdaten · keine Anlageberatung</footer>
+</body>
+</html>
