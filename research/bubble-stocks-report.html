@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>GENITUS BUBBLE-AKTIEN-STUDIE // Forschungs-Report</title>
+<style>
+  :root {
+    --bg: #f5f4f1; --bg-elevated: #ffffff; --bg-sunken: #ebe9e4; --border: #ddd9d1;
+    --text: #232019; --text-dim: #6b6557; --text-faint: #a39c8a;
+    --accent: #9a5b2e; --accent-soft: #f0e3d6;
+    --mono: ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace;
+    --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#161310; --bg-elevated:#211c17; --bg-sunken:#130f0c; --border:#382f26;
+      --text:#ece5da; --text-dim:#b3a897; --text-faint:#7c7160;
+      --accent:#e0a35f; --accent-soft:#3a2c1c;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#161310; --bg-elevated:#211c17; --bg-sunken:#130f0c; --border:#382f26;
+    --text:#ece5da; --text-dim:#b3a897; --text-faint:#7c7160;
+    --accent:#e0a35f; --accent-soft:#3a2c1c;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15.5px; line-height: 1.7; }
+  h1, h2, h3 { text-wrap: balance; }
+
+  header.top {
+    position: sticky; top: 0; z-index: 10; background: var(--bg-elevated); border-bottom: 1px solid var(--border);
+    padding: 14px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  header.top .icon { font-size: 20px; }
+  header.top .doctitle { font-family: var(--serif); font-size: 16px; font-weight: 700; }
+  header.top nav { margin-left: auto; display: flex; gap: 8px; }
+  header.top nav a {
+    font-size: 12px; color: var(--accent); text-decoration: none; border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 100px; transition: background .15s ease, border-color .15s ease;
+  }
+  header.top nav a:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+  main { max-width: 780px; margin: 0 auto; padding: 40px 24px 90px; }
+
+  main h1 { font-family: var(--serif); font-size: 30px; line-height: 1.2; margin: 0 0 20px; }
+  main h2 { font-family: var(--serif); font-size: 22px; margin: 42px 0 14px; padding-top: 6px; border-top: 1px solid var(--border); }
+  main h2:first-of-type { border-top: none; margin-top: 24px; }
+  main h3 { font-family: var(--serif); font-size: 17px; margin: 28px 0 10px; color: var(--accent); }
+  main p { color: var(--text); margin: 0 0 15px; }
+  main p:first-of-type em { color: var(--text-faint); font-size: 13.5px; }
+  main p.note { color: var(--text-dim); font-size: 13.5px; font-style: italic; border-left: 2px solid var(--accent); padding-left: 14px; margin: 18px 0; }
+  main strong { color: var(--text); font-weight: 700; }
+  main code { font-family: var(--mono); font-size: 13px; background: var(--bg-sunken); padding: 1px 5px; border-radius: 4px; }
+  main a { color: var(--accent); }
+  main ul { padding-left: 22px; margin: 0 0 16px; }
+  main li { margin-bottom: 8px; color: var(--text); }
+  main hr { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+
+  .table-wrap { overflow-x: auto; margin: 0 0 22px; border: 1px solid var(--border); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 9px 13px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  thead th { background: var(--bg-sunken); font-family: var(--sans); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); font-weight: 700; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--bg-sunken); }
+  td strong { color: var(--accent); }
+
+  footer { text-align: center; padding: 30px 20px calc(50px + env(safe-area-inset-bottom)); color: var(--text-faint); font-size: 11.5px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="icon">🫧</span>
+  <span class="doctitle">Bubble-Aktien-Studie</span>
+  <nav>
+    
+    <a href="./hub.html">🧭 Hub</a>
+    <a href="../index.html">🏠 Workshell</a>
+  </nav>
+</header>
+<main>
+<h1>Bubble-Aktien: Windfall-Dividenden &amp; IPO-Hype im Vergleich</h1><p class="note">Generiert: 10.8.2026, 09:12:50 · Ergänzt die <a href="./BULLRUNS-DRAWDOWNS-REPORT.html">Bull-Run- &amp; Drawdown-Studie</a> und die <a href="./DIVIDEND-ANALYSIS-REPORT.html">Dividenden-Studie</a>, die sich auf etablierte Blue Chips konzentrieren — hier geht's um die andere Seite: Aktien, deren Kurs (und teils Dividende) durch einen erkennbaren Einmal-Effekt aufgeblasen wurde, und was danach passierte.</p><p>Zwei völlig unterschiedliche Bubble-Mechaniken werden hier verglichen:</p><p>1. <strong>Rohstoff-/Fracht-Windfall-Dividenden</strong> (9 Werte): Container-/Tanker-/Bulk-Shipping sowie Öl-, Gas- und Kohleförderer mit expliziten "Basis + Variable" Ausschüttungsprogrammen. Der Boom war real und wurde tatsächlich in bar ausgezahlt — dann brach die Dividende mit dem Rohstoffpreis wieder ein. 2. <strong>IPO-Hype-Aktien</strong> (8 Werte): zahlen nachweislich <strong>keine einzige Dividende</strong>. Die gesamte Bewertung war reine Wachstums-/Narrativ-Story ohne jeden Cash-Rückfluss — der Vergleichsfall zur "echten" Windfall-Dividende.</p><h2>Wichtiger Methodik-Fix unterwegs</h2><p>Die naive Rechnung (adjustierte Dividende / adjustierter Kurs, wie im Blue-Chip-Report) versagt hier: Bei einer Sonderdividende, die einen großen Teil des Aktienkurses ausmacht (ZIM zahlte am 22.03.2022 <strong>17,00 $ auf eine ~77-$-Aktie</strong>, über 22%), rechnet der Datenanbieter das als Total-Return-Rückrechnung auf <strong>alle</strong> historischen Kurse zurück — das ergab eine physikalisch unsinnige Spitzenrendite von über 400%. Mit rohen Werten (<code>close</code> / <code>unadjustedValue</code>, tatsächlich gehandelter Kurs und tatsächlich gezahlte Dividende, beides auf derselben Basis) kommen <strong>171%</strong> heraus — immer noch extrem, aber real und nachvollziehbar. Diese komplette Analyse rechnet daher <strong>ausschließlich mit rohen, nicht-adjustierten Werten</strong>.</p><hr><h2>1. Rohstoff-/Fracht-Windfall-Dividenden</h2><div class="table-wrap"><table><thead><tr><th>Wert</th><th>Sektor</th><th>Spitzenzahlung</th><th>Zuletzt</th><th>Rückgang</th><th>Spitzenrendite (TTM)</th></tr></thead><tbody><tr><td>ZIM Integrated Shipping</td><td>Container-Shipping</td><td>17.00 $ (22.03.2022)</td><td>0.88 $</td><td>-94.8%</td><td>171.2% (16.12.2022)</td></tr><tr><td>Frontline (Tanker)</td><td>Tanker-Shipping</td><td>8.31 $ (17.06.2004)</td><td>1.55 $</td><td>-81.3%</td><td>83.3% (16.06.2005)</td></tr><tr><td>Star Bulk Carriers</td><td>Bulk-Shipping</td><td>2.00 $ (01.03.2022)</td><td>0.90 $</td><td>-55.0%</td><td>72.7% (03.03.2009)</td></tr><tr><td>Coterra Energy</td><td>Öl &amp; Gas (variable Dividende)</td><td>0.68 $ (15.11.2022)</td><td>0.22 $</td><td>-67.6%</td><td>11.0% (15.03.2023)</td></tr><tr><td>Devon Energy</td><td>Öl &amp; Gas (variable Dividende)</td><td>1.55 $ (09.09.2022)</td><td>0.32 $</td><td>-79.4%</td><td>11.2% (15.03.2023)</td></tr><tr><td>Diamondback Energy</td><td>Öl &amp; Gas (variable Dividende)</td><td>3.37 $ (15.11.2023)</td><td>1.10 $</td><td>-67.4%</td><td>9.5% (11.05.2023)</td></tr><tr><td>Warrior Met Coal</td><td>Kohle</td><td>11.21 $ (24.11.2017)</td><td>0.08 $</td><td>-99.3%</td><td>80.8% (23.11.2018)</td></tr><tr><td>Alliance Resource Partners</td><td>Kohle</td><td>1.22 $ (06.05.2014)</td><td>0.60 $</td><td>-50.9%</td><td>72.5% (01.04.2020)</td></tr><tr><td>CONSOL Energy</td><td>Kohle</td><td>1.10 $ (16.02.2023)</td><td>0.10 $</td><td>-90.9%</td><td>7.1% (12.06.2023)</td></tr></tbody></table></div><p><strong>Die Windfall-Story im Detail:</strong></p><ul><li><strong>ZIM Integrated Shipping:</strong> Spitzendividende 17.00 $ am 22.03.2022, seither -94.8%. Größter Kurs-Drawdown insgesamt: -61.5%. Der größte Kurs-Drawdown liegt in einer <strong>anderen Krise</strong> als die Dividenden-Spitze (11.08.2022–19.12.2022) — Kurs- und Dividendenzyklus dieses Werts sind zeitlich entkoppelt.</li><li><strong>Frontline (Tanker):</strong> Spitzendividende 8.31 $ am 17.06.2004, seither -81.3%. Größter Kurs-Drawdown insgesamt: -81.6%. Der größte Kurs-Drawdown liegt in einer <strong>anderen Krise</strong> als die Dividenden-Spitze (15.06.2010–25.08.2011) — Kurs- und Dividendenzyklus dieses Werts sind zeitlich entkoppelt.</li><li><strong>Star Bulk Carriers:</strong> Spitzendividende 2.00 $ am 01.03.2022, seither -55.0%. Größter Kurs-Drawdown insgesamt: -89.1%. Der größte Kurs-Drawdown liegt in einer <strong>anderen Krise</strong> als die Dividenden-Spitze (17.07.2015–11.01.2016) — Kurs- und Dividendenzyklus dieses Werts sind zeitlich entkoppelt.</li><li><strong>Coterra Energy:</strong> Spitzendividende 0.68 $ am 15.11.2022, seither -67.6%. Größter Kurs-Drawdown insgesamt: -70.0%. Der größte Kurs-Drawdown liegt in einer <strong>anderen Krise</strong> als die Dividenden-Spitze (17.06.2008–10.10.2008) — Kurs- und Dividendenzyklus dieses Werts sind zeitlich entkoppelt.</li><li><strong>Devon Energy:</strong> Spitzendividende 1.55 $ am 09.09.2022, seither -79.4%. Größter Kurs-Drawdown insgesamt: -79.4%. Der größte Kurs-Drawdown liegt in einer <strong>anderen Krise</strong> als die Dividenden-Spitze (24.12.2019–18.03.2020) — Kurs- und Dividendenzyklus dieses Werts sind zeitlich entkoppelt.</li><li><strong>Diamondback Energy:</strong> Spitzendividende 3.37 $ am 15.11.2023, seither -67.4%. Größter Kurs-Drawdown insgesamt: -83.8%. Der größte Kurs-Drawdown liegt in einer <strong>anderen Krise</strong> als die Dividenden-Spitze (07.01.2020–18.03.2020) — Kurs- und Dividendenzyklus dieses Werts sind zeitlich entkoppelt.</li><li><strong>Warrior Met Coal:</strong> Spitzendividende 11.21 $ am 24.11.2017, seither -99.3%. Größter Kurs-Drawdown insgesamt: -50.8%. Der größte Kurs-Drawdown liegt in einer <strong>anderen Krise</strong> als die Dividenden-Spitze (16.01.2020–12.03.2020) — Kurs- und Dividendenzyklus dieses Werts sind zeitlich entkoppelt.</li><li><strong>Alliance Resource Partners:</strong> Spitzendividende 1.22 $ am 06.05.2014, seither -50.9%. Größter Kurs-Drawdown insgesamt: -82.4%. Der größte Kurs-Drawdown liegt in einer <strong>anderen Krise</strong> als die Dividenden-Spitze (15.03.2019–18.03.2020) — Kurs- und Dividendenzyklus dieses Werts sind zeitlich entkoppelt.</li><li><strong>CONSOL Energy:</strong> Spitzendividende 1.10 $ am 16.02.2023, seither -90.9%. Größter Kurs-Drawdown insgesamt: -69.2%. Der größte Kurs-Drawdown liegt in einer <strong>anderen Krise</strong> als die Dividenden-Spitze (01.03.2019–14.11.2019) — Kurs- und Dividendenzyklus dieses Werts sind zeitlich entkoppelt.</li></ul><hr><h2>2. IPO-Hype-Aktien (null Dividende, reine Kursblase)</h2><div class="table-wrap"><table><thead><tr><th>Wert</th><th>IPO</th><th>Hype-Hoch</th><th>Tief danach</th><th>Rückgang</th><th>Später neues Hoch?</th><th>Status heute</th></tr></thead><tbody><tr><td>Snowflake</td><td>16.09.2020</td><td>16.11.2021 (402 $)</td><td>06.09.2024</td><td>-73.0%</td><td>nein</td><td><strong>nicht erholt</strong>, noch -17.8%</td></tr><tr><td>Peloton</td><td>26.09.2019</td><td>13.01.2021 (167 $)</td><td>14.08.2024</td><td>-98.3%</td><td>nein</td><td><strong>nicht erholt</strong>, noch -96.6%</td></tr><tr><td>Zoom</td><td>18.04.2019</td><td>19.10.2020 (568 $)</td><td>12.08.2024</td><td>-90.3%</td><td>nein</td><td><strong>nicht erholt</strong>, noch -81.6%</td></tr><tr><td>DoorDash</td><td>09.12.2020</td><td>12.11.2021 (246 $)</td><td>14.10.2022</td><td>-82.5%</td><td>ja</td><td>ursprüngliches Hoch <strong>zurückerobert</strong></td></tr><tr><td>Airbnb</td><td>10.12.2020</td><td>11.02.2021 (217 $)</td><td>28.12.2022</td><td>-62.0%</td><td>nein</td><td><strong>nicht erholt</strong>, noch -17.9%</td></tr><tr><td>Coinbase</td><td>14.04.2021</td><td>09.11.2021 (357 $)</td><td>28.12.2022</td><td>-90.9%</td><td>ja</td><td>ursprüngliches Hoch <strong>zurückerobert</strong></td></tr><tr><td>Robinhood</td><td>29.07.2021</td><td>04.08.2021 (70 $)</td><td>16.06.2022</td><td>-90.2%</td><td>ja</td><td>ursprüngliches Hoch <strong>zurückerobert</strong></td></tr><tr><td>Beyond Meat</td><td>02.05.2019</td><td>26.07.2019 (235 $)</td><td>16.10.2025</td><td>-99.8%</td><td>nein</td><td><strong>nicht erholt</strong>, noch -99.8%</td></tr></tbody></table></div><p><strong>Einordnung:</strong> Von 8 IPO-Hype-Werten haben nur <strong>DoorDash, Coinbase und Robinhood</strong> ihr ursprüngliches Hype-Hoch von 2021 tatsächlich zurückerobert (später sogar deutlich übertroffen) — bei diesen dreien hat sich die anfängliche Euphorie im Nachhinein durch reales Geschäftswachstum gerechtfertigt. Die anderen fünf (<strong>Snowflake, Peloton, Zoom, Airbnb, Beyond Meat</strong>) haben ihr Hype-Hoch bis heute nicht wieder gesehen — Peloton und Beyond Meat sind mit -97% bzw. -100% praktisch wertvernichtet.</p><hr><h2>3. Der Kernvergleich: Rohstoff-Dividenden-Bubble vs. IPO-Hype-Bubble</h2><div class="table-wrap"><table><thead><tr><th></th><th>Rohstoff-Windfall-Dividenden</th><th>IPO-Hype-Aktien</th></tr></thead><tbody><tr><td>Cash an Aktionäre vor dem Crash</td><td><strong>Ja</strong> — real ausgezahlt, teils extreme Renditen (bis 171% TTM)</td><td><strong>Nein</strong> — keine einzige Dividende, reine Multiple-Bewertung</td></tr><tr><td>Auslöser der Blase</td><td>Realer externer Preisschock (Frachtraten, Öl/Gas/Kohle)</td><td>Narrativ/Wachstumserwartung, oft Corona-Sondereffekt</td></tr><tr><td>Rückgang vom Hoch</td><td>-50% bis -99%</td><td>-48% bis -100%</td></tr><tr><td>Nach dem Platzen</td><td>Dividende bricht mit dem Rohstoffpreis mit ein, Unternehmen bestehen meist fort</td><td>Kurs bricht ein, ~3 von 8 rechtfertigen die Bewertung Jahre später durch echtes Wachstum</td></tr></tbody></table></div><p><strong>Fazit:</strong> Beide Bubble-Typen sind ähnlich brutal im Ausmaß des Kursrückgangs, aber grundverschieden im Muster. Die Rohstoff-Windfall-Dividende ist ehrlich: Aktionäre bekamen <strong>real Geld ausgezahlt</strong>, bevor der Rohstoffzyklus drehte — wer investiert war, hat zumindest einen Teil über die Ausschüttung zurückbekommen. Die IPO-Hype-Blase zahlte <strong>nichts</strong> aus; der gesamte "Wert" existierte nur im Kurs, und ob er je gerechtfertigt war, entscheidet sich erst Jahre später und uneinheitlich (3 von 8 hier: ja: DoorDash, Coinbase, Robinhood — 5 von 8: nein bislang).</p><hr><h2>Rohdaten</h2><p>Vollständige Ergebnisse (alle Kürzungsphasen, Rendite-Zeitpunkte, Kurs-Drawdowns je Symbol) liegen in <code>research/bubble-stocks-analysis.json</code>.</p>
+</main>
+<footer>historic-charts.local · Forschungs-Report · generiert aus EOD-Kurs- und Dividendendaten · keine Anlageberatung</footer>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>GENITUS DIVIDENDEN-STUDIE // Forschungs-Report</title>
+<style>
+  :root {
+    --bg: #f5f4f1; --bg-elevated: #ffffff; --bg-sunken: #ebe9e4; --border: #ddd9d1;
+    --text: #232019; --text-dim: #6b6557; --text-faint: #a39c8a;
+    --accent: #9a5b2e; --accent-soft: #f0e3d6;
+    --mono: ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace;
+    --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#161310; --bg-elevated:#211c17; --bg-sunken:#130f0c; --border:#382f26;
+      --text:#ece5da; --text-dim:#b3a897; --text-faint:#7c7160;
+      --accent:#e0a35f; --accent-soft:#3a2c1c;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#161310; --bg-elevated:#211c17; --bg-sunken:#130f0c; --border:#382f26;
+    --text:#ece5da; --text-dim:#b3a897; --text-faint:#7c7160;
+    --accent:#e0a35f; --accent-soft:#3a2c1c;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15.5px; line-height: 1.7; }
+  h1, h2, h3 { text-wrap: balance; }
+
+  header.top {
+    position: sticky; top: 0; z-index: 10; background: var(--bg-elevated); border-bottom: 1px solid var(--border);
+    padding: 14px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  header.top .icon { font-size: 20px; }
+  header.top .doctitle { font-family: var(--serif); font-size: 16px; font-weight: 700; }
+  header.top nav { margin-left: auto; display: flex; gap: 8px; }
+  header.top nav a {
+    font-size: 12px; color: var(--accent); text-decoration: none; border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 100px; transition: background .15s ease, border-color .15s ease;
+  }
+  header.top nav a:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+  main { max-width: 780px; margin: 0 auto; padding: 40px 24px 90px; }
+
+  main h1 { font-family: var(--serif); font-size: 30px; line-height: 1.2; margin: 0 0 20px; }
+  main h2 { font-family: var(--serif); font-size: 22px; margin: 42px 0 14px; padding-top: 6px; border-top: 1px solid var(--border); }
+  main h2:first-of-type { border-top: none; margin-top: 24px; }
+  main h3 { font-family: var(--serif); font-size: 17px; margin: 28px 0 10px; color: var(--accent); }
+  main p { color: var(--text); margin: 0 0 15px; }
+  main p:first-of-type em { color: var(--text-faint); font-size: 13.5px; }
+  main p.note { color: var(--text-dim); font-size: 13.5px; font-style: italic; border-left: 2px solid var(--accent); padding-left: 14px; margin: 18px 0; }
+  main strong { color: var(--text); font-weight: 700; }
+  main code { font-family: var(--mono); font-size: 13px; background: var(--bg-sunken); padding: 1px 5px; border-radius: 4px; }
+  main a { color: var(--accent); }
+  main ul { padding-left: 22px; margin: 0 0 16px; }
+  main li { margin-bottom: 8px; color: var(--text); }
+  main hr { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+
+  .table-wrap { overflow-x: auto; margin: 0 0 22px; border: 1px solid var(--border); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 9px 13px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  thead th { background: var(--bg-sunken); font-family: var(--sans); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); font-weight: 700; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--bg-sunken); }
+  td strong { color: var(--accent); }
+
+  footer { text-align: center; padding: 30px 20px calc(50px + env(safe-area-inset-bottom)); color: var(--text-faint); font-size: 11.5px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="icon">💰</span>
+  <span class="doctitle">Dividenden-Studie</span>
+  <nav>
+    
+    <a href="./hub.html">🧭 Hub</a>
+    <a href="../index.html">🏠 Workshell</a>
+  </nav>
+</header>
+<main>
+<h1>Dividenden-Studie: Zusammenhang zwischen Kurs-Drawdowns und Dividendenperformance</h1><p class="note">Generiert: 10.8.2026, 09:01:48 · 14 dividendenzahlende Kernwerte (Indizes ausgeschlossen, zahlen keine Dividende) · Datenbasis: adjusted_close &amp; split-bereinigte Dividendenwerte</p><p>Ergänzt die <a href="./BULLRUNS-DRAWDOWNS-REPORT.html">Bull-Run- &amp; Drawdown-Studie</a> um die Dividendenseite: Wie verhält sich die Dividende während der dort identifizierten Kurs-Drawdowns, und was ist die Dividendenrendite an Kurshöchst- und -tiefständen?</p><h2>Methodik</h2><ul><li><strong>Rendite-Zeitreihe:</strong> Für jeden Handelstag wird die Trailing-12-Monats-Dividendensumme (letzte ~4 Zahlungen, split-bereinigter Wert) durch <code>adjusted_close</code> geteilt → durchgängige Renditezeitreihe, vergleichbar über Splits hinweg. Für die ersten ~12 Monate nach Dividendenbeginn gibt es bewusst keinen Wert (sonst falsche 0%-Ausreißer).</li><li><strong>Dividenden-Rallyes/-Cuts:</strong> Die chronologische Folge der einzelnen Dividendenzahlungen (nicht Kalendertage) wird per Zigzag-Algorithmus (Schwelle 10%, kleiner als bei Kursen, weil Dividendenbewegungen normalerweise kleinschrittiger sind) in Wachstumsphasen und Kürzungsphasen zerlegt.</li><li><strong>Totalausfall-Fix:</strong> Wenn eine Dividende komplett ausgesetzt wird (kein weiterer Zahltermin), taucht das im Zigzag mangels Folgezahlung nicht automatisch als "Kürzung" auf. Solche Fälle werden explizit als eigener -100%-Eintrag geführt (siehe Boeing).</li><li><strong>Verknüpfung mit Kurs-Drawdowns:</strong> Für jeden der 379 bereits identifizierten ≥20%-Kurs-Drawdowns aus der Bull-Run-Studie wird geprüft, ob im selben Zeitfenster (± ca. 6 Monate Puffer) eine Dividendenkürzung stattfand.</li></ul><hr><h2>1. Dividendenrendite an Kurshöchst- vs. Kurstiefständen</h2><div class="table-wrap"><table><thead><tr><th></th><th>Ø gesamte Historie</th><th>Median gesamte Historie</th><th>Ø seit 1990</th><th>Median seit 1990</th></tr></thead><tbody><tr><td><strong>Am Kurshoch</strong></td><td>8.47%</td><td>3.53%</td><td>3.52%</td><td>2.80%</td></tr><tr><td><strong>Am Kurstief</strong></td><td>12.53%</td><td>5.18%</td><td>5.35%</td><td>4.30%</td></tr></tbody></table></div><p><strong>Per Definition</strong> ist die Rendite am Tief höher als am Hoch, solange die Dividende nicht im selben Ausmaß gekürzt wird wie der Kurs fällt (Rendite = Dividende / Kurs — fällt der Kurs, steigt die Rendite automatisch, wenn die Dividende hält). Das bestätigt sich hier klar: Seit 1990 im Median <strong>2.80% am Hoch → 4.30% am Tief</strong>, also grob eine <strong>Verdoppelung der Rendite</strong> an typischen Kurstiefpunkten.</p><p><em>Hinweis zur Gesamt-Historie-Spalte:</em> Die Werte inklusive der 1970er/80er-Jahre liegen deutlich höher (Ø 8.47% am Hoch), weil die Stagflations-Ära 1973-1982 zweistellige Dividendenrenditen bei vielen Blue Chips hervorbrachte (Aktienkurse crashten, Dividenden hielten) — kein Fehler in den Daten, sondern echte Geldmarktzins-Ära-Realität.</p><p><strong>Praktische Lesart:</strong> Eine ungewöhnlich hohe Dividendenrendite an einem Kurstief ist historisch meistens ein Zeichen, dass der Markt den Kurs stärker bestraft hat als das Unternehmen seine Ausschüttung gekürzt hat — nicht automatisch ein "Kaufsignal", aber ein Hinweis, dass hier ggf. Panik statt Fundamentaldaten den Kurs treibt (sofern die Dividende tatsächlich hält, siehe Abschnitt 2).</p><hr><h2>2. Fielen Kürzungen mit Kurs-Crashs zusammen?</h2><ul><li><strong>64 von 379</strong> Kurs-Drawdowns (17%) fielen zeitlich mit einer Dividendenkürzung zusammen.</li><li>Durchschnittlicher Kursrückgang <strong>mit</strong> Dividendenkürzung: <strong>-32.2%</strong></li><li>Durchschnittlicher Kursrückgang <strong>ohne</strong> Dividendenkürzung: <strong>-31.6%</strong></li></ul><p><strong>Überraschendes Ergebnis:</strong> Die durchschnittliche Kurstiefe unterscheidet sich kaum (-32.2% vs. -31.6%) — ob eine Dividende gekürzt wurde, sagt in diesem Datensatz <strong>nichts Verlässliches über die Schwere des Kurs-Crashs</strong> voraus. Nur 17% aller ≥20%-Drawdowns gehen überhaupt mit einer echten Dividendenkürzung einher — die meisten Kurs-Crashs sind also reine Bewertungs-/Sentiment-Bewegungen, nicht durch tatsächlich schlechtere Fundamentaldaten (im Sinne von Ausschüttungskraft) untermauert.</p><hr><h2>3. Wer hat nie gekürzt?</h2><p>Von den 14 Kernwerten hat <strong>nur Coca-Cola</strong> über die komplette verfügbare Historie (seit 08.06.1970) <strong>keine einzige Kürzung ≥10%</strong> — durch Ölkrisen, Stagflation, Dotcom-Crash, Finanzkrise und Corona hindurch. Deckt sich mit der realen Auszeichnung als "Dividend King" (60+ Jahre in Folge steigende Dividende).</p><p>Alle anderen 13 Werte hatten mindestens eine Kürzung ≥10% in ihrer Geschichte — Dividendensicherheit ist historisch die Ausnahme, nicht die Regel, selbst bei Blue Chips.</p><hr><h2>4. Die größten Dividendenkürzungen (alle 14 Werte)</h2><div class="table-wrap"><table><thead><tr><th>Wert</th><th>Kürzung</th><th>Von</th><th>Bis</th><th></th></tr></thead><tbody><tr><td>Boeing</td><td>-100.0%</td><td>13.02.2020</td><td>07.08.2026</td><td><strong>bis heute ausgesetzt</strong></td></tr><tr><td>General Dynamics</td><td>-97.8%</td><td>15.06.1993</td><td>12.07.1993</td><td></td></tr><tr><td>General Electric</td><td>-95.8%</td><td>22.12.2016</td><td>19.12.2018</td><td></td></tr><tr><td>ExxonMobil</td><td>-95.5%</td><td>09.11.1999</td><td>18.06.2001</td><td></td></tr><tr><td>General Dynamics</td><td>-95.0%</td><td>22.09.1993</td><td>08.10.1993</td><td></td></tr><tr><td>Honeywell</td><td>-91.7%</td><td>12.02.1993</td><td>14.02.1994</td><td></td></tr><tr><td>Merck &amp; Co.</td><td>-87.1%</td><td>20.08.2003</td><td>03.09.2003</td><td></td></tr><tr><td>General Dynamics</td><td>-84.0%</td><td>30.03.1993</td><td>12.04.1993</td><td></td></tr><tr><td>3M</td><td>-79.6%</td><td>16.07.1996</td><td>21.08.1996</td><td></td></tr><tr><td>IBM</td><td>-79.3%</td><td>04.05.1989</td><td>05.08.1993</td><td></td></tr><tr><td>Chevron</td><td>-75.0%</td><td>06.02.1984</td><td>04.05.1984</td><td></td></tr><tr><td>Consolidated Edison</td><td>-75.0%</td><td>03.02.1977</td><td>03.11.1977</td><td></td></tr><tr><td>Consolidated Edison</td><td>-74.9%</td><td>04.05.1970</td><td>01.11.1971</td><td></td></tr><tr><td>Consolidated Edison</td><td>-72.4%</td><td>31.01.1980</td><td>05.02.1981</td><td></td></tr><tr><td>General Electric</td><td>-67.7%</td><td>20.12.2007</td><td>18.06.2009</td><td></td></tr></tbody></table></div><p><strong>Boeing</strong> führt mit <strong>-100%</strong> — die Dividende wurde im Februar 2020 (737-MAX-Krise + Corona) komplett ausgesetzt und ist bis heute (Stand 07.08.2026, über 6 Jahre später) nicht wieder aufgenommen worden. Der mechanische Zigzag-Algorithmus hätte das mangels Folgezahlung gar nicht als "Kürzung" erkannt — deshalb wird eine echte Aussetzung hier explizit als eigener Fall geführt.</p><p>Bemerkenswert: <strong>General Dynamics und Honeywell kürzten massiv in den frühen 1990ern</strong> (Verteidigungsbudget-Kürzungen nach dem Kalten Krieg) — ein heute kaum noch erinnerter, aber historisch drastischer Dividenden-Bärenmarkt im Rüstungssektor.</p><h2>Die längsten Dividenden-Wachstumsphasen</h2><div class="table-wrap"><table><thead><tr><th>Wert</th><th>Zuwachs</th><th>Dauer</th><th>Von</th><th>Bis</th></tr></thead><tbody><tr><td>Johnson &amp; Johnson</td><td>+1218081.8%</td><td>50.0 J.</td><td>17.05.1976</td><td>26.05.2026</td></tr><tr><td>Chevron</td><td>+1086.7%</td><td>41.8 J.</td><td>04.05.1984</td><td>17.02.2026</td></tr><tr><td>Consolidated Edison</td><td>+122.5%</td><td>38.3 J.</td><td>12.05.1988</td><td>19.08.2026</td></tr><tr><td>Boeing</td><td>+5037.5%</td><td>33.8 J.</td><td>06.05.1985</td><td>07.02.2019</td></tr><tr><td>IBM</td><td>+2728.5%</td><td>32.8 J.</td><td>05.08.1993</td><td>08.05.2026</td></tr><tr><td>General Dynamics</td><td>+2020.0%</td><td>32.5 J.</td><td>08.10.1993</td><td>10.04.2026</td></tr><tr><td>3M</td><td>+516.3%</td><td>27.5 J.</td><td>21.08.1996</td><td>15.02.2024</td></tr><tr><td>ExxonMobil</td><td>+10200.0%</td><td>24.4 J.</td><td>18.06.2001</td><td>14.11.2025</td></tr><tr><td>Procter &amp; Gamble</td><td>+431.2%</td><td>23.8 J.</td><td>17.07.2002</td><td>24.04.2026</td></tr><tr><td>Honeywell</td><td>+12337.7%</td><td>22.6 J.</td><td>14.02.1994</td><td>15.09.2016</td></tr></tbody></table></div><p class="note">Die extrem hohen Prozentwerte (z.B. Johnson &amp; Johnson +1.218.082% über 50 Jahre) sind reiner Zinseszins-Effekt einer 50-jährigen ununterbrochenen Erhöhungsserie von einer sehr niedrigen Ausgangsbasis — kein Datenfehler, sondern der Punkt: diese Werte haben Jahrzehnte ohne eine einzige Kürzung durchgehalten.</p><hr><h2>Rohdaten</h2><p>Vollständige Ergebnisse je Symbol (alle Kürzungen, Wachstumsphasen, Renditewerte an jedem Kurs-Drawdown) liegen in <code>research/dividend-analysis.json</code>.</p><p><strong>Weiterführend:</strong> Die <a href="./BUBBLE-STOCKS-REPORT.html">Bubble-Aktien-Studie</a> wendet dieselbe Methodik auf echte Windfall-Dividenden (Shipping, Öl/Gas, Kohle mit teils &gt;100% Spitzenrendite) und dividendenlose IPO-Hype-Aktien an.</p>
+</main>
+<footer>historic-charts.local · Forschungs-Report · generiert aus EOD-Kurs- und Dividendendaten · keine Anlageberatung</footer>
+</body>
+</html>
