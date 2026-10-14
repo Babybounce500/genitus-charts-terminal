@@ -1,0 +1,795 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GENITUS BULL-BEAR SCANNER // Heikin-Ashi-Regime</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+  <style>
+    :root{
+      --bg:#080c10;--surface:#0d1117;--panel:#111820;--card:#121a22;
+      --border:#1e2d3d;--accent:#00d4ff;--green:#00ff88;--red:#ff3b5c;
+      --amber:#ffb300;--purple:#b44fff;--gold:#f0c040;
+      --muted:#7d92a8;--text:#c8d8e8;--bright:#fff;
+      --mono:'JetBrains Mono',monospace;--head:'Orbitron',sans-serif;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--mono);overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,.007) 2px,rgba(0,212,255,.007) 4px);pointer-events:none;z-index:1000;}
+
+    header{position:sticky;top:0;z-index:200;background:rgba(8,12,16,.97);border-bottom:1px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+    .logo{display:flex;align-items:center;gap:12px;}
+    .logo-box{width:32px;height:32px;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:9px;color:var(--accent);position:relative;}
+    .logo-box::before{content:'';position:absolute;inset:3px;background:rgba(0,212,255,.06);}
+    .logo-name{font-family:var(--head);font-size:13px;letter-spacing:3px;color:var(--bright);}
+    .logo-sub{font-family:var(--mono);font-size:8px;letter-spacing:3px;color:var(--muted);display:block;}
+    .hdr-right{display:flex;align-items:center;gap:8px;}
+    .status-dot{width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 8px var(--green);animation:pulse 2s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+    .hdr-clock{font-family:var(--mono);font-size:11px;color:var(--muted);}
+    .hdr-btn{font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:5px 10px;border:1px solid var(--border);color:var(--muted);background:transparent;cursor:pointer;border-radius:2px;transition:all .2s;text-decoration:none;}
+    .hdr-btn:hover{border-color:var(--accent);color:var(--accent);}
+    .burger-btn{display:none;font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:6px 10px;border:1px solid var(--border);color:var(--text);background:transparent;cursor:pointer;border-radius:2px;align-items:center;gap:6px;}
+    .burger-icon{display:flex;flex-direction:column;gap:3px;width:14px;}
+    .burger-icon span{display:block;height:2px;border-radius:1px;background:currentColor;}
+
+    .prog-bar{height:2px;background:var(--border);}
+    .prog-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .3s;border-radius:2px;}
+    .prog-fill.ind{animation:ind-sw 1.1s ease-in-out infinite;}
+    @keyframes ind-sw{0%{margin-left:-40%;width:40%;}100%{margin-left:100%;width:40%;}}
+
+    .ctrl{background:var(--panel);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .ctrl-lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);}
+    .ctrl-inp{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:12px;padding:7px 12px;outline:none;border-radius:2px;transition:border-color .2s;}
+    .ctrl-inp:focus{border-color:var(--accent);}
+    .sym-inp{width:150px;text-transform:uppercase;}
+    .num-inp{width:70px;}
+    .ctrl-btn{font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:7px 14px;border:1px solid;background:transparent;cursor:pointer;border-radius:2px;transition:all .2s;white-space:nowrap;}
+    .btn-accent{border-color:var(--accent);color:var(--accent);}
+    .btn-accent:hover{background:rgba(0,212,255,.08);}
+    .btn-gold{border-color:var(--gold);color:var(--gold);}
+    .btn-gold:hover{background:rgba(240,192,64,.08);}
+    .btn-muted{border-color:var(--border);color:var(--muted);}
+    .btn-muted:hover{border-color:var(--accent);color:var(--accent);}
+    .btn-muted.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.08);}
+    .divider{width:1px;height:28px;background:var(--border);}
+
+    .main{display:grid;grid-template-columns:230px 1fr 340px;grid-template-rows:auto 1fr;gap:0;height:calc(100vh - 52px - 2px - 56px);}
+    @media(max-width:1200px){.main{grid-template-columns:1fr 340px;}.symbols-col{position:fixed;top:0;left:0;bottom:0;width:270px;z-index:500;transform:translateX(-100%);transition:transform .28s cubic-bezier(.34,1.56,.64,1);box-shadow:4px 0 24px rgba(0,0,0,.5);}.symbols-col.open{transform:translateX(0);}.burger-btn{display:flex;}}
+    @media(max-width:920px){.main{grid-template-columns:1fr;height:auto;}.side{display:none;}}
+    .scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;}
+    .scrim.show{display:block;}
+
+    .symbols-col{background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+    .sym-search-wrap{padding:10px;border-bottom:1px solid var(--border);}
+    .sym-search{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;border-radius:2px;}
+    .sym-search:focus{border-color:var(--accent);}
+    .sym-count{font-size:8px;letter-spacing:1px;color:var(--muted);padding:6px 10px 0;}
+    .sym-list{flex:1;overflow-y:auto;padding:6px 0;}
+    .sym-group-head{font-family:var(--head);font-size:8px;letter-spacing:2px;color:var(--gold);padding:10px 12px 4px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;position:sticky;top:0;background:var(--panel);}
+    .sym-group-head .scan-mini{font-family:var(--mono);font-size:7px;letter-spacing:1px;color:var(--accent);border:1px solid var(--border);padding:2px 5px;border-radius:2px;}
+    .sym-group-head .scan-mini:hover{border-color:var(--accent);}
+    .sym-row{display:flex;flex-direction:column;gap:1px;padding:6px 12px;cursor:pointer;border-left:2px solid transparent;transition:all .12s;}
+    .sym-row:hover{background:rgba(0,212,255,.06);border-left-color:var(--accent);}
+    .sym-row.active{background:rgba(0,212,255,.1);border-left-color:var(--accent);}
+    .sym-row .t{font-family:var(--mono);font-size:11px;color:var(--bright);letter-spacing:.5px;}
+    .sym-row .n{font-family:var(--mono);font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sym-empty{padding:30px 14px;text-align:center;color:var(--muted);font-size:10px;line-height:1.8;}
+
+    .center-col{display:flex;flex-direction:column;overflow:hidden;}
+    .chart-header{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--border);border-right:1px solid var(--border);flex-wrap:wrap;gap:6px;}
+    .chart-sym{font-family:var(--head);font-size:14px;letter-spacing:4px;color:var(--bright);}
+    .ohlcv{display:flex;gap:14px;font-family:var(--mono);font-size:10px;}
+    .ohlcv span{color:var(--muted);}
+    .ohlcv b{color:var(--text);}
+    #ov-close{font-size:13px;font-weight:700;}
+    .chart-wrap{flex:0 0 55%;position:relative;background:var(--bg);border-right:1px solid var(--border);}
+    #lwChart{width:100%;height:100%;}
+    .chart-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--muted);font-family:var(--head);font-size:11px;letter-spacing:3px;}
+    .chart-empty .kanji{font-size:52px;opacity:.08;}
+
+    .grid-col{flex:1;overflow-y:auto;border-right:1px solid var(--border);background:var(--bg);}
+    .grid-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--panel);}
+    .grid-title{font-family:var(--head);font-size:10px;letter-spacing:2px;color:var(--muted);}
+    .grid-title b{color:var(--bright);}
+    .scan-progress-wrap{padding:0 16px;}
+    .scan-progress{height:2px;background:var(--border);margin:0;}
+    .scan-progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .2s;}
+    .scanner-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding:14px 16px;}
+    .sym-card{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:10px 12px;cursor:pointer;transition:all .15s;}
+    .sym-card:hover{border-color:var(--accent);transform:translateY(-1px);}
+    .sym-card.loading{opacity:.4;}
+    .sym-card .card-sym{font-family:var(--head);font-size:11px;letter-spacing:1px;color:var(--bright);margin-bottom:6px;}
+    .sym-card .card-name{font-family:var(--mono);font-size:8px;color:var(--muted);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .card-dots{display:flex;gap:4px;flex-wrap:wrap;}
+    .card-dot{font-family:var(--mono);font-size:7px;letter-spacing:.5px;padding:2px 5px;border-radius:2px;border:1px solid;}
+    .dot-long{color:var(--green);border-color:rgba(0,255,136,.35);background:rgba(0,255,136,.08);}
+    .dot-short{color:var(--red);border-color:rgba(255,0,60,.35);background:rgba(255,0,60,.08);}
+    .dot-na{color:var(--muted);border-color:var(--border);}
+    .grid-empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:11px;line-height:2;}
+
+    .side{background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;padding:14px;gap:12px;}
+    .side-title{font-family:var(--head);font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-top:6px;}
+    .side-title:first-child{margin-top:0;}
+    .sig-card{border:1px solid var(--border);border-radius:3px;background:var(--card);padding:11px 13px;}
+    .sig-card.long{border-left:3px solid var(--green);}
+    .sig-card.short{border-left:3px solid var(--red);}
+    .sig-card.na{border-left:3px solid var(--muted);}
+    .sig-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .sig-name{font-family:var(--head);font-size:9px;letter-spacing:2px;color:var(--bright);}
+    .sig-badge{font-family:var(--mono);font-size:8px;letter-spacing:1px;padding:3px 8px;border-radius:2px;font-weight:700;}
+    .badge-long{background:rgba(0,255,136,.12);color:var(--green);border:1px solid rgba(0,255,136,.3);}
+    .badge-short{background:rgba(255,0,60,.12);color:var(--red);border:1px solid rgba(255,0,60,.3);}
+    .badge-na{background:rgba(58,80,104,.2);color:var(--muted);border:1px solid var(--border);}
+    .sig-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;margin-bottom:3px;}
+    .sig-row span:first-child{color:var(--muted);}
+    .sig-pnl.up{color:var(--green);}
+    .sig-pnl.dn{color:var(--red);}
+    .sig-desc{font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.6;margin-top:6px;border-top:1px solid var(--border);padding-top:6px;}
+    .no-sig{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;padding:14px 0;}
+
+    .toast{position:fixed;bottom:20px;right:20px;background:var(--panel);border:1px solid var(--accent);padding:8px 14px;font-family:var(--mono);font-size:11px;color:var(--accent);border-radius:2px;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);}
+    .toast.err{border-color:var(--red);color:var(--red);}
+    .toast.ok{border-color:var(--green);color:var(--green);}
+    .toast.show{transform:translateY(0);opacity:1;}
+
+    ::-webkit-scrollbar{width:4px;}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <button class="burger-btn" id="burgerBtn" onclick="toggleSymbols()">
+      <span class="burger-icon"><span></span><span></span><span></span></span>
+      SYMBOLE
+    </button>
+    <div class="logo-box">BB</div>
+    <div>
+      <span class="logo-name">BULL-BEAR-SCANNER</span>
+      <span class="logo-sub" id="sym-total">— SYMBOLE · HEIKIN-ASHI</span>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="status-dot"></div>
+    <span class="hdr-clock" id="hdr-clock">--:--:--</span>
+    <a class="hdr-btn" href="STOCKS-TERMINAL.html">🖥 TERMINAL</a>
+    <a class="hdr-btn" href="SIGNALS-TERMINAL.html">🎯 SIGNALS</a>
+    <a class="hdr-btn" href="LEGENDARY-TERMINAL.html">🏛 LEGENDARY</a>
+    <a class="hdr-btn" href="PORTFOLIO-RISK-ENGINE.html">⚖ RISK</a>
+    <a class="hdr-btn" href="VOLATILITY-SCREENER.html">🌪 VOLA</a>
+    <a class="hdr-btn" href="WATCHLIST-CHARTS.html">📡 WATCHLIST</a>
+    <a class="hdr-btn" href="CHARTS-BOT.html">🕯 CHARTS-BOT</a>
+    <a class="hdr-btn" href="../viewer/watchlist/index.html">📚 CHART-LIB</a>
+    <a class="hdr-btn" href="../viewer/funds/index.html">🌍 FUNDS-LIB</a>
+    <a class="hdr-btn" href="../viewer/forex/index.html">💱 FOREX-LIB</a>
+    <a class="hdr-btn" href="../viewer/crypto/index.html">₿ CRYPTO-LIB</a>
+    <a class="hdr-btn" href="../viewer/gbond/index.html">🏛 GBOND-LIB</a>
+    <a class="hdr-btn" href="../index.html">← WORKSHELL</a>
+  </div>
+</header>
+
+<div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
+
+<div class="ctrl">
+  <span class="ctrl-lbl">SYMBOL</span>
+  <input class="ctrl-inp sym-inp" id="sym" placeholder="AAPL.US, VNA.XETRA …" autocomplete="off">
+  <span class="ctrl-lbl">KERZEN</span>
+  <input class="ctrl-inp num-inp" id="num" type="number" value="200" min="30" max="1000">
+  <button class="ctrl-btn btn-accent" onclick="loadChart()">▶ LADEN</button>
+  <div class="divider"></div>
+  <span class="ctrl-lbl">CHART</span>
+  <button class="ctrl-btn btn-muted active" id="toggle-sma20-btn" onclick="toggleOverlay('sma20')">SMA20</button>
+  <button class="ctrl-btn btn-muted active" id="toggle-sma200-btn" onclick="toggleOverlay('sma200')">SMA200</button>
+  <div class="divider"></div>
+  <span class="ctrl-lbl">GRUPPE</span>
+  <button class="ctrl-btn btn-gold" id="scan-group-btn" onclick="scanCurrentGroup()">⬛ GRUPPE SCANNEN</button>
+</div>
+
+<div class="scrim" id="scrim" onclick="toggleSymbols(false)"></div>
+
+<div class="main">
+  <!-- LEFT: Symbol browser -->
+  <div class="symbols-col" id="symbolsCol">
+    <div class="sym-search-wrap">
+      <input class="sym-search" id="symSearch" placeholder="Suche: Name, Symbol, Gruppe …" autocomplete="off">
+      <div class="sym-count" id="symCount"></div>
+    </div>
+    <div class="sym-list" id="symList"></div>
+  </div>
+
+  <!-- CENTER: Chart + Scanner grid -->
+  <div class="center-col">
+    <div class="chart-header">
+      <span class="chart-sym" id="chart-sym-lbl">—</span>
+      <div class="ohlcv" id="ohlcv">
+        <span>O: <b id="ov-open">—</b></span>
+        <span>H: <b id="ov-high">—</b></span>
+        <span>L: <b id="ov-low">—</b></span>
+        <span>C: <b id="ov-close">—</b></span>
+        <span>V: <b id="ov-vol">—</b></span>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-empty" id="chart-empty">
+        <div class="kanji">陰陽</div>
+        <span>SYMBOL WÄHLEN — HEIKIN-ASHI TREND-FOLGE</span>
+        <span style="font-size:9px;font-family:var(--mono)">Grün folgen bis Rot · Rot folgen bis Grün</span>
+      </div>
+      <div id="lwChart"></div>
+    </div>
+    <div class="grid-col">
+      <div class="grid-header">
+        <div class="grid-title" id="grid-title">▌ SCANNER — <b id="grid-group-name">keine Gruppe gewählt</b></div>
+        <span class="sym-count" id="grid-count"></span>
+      </div>
+      <div class="scan-progress-wrap"><div class="scan-progress"><div class="scan-progress-bar" id="scan-progress-bar"></div></div></div>
+      <div class="scanner-grid" id="scanner-grid">
+        <div class="grid-empty">Symbol aus der linken Liste laden, dann oben rechts "GRUPPE SCANNEN" klicken —<br>alle Symbole der Gruppe werden mit allen 4 Signalen gescannt.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Signal panels -->
+  <div class="side" id="sideSignals">
+    <div class="side-title">🕯 HA-FLIP · TREND-FOLGE</div>
+    <div id="sig-ha" class="no-sig">Symbol laden für Signal</div>
+
+    <div class="side-title">🔄 MACRO · KURS VS. SMA200 (5J)</div>
+    <div id="sig-macro" class="no-sig">Symbol laden für Signal</div>
+
+    <div class="side-title">⚡ FAST · KURS VS. SMA20 (3M)</div>
+    <div id="sig-fast" class="no-sig">Symbol laden für Signal</div>
+
+    <div class="side-title">📈 SLOPE · SMA20-RICHTUNG (3M)</div>
+    <div id="sig-slope" class="no-sig">Symbol laden für Signal</div>
+
+    <div class="side-title">🎯 RSI-MR · RSI(14) MEAN-REVERSION</div>
+    <div id="sig-rsiMR" class="no-sig">Symbol laden für Signal</div>
+
+    <div class="side-title">🗓 HA-MONAT · TREND-FOLGE (MONATSKERZEN)</div>
+    <div id="sig-haMonthly" class="no-sig">Symbol laden für Signal</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const PROXY = 'https://theserver-open-ai.replit.app';
+  const SYMBOLS = [{"sym":"MP.US","name":"MP Materials Corp","group":"🌊 BLUE ECONOMY","sector":"Rare Earths & Critical Materials"},{"sym":"NEO.TO","name":"Neo Performance Mtl","group":"🌊 BLUE ECONOMY","sector":"Rare Earths & Critical Materials"},{"sym":"TMC.US","name":"The Metals Company","group":"🌊 BLUE ECONOMY","sector":"Deep Sea & Recycling"},{"sym":"ABO.XETRA","name":"ABO Wind AG","group":"🌿 Green Tech","sector":"Komponenten & Infrastruktur"},{"sym":"EKT.XETRA","name":"Energiekontor AG","group":"🌿 Green Tech","sector":"Wasserstoff & Solar"},{"sym":"MBG.XETRA","name":"Mercedes-Benz Group","group":"🌿 Green Tech","sector":"EV & Batterie"},{"sym":"HAG.XETRA","name":"Helma Eigenheimbau AG","group":"🏗️ Distressed Devs","sector":"Deep Value / Turnaround"},{"sym":"NTG.XETRA","name":"Nabaltec AG","group":"🏗️ Distressed Devs","sector":"Deep Value / Turnaround"},{"sym":"SFQ.XETRA","name":"SAF-Holland SE","group":"🏗️ Distressed Devs","sector":"Micro-Cap Spezialisten"},{"sym":"SY1.XETRA","name":"Symrise AG","group":"🏗️ Distressed Devs","sector":"Deep Value / Turnaround"},{"sym":"WDP.XETRA","name":"Warehousing De Pauw","group":"🏗️ Distressed Devs","sector":"Micro-Cap Spezialisten"},{"sym":"BMNR.US","name":"BitMine Immersion","group":"🏦 DIGITAL ASSETS","sector":"Mining & High-Yield"},{"sym":"COIN.US","name":"Coinbase Global","group":"🏦 DIGITAL ASSETS","sector":"Exchanges & Infrastructure"},{"sym":"IREN.US","name":"IREN Ltd","group":"🏦 DIGITAL ASSETS","sector":"Mining & High-Yield"},{"sym":"MARA.US","name":"Marathon Digital","group":"🏦 DIGITAL ASSETS","sector":"Mining & High-Yield"},{"sym":"MSTR.US","name":"MicroStrategy","group":"🏦 DIGITAL ASSETS","sector":"Exchanges & Infrastructure"},{"sym":"CBK.XETRA","name":"Commerzbank AG","group":"🏦 Shadow Banking","sector":"Turnaround Banken"},{"sym":"DBK.XETRA","name":"Deutsche Bank AG","group":"🏦 Shadow Banking","sector":"Turnaround Banken"},{"sym":"DGR.XETRA","name":"Dt. Grundstücksaukt. AG","group":"🏦 Shadow Banking","sector":"Niche & Special Finance"},{"sym":"GFT.XETRA","name":"GFT Technologies SE","group":"🏦 Shadow Banking","sector":"Niche & Special Finance"},{"sym":"MBB.XETRA","name":"MBB SE","group":"🏦 Shadow Banking","sector":"Niche & Special Finance"},{"sym":"VBK.XETRA","name":"Varengold Bank AG","group":"🏦 Shadow Banking","sector":"Turnaround Banken"},{"sym":"EUZ.XETRA","name":"Eckert & Ziegler","group":"🔬 NANO-CAP INFRA","sector":"Specialized Hardware"},{"sym":"YSN.XETRA","name":"Secunet Security","group":"🔬 NANO-CAP INFRA","sector":"Specialized Hardware"},{"sym":"BFSA.XETRA","name":"Befesa S.A.","group":"🔮 OUT OF THE BOX","sector":"Circular Economy & Urban Mining"},{"sym":"MDT.US","name":"Medtronic PLC","group":"🔮 OUT OF THE BOX","sector":"Neuro-Tech & Bio-Electronics"},{"sym":"STKH.US","name":"Steakholder Foods","group":"🔮 OUT OF THE BOX","sector":"Lab-Grown Food & Ag-Tech"},{"sym":"AIXA.XETRA","name":"Aixtron SE","group":"🤖 Silent AI Infra","sector":"DE Tech Mid-Cap"},{"sym":"AUDC.US","name":"AudioCodes Ltd.","group":"🤖 Silent AI Infra","sector":"Data & Backend"},{"sym":"COK.XETRA","name":"Cancom SE","group":"🤖 Silent AI Infra","sector":"DE Tech Mid-Cap"},{"sym":"IFX.XETRA","name":"Infineon Technologies","group":"🤖 Silent AI Infra","sector":"DE Tech Mid-Cap"},{"sym":"INOD.US","name":"Innodata Inc.","group":"🤖 Silent AI Infra","sector":"Data & Backend"},{"sym":"NBIS.US","name":"Nebius Group NV","group":"🤖 Silent AI Infra","sector":"EU AI Infrastructure"},{"sym":"SAP.XETRA","name":"SAP SE","group":"🤖 Silent AI Infra","sector":"DE Tech Mid-Cap"},{"sym":"SMCI.US","name":"Super Micro Computer","group":"🤖 Silent AI Infra","sector":"Data & Backend"},{"sym":"BEAM.US","name":"Beam Therapeutics","group":"🧪 SYNTHETIC BIO","sector":"Gene Editing & CRISPR"},{"sym":"CRSP.US","name":"CRISPR Therapeutics","group":"🧪 SYNTHETIC BIO","sector":"Gene Editing & CRISPR"},{"sym":"NTLA.US","name":"Intellia Therapeutics","group":"🧪 SYNTHETIC BIO","sector":"Gene Editing & CRISPR"},{"sym":"TWST.US","name":"Twist Bioscience","group":"🧪 SYNTHETIC BIO","sector":"Gene Editing & CRISPR"},{"sym":"CMPX.US","name":"Compass Therapeutics","group":"🧬 BIO-TECH & LONGEVITY","sector":"Clinical Trials & Rebound"},{"sym":"EVT.XETRA","name":"Evotec SE","group":"🧬 BIO-TECH & LONGEVITY","sector":"Clinical Trials & Rebound"},{"sym":"IBRX.US","name":"ImmunityBio Inc.","group":"🧬 BIO-TECH & LONGEVITY","sector":"Clinical Trials & Rebound"},{"sym":"NDA.XETRA","name":"Aurubis AG","group":"🧱 RESOURCES & GRID","sector":"Critical Materials"},{"sym":"SDF.XETRA","name":"K+S AG","group":"🧱 RESOURCES & GRID","sector":"Critical Materials"},{"sym":"F3C.XETRA","name":"SFC Energy AG","group":"🧱 RESOURCES & GRID","sector":"Grid & Storage"},{"sym":"S92.XETRA","name":"SMA Solar Tech.","group":"🧱 RESOURCES & GRID","sector":"Grid & Storage"},{"sym":"VUL.XETRA","name":"Vulcan Energy Res.","group":"🧱 RESOURCES & GRID","sector":"Critical Materials"},{"sym":"CHPT.US","name":"ChargePoint Holdings","group":"🩸 MAX TURNAROUND","sector":"Fallen Angels & Penny Stocks"},{"sym":"DNA.US","name":"Ginkgo Bioworks","group":"🩸 MAX TURNAROUND","sector":"Fallen Angels & Penny Stocks"},{"sym":"NEL.OL","name":"Nel ASA","group":"🩸 MAX TURNAROUND","sector":"Clean Energy Crash"},{"sym":"PLUG.US","name":"Plug Power Inc.","group":"🩸 MAX TURNAROUND","sector":"Fallen Angels & Penny Stocks"},{"sym":"QS.US","name":"QuantumScape Corp.","group":"🩸 MAX TURNAROUND","sector":"Fallen Angels & Penny Stocks"},{"sym":"SPWR.US","name":"SunPower Corp.","group":"🩸 MAX TURNAROUND","sector":"Clean Energy Crash"},{"sym":"RHM.XETRA","name":"Rheinmetall AG","group":"🛡️ CYBER & DEFENSE","sector":"Defense & Aerospace"},{"sym":"LMT.US","name":"Lockheed Martin","group":"🛰️ SPACE ECONOMY","sector":"Orbital Infrastructure"},{"sym":"OHB.XETRA","name":"OHB SE","group":"🛰️ SPACE ECONOMY","sector":"Orbital Infrastructure"},{"sym":"PL.US","name":"Planet Labs PBC","group":"🛰️ SPACE ECONOMY","sector":"Orbital Infrastructure"},{"sym":"RDW.US","name":"Redwire Corp","group":"🛰️ SPACE ECONOMY","sector":"Orbital Infrastructure"},{"sym":"RKLB.US","name":"Rocket Lab USA","group":"🛰️ SPACE ECONOMY","sector":"Orbital Infrastructure"},{"sym":"ALL.AU","name":"Aristocrat Leisure Limited","group":"ASX (AUSTRALIEN)","sector":"Materials & Energy"},{"sym":"ANZ.AU","name":"Australia and New Zealand Banking","group":"ASX (AUSTRALIEN)","sector":"Finance & Banking"},{"sym":"BHP.AU","name":"BHP Group Limited","group":"ASX (AUSTRALIEN)","sector":"Materials & Energy"},{"sym":"CSL.AU","name":"CSL Limited","group":"ASX (AUSTRALIEN)","sector":"Consumer & Industrial"},{"sym":"EVT.AU","name":"Everton Resources Inc","group":"ASX (AUSTRALIEN)","sector":"Consumer & Industrial"},{"sym":"FLT.AU","name":"Flight Centre Travel Group Ltd","group":"ASX (AUSTRALIEN)","sector":"Consumer & Industrial"},{"sym":"FMG.AU","name":"Fortescue Metals Group Limited","group":"ASX (AUSTRALIEN)","sector":"Materials & Energy"},{"sym":"MQG.AU","name":"Macquarie Group Limited","group":"ASX (AUSTRALIEN)","sector":"Finance & Banking"},{"sym":"MIN.AU","name":"Minerals Resources Limited","group":"ASX (AUSTRALIEN)","sector":"Finance & Banking"},{"sym":"NAB.AU","name":"National Australia Bank Ltd","group":"ASX (AUSTRALIEN)","sector":"Finance & Banking"},{"sym":"ORG.AU","name":"Origin Energy Limited","group":"ASX (AUSTRALIEN)","sector":"Consumer & Industrial"},{"sym":"QAN.AU","name":"Qantas Airways Limited","group":"ASX (AUSTRALIEN)","sector":"Consumer & Industrial"},{"sym":"RIO.AU","name":"Rio Tinto Limited","group":"ASX (AUSTRALIEN)","sector":"Materials & Energy"},{"sym":"STO.AU","name":"Santos Limited","group":"ASX (AUSTRALIEN)","sector":"Materials & Energy"},{"sym":"S32.AU","name":"South32 Limited","group":"ASX (AUSTRALIEN)","sector":"Materials & Energy"},{"sym":"WEB.AU","name":"Webjet Limited","group":"ASX (AUSTRALIEN)","sector":"Consumer & Industrial"},{"sym":"WBC.AU","name":"Westpac Banking Corporation","group":"ASX (AUSTRALIEN)","sector":"Finance & Banking"},{"sym":"WOW.AU","name":"Woolworths Group Limited","group":"ASX (AUSTRALIEN)","sector":"Consumer & Industrial"},{"sym":"ADMIE.AT","name":"Admie Holding S.A","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Energy & Resources"},{"sym":"ALPHA.AT","name":"Alpha Services & Holdings S.A.","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Finance & Banking"},{"sym":"AVAX.AT","name":"Avax S.A","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Industrial & Utilities"},{"sym":"CENER.AT","name":"Cenergy Holdings SA","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Industrial & Utilities"},{"sym":"ELHA.AT","name":"Elvalhalcor Hellenic Copper","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Industrial & Utilities"},{"sym":"EUROB.AT","name":"Eurobank Ergasias Services","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Finance & Banking"},{"sym":"FOYRK.AT","name":"Fourlis Holdings S.A.","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Industrial & Utilities"},{"sym":"GEKTERNA.AT","name":"GEK TERNA Holdings Real Estate","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Industrial & Utilities"},{"sym":"SAR.AT","name":"Gr. Sarantis S.A.","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Industrial & Utilities"},{"sym":"EXAE.AT","name":"Hellenic Exchanges Athens","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Industrial & Utilities"},{"sym":"ELPE.AT","name":"Hellenic Petroleum S.A","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Energy & Resources"},{"sym":"HTO.AT","name":"Hellenic Telecommunications","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Industrial & Utilities"},{"sym":"LAMDA.AT","name":"LAMDA Development S.A.","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Finance & Banking"},{"sym":"MOH.AT","name":"Motor Oil Hellas Corinth","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Energy & Resources"},{"sym":"ETE.AT","name":"National Bank of Greece S.A","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Finance & Banking"},{"sym":"PPC.AT","name":"Public Power Corporation S.A.","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Energy & Resources"},{"sym":"TITC.AT","name":"Titan Cement International","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Energy & Resources"},{"sym":"VIO.AT","name":"Viohalco S.A","group":"ATHENS STOCK EXCHANGE (GRIECHENLAND)","sector":"Industrial & Utilities"},{"sym":"ABEV3.SA","name":"Ambev S.A.","group":"B3 SAO PAULO (BRASILIEN)","sector":"Consumer & Industrial"},{"sym":"B3SA3.SA","name":"B3 S.A. - Brasil Bolsa Balcão","group":"B3 SAO PAULO (BRASILIEN)","sector":"Finance & Banking"},{"sym":"BBDC3.SA","name":"Banco Bradesco S.A. ON","group":"B3 SAO PAULO (BRASILIEN)","sector":"Finance & Banking"},{"sym":"BBDC4.SA","name":"Banco Bradesco S.A. PN","group":"B3 SAO PAULO (BRASILIEN)","sector":"Finance & Banking"},{"sym":"BBAS3.SA","name":"Banco do Brasil S.A.","group":"B3 SAO PAULO (BRASILIEN)","sector":"Finance & Banking"},{"sym":"BBSE3.SA","name":"BB Seguridade Participações SA","group":"B3 SAO PAULO (BRASILIEN)","sector":"Finance & Banking"},{"sym":"CSAN3.SA","name":"Cosan S.A.","group":"B3 SAO PAULO (BRASILIEN)","sector":"Consumer & Industrial"},{"sym":"GGBR4.SA","name":"Gerdau S.A. PN","group":"B3 SAO PAULO (BRASILIEN)","sector":"Energy & Materials"},{"sym":"ITUB4.SA","name":"Itaú Unibanco Holding S.A.","group":"B3 SAO PAULO (BRASILIEN)","sector":"Finance & Banking"},{"sym":"KLBN11.SA","name":"Klabin S.A. Unit","group":"B3 SAO PAULO (BRASILIEN)","sector":"Energy & Materials"},{"sym":"PETR3.SA","name":"Petrobras ON","group":"B3 SAO PAULO (BRASILIEN)","sector":"Energy & Materials"},{"sym":"PETR4.SA","name":"Petrobras PN","group":"B3 SAO PAULO (BRASILIEN)","sector":"Energy & Materials"},{"sym":"SBSP3.SA","name":"SABESP S.A.","group":"B3 SAO PAULO (BRASILIEN)","sector":"Consumer & Industrial"},{"sym":"SUZB3.SA","name":"Suzano S.A.","group":"B3 SAO PAULO (BRASILIEN)","sector":"Energy & Materials"},{"sym":"VIVT3.SA","name":"Telefônica Brasil S.A.","group":"B3 SAO PAULO (BRASILIEN)","sector":"Consumer & Industrial"},{"sym":"VALE3.SA","name":"Vale S.A.","group":"B3 SAO PAULO (BRASILIEN)","sector":"Energy & Materials"},{"sym":"WEGE3.SA","name":"WEG S.A.","group":"B3 SAO PAULO (BRASILIEN)","sector":"Consumer & Industrial"},{"sym":"AMXB.MX","name":"América Móvil S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Consumer & Retail"},{"sym":"AC.MX","name":"Arca Continental S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Finance & Banking"},{"sym":"ASURB.MX","name":"Asura S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Finance & Banking"},{"sym":"CEMEXCPO.MX","name":"CEMEX S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Industrial & Energy"},{"sym":"CHDRAUIB.MX","name":"Chedraui S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Consumer & Retail"},{"sym":"FEMSAUB.MX","name":"FEMSA Grupo S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Consumer & Retail"},{"sym":"GAPB.MX","name":"Gap Inc Mexico","group":"BMV (MEXIKO)","sector":"Industrial & Energy"},{"sym":"BIMBOA.MX","name":"Grupo Bimbo S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Finance & Banking"},{"sym":"GCARSOA1.MX","name":"Grupo Carso S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Industrial & Energy"},{"sym":"GFNORTEO.MX","name":"Grupo Financiero del Noreste","group":"BMV (MEXIKO)","sector":"Industrial & Energy"},{"sym":"GFINBURO.MX","name":"Grupo Financiero Inbursa S.A.B","group":"BMV (MEXIKO)","sector":"Finance & Banking"},{"sym":"GMEXICOB.MX","name":"Grupo México S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Finance & Banking"},{"sym":"OMAB.MX","name":"Grupo OMA S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Consumer & Retail"},{"sym":"CUERVO.MX","name":"José Cuervo S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Consumer & Retail"},{"sym":"KIMBERA.MX","name":"Kimberly-Clark de México","group":"BMV (MEXIKO)","sector":"Consumer & Retail"},{"sym":"SORIANAB.MX","name":"Soriana S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Consumer & Retail"},{"sym":"VOLARA.MX","name":"Volar S.A.B. de C.V.","group":"BMV (MEXIKO)","sector":"Consumer & Retail"},{"sym":"WALMEX.MX","name":"Walmart de México S.A.B. de CV","group":"BMV (MEXIKO)","sector":"Consumer & Retail"},{"sym":"ADJ.XETRA","name":"Adler Group SA","group":"DE Immobilien","sector":"Wohnen"},{"sym":"AT1.XETRA","name":"Aroundtown SA","group":"DE Immobilien","sector":"Gewerbe / Büro"},{"sym":"BRNK.XETRA","name":"Branicks Group (DIC)","group":"DE Immobilien","sector":"Gewerbe / Büro"},{"sym":"DMRE.F","name":"DEMIRE AG","group":"DE Immobilien","sector":"Gewerbe / Büro"},{"sym":"DEQ.XETRA","name":"Deutsche EuroShop AG","group":"DE Immobilien","sector":"REIT & Spezial"},{"sym":"PBB.XETRA","name":"Deutsche Pfandbriefbank","group":"DE Immobilien","sector":"Pfandbriefbanken & Finanzierung"},{"sym":"GYC.XETRA","name":"Grand City Properties","group":"DE Immobilien","sector":"Wohnen"},{"sym":"HABA.XETRA","name":"Hamborner REIT AG","group":"DE Immobilien","sector":"REIT & Spezial"},{"sym":"HYQ.XETRA","name":"Hypoport SE","group":"DE Immobilien","sector":"Pfandbriefbanken & Finanzierung"},{"sym":"INS.XETRA","name":"Instone Real Estate","group":"DE Immobilien","sector":"Projektentwicklung & Asset Mgmt"},{"sym":"LEG.XETRA","name":"LEG Immobilien SE","group":"DE Immobilien","sector":"Wohnen"},{"sym":"PAT.XETRA","name":"Patrizia SE","group":"DE Immobilien","sector":"Projektentwicklung & Asset Mgmt"},{"sym":"TEG.XETRA","name":"TAG Immobilien AG","group":"DE Immobilien","sector":"Wohnen"},{"sym":"VNA.XETRA","name":"Vonovia SE","group":"DE Immobilien","sector":"Wohnen"},{"sym":"AALB.AS","name":"Aalberts Industries NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Consumer & Industrial"},{"sym":"ABN.AS","name":"ABN Amro Group NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Finance & Banking"},{"sym":"ADYEN.AS","name":"Adyen NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Tech & Semiconductors"},{"sym":"AGN.AS","name":"Aegon NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Finance & Banking"},{"sym":"AKZA.AS","name":"Akzo Nobel NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Finance & Banking"},{"sym":"ACOMO.AS","name":"Amsterdam Commodities NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Consumer & Industrial"},{"sym":"ASML.AS","name":"ASML Holding NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Tech & Semiconductors"},{"sym":"ASRNL.AS","name":"ASR Nederland NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Consumer & Industrial"},{"sym":"BESI.AS","name":"BE Semiconductor Industries NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Tech & Semiconductors"},{"sym":"HEIA.AS","name":"Heineken NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Consumer & Industrial"},{"sym":"IMCD.AS","name":"IMCD NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Finance & Banking"},{"sym":"AD.AS","name":"Koninklijke Ahold Delhaize NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Consumer & Industrial"},{"sym":"KPN.AS","name":"Koninklijke KPN NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Consumer & Industrial"},{"sym":"PHIA.AS","name":"Koninklijke Philips NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Tech & Semiconductors"},{"sym":"VPK.AS","name":"Koninklijke Vopak NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Consumer & Industrial"},{"sym":"NN.AS","name":"NN Group NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Finance & Banking"},{"sym":"RAND.AS","name":"Randstad NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Finance & Banking"},{"sym":"WKL.AS","name":"Wolters Kluwer NV","group":"EURONEXT AMSTERDAM (NIEDERLANDE)","sector":"Tech & Semiconductors"},{"sym":"ACKB.BR","name":"Ackermans & Van Haaren NV","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Finance & Banking"},{"sym":"AED.BR","name":"Aedifica","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Healthcare & Consumer"},{"sym":"AGS.BR","name":"ageas SA/NV","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Finance & Banking"},{"sym":"ABI.BR","name":"Anheuser Busch Inbev SA NV","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Healthcare & Consumer"},{"sym":"ARGX.BR","name":"Argen-X","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Healthcare & Consumer"},{"sym":"BPOST.BR","name":"Bpost NV","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Industrial & Materials"},{"sym":"COLR.BR","name":"Colruyt NV","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Industrial & Materials"},{"sym":"ELI.BR","name":"Elia Group SA/NV","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Industrial & Materials"},{"sym":"GBLB.BR","name":"Groep Brussel Lambert NV","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Healthcare & Consumer"},{"sym":"KBCA.BR","name":"KBC Ancora","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Finance & Banking"},{"sym":"KBC.BR","name":"KBC Groep NV","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Finance & Banking"},{"sym":"MELE.BR","name":"Melexis NV","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Healthcare & Consumer"},{"sym":"ONTEX.BR","name":"Ontex Group NV","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Healthcare & Consumer"},{"sym":"PROX.BR","name":"Proximus NV","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Industrial & Materials"},{"sym":"SOF.BR","name":"Sofina Société Anonyme","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Finance & Banking"},{"sym":"SOLB.BR","name":"Solvay SA","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Industrial & Materials"},{"sym":"TITC.BR","name":"Titan Cement International SA","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Industrial & Materials"},{"sym":"UCB.BR","name":"UCB SA","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Healthcare & Consumer"},{"sym":"UMI.BR","name":"Umicore S.A.","group":"EURONEXT BRUSSELS (BELGIEN)","sector":"Industrial & Materials"},{"sym":"AI.PA","name":"Air Liquide SA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Industrial & Tech"},{"sym":"AIR.PA","name":"Airbus Group SE","group":"EURONEXT PARIS (FRANKREICH)","sector":"Industrial & Tech"},{"sym":"ALO.PA","name":"Alstom S.A.","group":"EURONEXT PARIS (FRANKREICH)","sector":"Industrial & Tech"},{"sym":"CS.PA","name":"AXA SA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Finance & Banking"},{"sym":"BNP.PA","name":"BNP Paribas SA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Finance & Banking"},{"sym":"EN.PA","name":"Bouygues SA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Industrial & Tech"},{"sym":"CAP.PA","name":"Capgemini SE","group":"EURONEXT PARIS (FRANKREICH)","sector":"Industrial & Tech"},{"sym":"CA.PA","name":"Carrefour SA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Luxury & Consumer"},{"sym":"ACA.PA","name":"Credit Agricole SA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Finance & Banking"},{"sym":"BN.PA","name":"Danone SA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Luxury & Consumer"},{"sym":"EL.PA","name":"EssilorLuxottica S.A.","group":"EURONEXT PARIS (FRANKREICH)","sector":"Luxury & Consumer"},{"sym":"KER.PA","name":"Kering SA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Luxury & Consumer"},{"sym":"OR.PA","name":"L'Oreal SA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Finance & Banking"},{"sym":"LR.PA","name":"Legrand SA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Industrial & Tech"},{"sym":"MC.PA","name":"LVMH Moët Hennessy Louis Vuitton","group":"EURONEXT PARIS (FRANKREICH)","sector":"Luxury & Consumer"},{"sym":"ML.PA","name":"Michelin SCA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Luxury & Consumer"},{"sym":"SAN.PA","name":"Sanofi SA","group":"EURONEXT PARIS (FRANKREICH)","sector":"Finance & Banking"},{"sym":"SU.PA","name":"Schneider Electric S.E.","group":"EURONEXT PARIS (FRANKREICH)","sector":"Industrial & Tech"},{"sym":"GLE.PA","name":"Societe Generale S.A.","group":"EURONEXT PARIS (FRANKREICH)","sector":"Finance & Banking"},{"sym":"DG.PA","name":"Vinci S.A.","group":"EURONEXT PARIS (FRANKREICH)","sector":"Industrial & Tech"},{"sym":"AUDNZD.forex","name":"Australian / New Zealand Dollar","group":"FOREX PAIRS","sector":"GBP & Exotic Pairs"},{"sym":"AUDJPY.forex","name":"Australian Dollar / JPY","group":"FOREX PAIRS","sector":"GBP & Exotic Pairs"},{"sym":"AUDUSD.forex","name":"Australian Dollar / US Dollar","group":"FOREX PAIRS","sector":"USD Pairs"},{"sym":"CADJPY.forex","name":"Canadian Dollar / Japanese Yen","group":"FOREX PAIRS","sector":"GBP & Exotic Pairs"},{"sym":"EURCAD.forex","name":"Euro / Canadian Dollar","group":"FOREX PAIRS","sector":"EUR Pairs"},{"sym":"EURJPY.forex","name":"Euro / Japanese Yen","group":"FOREX PAIRS","sector":"EUR Pairs"},{"sym":"EURCHF.forex","name":"Euro / Swiss Franc","group":"FOREX PAIRS","sector":"EUR Pairs"},{"sym":"EURGBP.forex","name":"Euro / UK Pound","group":"FOREX PAIRS","sector":"EUR Pairs"},{"sym":"EURUSD.forex","name":"Euro / US Dollar","group":"FOREX PAIRS","sector":"EUR Pairs"},{"sym":"NZDJPY.forex","name":"New Zealand Dollar / JPY","group":"FOREX PAIRS","sector":"GBP & Exotic Pairs"},{"sym":"NZDUSD.forex","name":"New Zealand Dollar / US Dollar","group":"FOREX PAIRS","sector":"USD Pairs"},{"sym":"CHFJPY.forex","name":"Swiss Franc / Japanese Yen","group":"FOREX PAIRS","sector":"GBP & Exotic Pairs"},{"sym":"GBPJPY.forex","name":"UK Pound / Japanese Yen","group":"FOREX PAIRS","sector":"GBP & Exotic Pairs"},{"sym":"GBPCHF.forex","name":"UK Pound / Swiss Franc","group":"FOREX PAIRS","sector":"GBP & Exotic Pairs"},{"sym":"GBPUSD.forex","name":"UK Pound / US Dollar","group":"FOREX PAIRS","sector":"GBP & Exotic Pairs"},{"sym":"USDCAD.forex","name":"US Dollar / Canadian Dollar","group":"FOREX PAIRS","sector":"USD Pairs"},{"sym":"USDEUR.forex","name":"US Dollar / Euro","group":"FOREX PAIRS","sector":"USD Pairs"},{"sym":"USDJPY.forex","name":"US Dollar / Japanese Yen","group":"FOREX PAIRS","sector":"USD Pairs"},{"sym":"USDCHF.forex","name":"US Dollar / Swiss Franc","group":"FOREX PAIRS","sector":"USD Pairs"},{"sym":"USDGBP.forex","name":"US Dollar / UK Pound","group":"FOREX PAIRS","sector":"USD Pairs"},{"sym":"BVSP.indx","name":"BOVESPA Index","group":"GLOBAL INDICES","sector":"Emerging & Other Indices"},{"sym":"BSESN.indx","name":"BSE Sensex","group":"GLOBAL INDICES","sector":"Asian Indices"},{"sym":"DJI.indx","name":"Dow Jones Industrial Average","group":"GLOBAL INDICES","sector":"North American Indices"},{"sym":"STOXX50E.indx","name":"EuroStoxx 50","group":"GLOBAL INDICES","sector":"European Indices"},{"sym":"HSI.indx","name":"Hang Seng Index","group":"GLOBAL INDICES","sector":"Asian Indices"},{"sym":"IBEX.indx","name":"IBEX 35","group":"GLOBAL INDICES","sector":"European Indices"},{"sym":"MXX.indx","name":"IPC Mexico","group":"GLOBAL INDICES","sector":"Emerging & Other Indices"},{"sym":"JKSE.indx","name":"Jakarta Composite Index","group":"GLOBAL INDICES","sector":"Asian Indices"},{"sym":"IXIC.indx","name":"NASDAQ Composite","group":"GLOBAL INDICES","sector":"North American Indices"},{"sym":"N225.indx","name":"Nikkei 225","group":"GLOBAL INDICES","sector":"Asian Indices"},{"sym":"RTSI.indx","name":"RTSI Index Russia","group":"GLOBAL INDICES","sector":"Emerging & Other Indices"},{"sym":"GSPC.indx","name":"S&P 500 Index","group":"GLOBAL INDICES","sector":"North American Indices"},{"sym":"SSEC.indx","name":"Shanghai Composite","group":"GLOBAL INDICES","sector":"Asian Indices"},{"sym":"A5G.IR","name":"AIB Group PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Finance & Banking"},{"sym":"BIRG.IR","name":"Bank of Ireland Group PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Finance & Banking"},{"sym":"C5H.IR","name":"Cairn Homes PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Transport & Services"},{"sym":"DQ7A.IR","name":"Donegal Investment Group PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Transport & Services"},{"sym":"GL9.IR","name":"Glanbia PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Industrial & Materials"},{"sym":"GVR.IR","name":"Glenveagh Properties PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Transport & Services"},{"sym":"8GW.IR","name":"Great Western Mining Corp Plc","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Transport & Services"},{"sym":"GRP.IR","name":"Greencoat Renewables PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Transport & Services"},{"sym":"HSW.IR","name":"Hostelworld Group PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Transport & Services"},{"sym":"IR5B.IR","name":"Irish Continental Group PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Transport & Services"},{"sym":"IRES.IR","name":"Irish Residential Properties","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Transport & Services"},{"sym":"KMR.IR","name":"Kenmare Resources PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Industrial & Materials"},{"sym":"KRZ.IR","name":"Kerry Group","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Industrial & Materials"},{"sym":"KRX.IR","name":"Kingspan Group plc","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Industrial & Materials"},{"sym":"MLC.IR","name":"Malin Corporation plc","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Industrial & Materials"},{"sym":"MIO.IR","name":"Mincon Group P","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Industrial & Materials"},{"sym":"OIZ.IR","name":"Origin Enterprises Plc","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Industrial & Materials"},{"sym":"PTSB.IR","name":"PERMANENT TSB GROUP HOLDINGS PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Finance & Banking"},{"sym":"RYA.IR","name":"Ryanair Holdings plc","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Transport & Services"},{"sym":"UPR.IR","name":"Uniphar Group PLC","group":"IRISH STOCK EXCHANGE (IRLAND)","sector":"Finance & Banking"},{"sym":"000480.KO","name":"Chosun Refractories Co Ltd","group":"KOSPI (SÜDKOREA)","sector":"Chemicals & Materials"},{"sym":"000490.KO","name":"Daedong Ind","group":"KOSPI (SÜDKOREA)","sector":"Automotive & Industrial"},{"sym":"000430.KO","name":"Daewon Kangup Co Ltd","group":"KOSPI (SÜDKOREA)","sector":"Automotive & Industrial"},{"sym":"000020.KO","name":"Dongwha Pharmaceutical Co Ltd","group":"KOSPI (SÜDKOREA)","sector":"Finance & Insurance"},{"sym":"000150.KO","name":"Doosan","group":"KOSPI (SÜDKOREA)","sector":"Automotive & Industrial"},{"sym":"000500.KO","name":"Gaon Cable","group":"KOSPI (SÜDKOREA)","sector":"Chemicals & Materials"},{"sym":"000240.KO","name":"Hankook Tire Worldwide","group":"KOSPI (SÜDKOREA)","sector":"Chemicals & Materials"},{"sym":"000540.KO","name":"Heungkuk Fire & Marine Ins.","group":"KOSPI (SÜDKOREA)","sector":"Finance & Insurance"},{"sym":"000080.KO","name":"Hite Jinro","group":"KOSPI (SÜDKOREA)","sector":"Finance & Insurance"},{"sym":"000850.KO","name":"Hwacheon Machine Tool Co Ltd","group":"KOSPI (SÜDKOREA)","sector":"Automotive & Industrial"},{"sym":"000720.KO","name":"Hyundai Engineering & Construction","group":"KOSPI (SÜDKOREA)","sector":"Automotive & Industrial"},{"sym":"000270.KO","name":"Kia Corp","group":"KOSPI (SÜDKOREA)","sector":"Automotive & Industrial"},{"sym":"000400.KO","name":"Lotte Non-Life Insurance","group":"KOSPI (SÜDKOREA)","sector":"Finance & Insurance"},{"sym":"000390.KO","name":"Samhwa Paint","group":"KOSPI (SÜDKOREA)","sector":"Chemicals & Materials"},{"sym":"000810.KO","name":"Samsung Fire & Marine Ins.","group":"KOSPI (SÜDKOREA)","sector":"Finance & Insurance"},{"sym":"000070.KO","name":"Samyang Holdings","group":"KOSPI (SÜDKOREA)","sector":"Finance & Insurance"},{"sym":"000670.KO","name":"Young Poong Corp","group":"KOSPI (SÜDKOREA)","sector":"Chemicals & Materials"},{"sym":"000220.KO","name":"Yuyu Pharma","group":"KOSPI (SÜDKOREA)","sector":"Chemicals & Materials"},{"sym":"AAL.LSE","name":"Anglo American plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Energy & Resources"},{"sym":"AZN.LSE","name":"AstraZeneca plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Consumer & Pharma"},{"sym":"BARC.LSE","name":"Barclays plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Banking & Finance"},{"sym":"BHP.LSE","name":"BHP Group plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Energy & Resources"},{"sym":"BP.LSE","name":"BP plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Energy & Resources"},{"sym":"BATS.LSE","name":"British American Tobacco plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Consumer & Pharma"},{"sym":"DGE.LSE","name":"Diageo plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Consumer & Pharma"},{"sym":"GSK.LSE","name":"GSK plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Consumer & Pharma"},{"sym":"HSBA.LSE","name":"HSBC Holdings plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Banking & Finance"},{"sym":"SBRY.LSE","name":"J Sainsbury plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Consumer & Pharma"},{"sym":"LLOY.LSE","name":"Lloyds Banking Group plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Banking & Finance"},{"sym":"NG.LSE","name":"National Grid plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Utilities & Telecom"},{"sym":"PRU.LSE","name":"Prudential plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Banking & Finance"},{"sym":"RIO.LSE","name":"Rio Tinto plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Energy & Resources"},{"sym":"TSCO.LSE","name":"Tesco plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Consumer & Pharma"},{"sym":"ULVR.LSE","name":"Unilever plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Consumer & Pharma"},{"sym":"VOD.LSE","name":"Vodafone Group plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Utilities & Telecom"},{"sym":"WTB.LSE","name":"Whitbread plc","group":"LONDON STOCK EXCHANGE (UK)","sector":"Consumer & Pharma"},{"sym":"ANA.MC","name":"Acciona","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Finance & Banking"},{"sym":"ACX.MC","name":"Acerinox","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Energy & Resources"},{"sym":"ACS.MC","name":"ACS Actividades de Construccion","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Energy & Resources"},{"sym":"AENA.MC","name":"Aena SA","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Consumer & Industrial"},{"sym":"AMS.MC","name":"Amadeus IT Group S.A","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Finance & Banking"},{"sym":"A3M.MC","name":"Atresmedia Corporación","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Consumer & Industrial"},{"sym":"BBVA.MC","name":"Banco Bilbao Vizcaya Argentaria","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Finance & Banking"},{"sym":"BKT.MC","name":"Bankinter","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Finance & Banking"},{"sym":"CABK.MC","name":"Caixabank SA","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Finance & Banking"},{"sym":"CLNX.MC","name":"Cellnex Telecom SA","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Consumer & Industrial"},{"sym":"EBRO.MC","name":"Ebro Foods","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Consumer & Industrial"},{"sym":"ELE.MC","name":"Endesa SA","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Energy & Resources"},{"sym":"FER.MC","name":"Ferrovial","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Energy & Resources"},{"sym":"GRF.MC","name":"Grifols S.A.","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Consumer & Industrial"},{"sym":"IBE.MC","name":"Iberdrola S.A.","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Energy & Resources"},{"sym":"ITX.MC","name":"Industria de Diseno Textil SA","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Consumer & Industrial"},{"sym":"IAG.MC","name":"International Airlines Group","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Consumer & Industrial"},{"sym":"MAP.MC","name":"Mapfre","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Finance & Banking"},{"sym":"REP.MC","name":"Repsol","group":"MADRID STOCK EXCHANGE (SPANIEN)","sector":"Energy & Resources"},{"sym":"MAERSK-B.CO","name":"A.P. Møller - Mærsk A/S","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"ELUX-B.ST","name":"AB Electrolux (publ)","group":"NORDIC MARKETS","sector":"Nordic Energy & Materials"},{"sym":"ALFA.ST","name":"Alfa Laval AB","group":"NORDIC MARKETS","sector":"Nordic Energy & Materials"},{"sym":"ASSA-B.ST","name":"ASSA ABLOY AB (publ)","group":"NORDIC MARKETS","sector":"Nordic Tech & Telecom"},{"sym":"ATCO-B.ST","name":"Atlas Copco AB Series B","group":"NORDIC MARKETS","sector":"Nordic Tech & Telecom"},{"sym":"BOL.ST","name":"Boliden AB","group":"NORDIC MARKETS","sector":"Nordic Energy & Materials"},{"sym":"CARL-B.CO","name":"Carlsberg A/S","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"DNB.OL","name":"DnB ASA","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"DSV.CO","name":"DSV Panalpina A/S","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"EQNR.OL","name":"Equinor ASA","group":"NORDIC MARKETS","sector":"Nordic Energy & Materials"},{"sym":"FORTUM.HE","name":"Fortum Oyj","group":"NORDIC MARKETS","sector":"Nordic Energy & Materials"},{"sym":"FRO.OL","name":"Frontline Ltd","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"HEXA-B.ST","name":"Hexagon AB (publ)","group":"NORDIC MARKETS","sector":"Nordic Tech & Telecom"},{"sym":"INVE-B.ST","name":"Investor AB ser. B","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"NKT.CO","name":"NKT A/S","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"NOKIA.HE","name":"Nokia Oyj","group":"NORDIC MARKETS","sector":"Nordic Tech & Telecom"},{"sym":"NDA-DK.CO","name":"Nordea Bank Abp","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"NOVO-B.CO","name":"Novo Nordisk A/S","group":"NORDIC MARKETS","sector":"Nordic Tech & Telecom"},{"sym":"ORSTED.CO","name":"Orsted A/S","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"OUT1V.HE","name":"Outokumpu Oyj","group":"NORDIC MARKETS","sector":"Nordic Energy & Materials"},{"sym":"SEB-A.ST","name":"Skandinaviska Enskilda Banken","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"SHB-B.ST","name":"Svenska Handelsbanken AB (publ)","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"ERIC-B.ST","name":"Telefonaktiebolaget LM Ericsson","group":"NORDIC MARKETS","sector":"Nordic Tech & Telecom"},{"sym":"TELIA1.HE","name":"Telia Company AB","group":"NORDIC MARKETS","sector":"Nordic Tech & Telecom"},{"sym":"TOM.OL","name":"Tomra Systems ASA","group":"NORDIC MARKETS","sector":"Nordic Finance & Industrial"},{"sym":"UPM.HE","name":"UPM-Kymmene Oyj","group":"NORDIC MARKETS","sector":"Nordic Energy & Materials"},{"sym":"YAR.OL","name":"Yara International ASA","group":"NORDIC MARKETS","sector":"Nordic Energy & Materials"},{"sym":"AXISBANK.NSE","name":"Axis Bank Limited","group":"NSE (INDIEN)","sector":"Finance & Banking"},{"sym":"BAJFINANCE.NSE","name":"Bajaj Finance Limited","group":"NSE (INDIEN)","sector":"Finance & Banking"},{"sym":"BHARTIARTL.NSE","name":"Bharti Airtel Limited","group":"NSE (INDIEN)","sector":"Consumer & Energy"},{"sym":"COFORGE.NSE","name":"Coforge Limited","group":"NSE (INDIEN)","sector":"Tech & IT"},{"sym":"HCLTECH.NSE","name":"HCL Technologies Limited","group":"NSE (INDIEN)","sector":"Tech & IT"},{"sym":"HDFCBANK.NSE","name":"HDFC Bank Limited","group":"NSE (INDIEN)","sector":"Finance & Banking"},{"sym":"HINDUNILVR.NSE","name":"Hindustan Unilever Limited","group":"NSE (INDIEN)","sector":"Consumer & Energy"},{"sym":"ICICIBANK.NSE","name":"ICICI Bank Limited","group":"NSE (INDIEN)","sector":"Finance & Banking"},{"sym":"INFY.NSE","name":"Infosys Limited","group":"NSE (INDIEN)","sector":"Tech & IT"},{"sym":"KOTAKBANK.NSE","name":"Kotak Mahindra Bank","group":"NSE (INDIEN)","sector":"Finance & Banking"},{"sym":"MPHASIS.NSE","name":"Mphasis Limited","group":"NSE (INDIEN)","sector":"Tech & IT"},{"sym":"PERSISTENT.NSE","name":"Persistent Systems Limited","group":"NSE (INDIEN)","sector":"Tech & IT"},{"sym":"RELIANCE.NSE","name":"Reliance Industries Limited","group":"NSE (INDIEN)","sector":"Consumer & Energy"},{"sym":"SBIN.NSE","name":"State Bank of India","group":"NSE (INDIEN)","sector":"Finance & Banking"},{"sym":"TCS.NSE","name":"Tata Consultancy Services","group":"NSE (INDIEN)","sector":"Tech & IT"},{"sym":"TECHM.NSE","name":"Tech Mahindra Limited","group":"NSE (INDIEN)","sector":"Tech & IT"},{"sym":"WIPRO.NSE","name":"Wipro Limited","group":"NSE (INDIEN)","sector":"Tech & IT"},{"sym":"ABBN.SW","name":"ABB Ltd","group":"SIX (SCHWEIZ)","sector":"Industrial & Materials"},{"sym":"ADEN.SW","name":"Adecco Group AG Class N","group":"SIX (SCHWEIZ)","sector":"Industrial & Materials"},{"sym":"BARN.SW","name":"Barry Callebaut AG","group":"SIX (SCHWEIZ)","sector":"Industrial & Materials"},{"sym":"BSKP.SW","name":"Basler Kantonalbank","group":"SIX (SCHWEIZ)","sector":"Finance & Banking"},{"sym":"FHZN.SW","name":"Flughafen Zurich","group":"SIX (SCHWEIZ)","sector":"Finance & Banking"},{"sym":"GEBN.SW","name":"Geberit AG","group":"SIX (SCHWEIZ)","sector":"Pharma & Healthcare"},{"sym":"GIVN.SW","name":"Givaudan SA","group":"SIX (SCHWEIZ)","sector":"Industrial & Materials"},{"sym":"BAER.SW","name":"Julius Baer Gruppe AG","group":"SIX (SCHWEIZ)","sector":"Finance & Banking"},{"sym":"LONN.SW","name":"Lonza Group AG","group":"SIX (SCHWEIZ)","sector":"Pharma & Healthcare"},{"sym":"NESN.SW","name":"Nestlé S.A.","group":"SIX (SCHWEIZ)","sector":"Industrial & Materials"},{"sym":"NOVN.SW","name":"Novartis AG","group":"SIX (SCHWEIZ)","sector":"Pharma & Healthcare"},{"sym":"PGHN.SW","name":"Partners Group Holding AG","group":"SIX (SCHWEIZ)","sector":"Finance & Banking"},{"sym":"SCHN.SW","name":"Schindler Holding AG","group":"SIX (SCHWEIZ)","sector":"Industrial & Materials"},{"sym":"SGSN.SW","name":"SGS SA","group":"SIX (SCHWEIZ)","sector":"Industrial & Materials"},{"sym":"SIKA.SW","name":"Sika AG","group":"SIX (SCHWEIZ)","sector":"Pharma & Healthcare"},{"sym":"SOON.SW","name":"Sonova Holding AG","group":"SIX (SCHWEIZ)","sector":"Pharma & Healthcare"},{"sym":"UHR.SW","name":"Swatch Group AG","group":"SIX (SCHWEIZ)","sector":"Industrial & Materials"},{"sym":"SCMN.SW","name":"Swisscom AG","group":"SIX (SCHWEIZ)","sector":"Finance & Banking"},{"sym":"601288.SHG","name":"Agricultural Bank of China","group":"SSE (CHINA)","sector":"Finance & Banking"},{"sym":"601888.SHG","name":"China International Travel Service","group":"SSE (CHINA)","sector":"Consumer & Industrial"},{"sym":"601628.SHG","name":"China Life Insurance","group":"SSE (CHINA)","sector":"Finance & Banking"},{"sym":"601601.SHG","name":"China Pacific Insurance","group":"SSE (CHINA)","sector":"Finance & Banking"},{"sym":"601088.SHG","name":"China Shenhua Energy Co Ltd","group":"SSE (CHINA)","sector":"Energy & Resources"},{"sym":"601668.SHG","name":"China State Construction Eng.","group":"SSE (CHINA)","sector":"Energy & Resources"},{"sym":"600030.SHG","name":"CITIC Securities","group":"SSE (CHINA)","sector":"Finance & Banking"},{"sym":"601766.SHG","name":"CRRC Corporation","group":"SSE (CHINA)","sector":"Energy & Resources"},{"sym":"600690.SHG","name":"Haier Smart Home","group":"SSE (CHINA)","sector":"Consumer & Industrial"},{"sym":"601398.SHG","name":"ICBC - Industrial & Commercial Bank","group":"SSE (CHINA)","sector":"Finance & Banking"},{"sym":"600276.SHG","name":"Jiangsu Hengrui Medicine","group":"SSE (CHINA)","sector":"Energy & Resources"},{"sym":"600519.SHG","name":"Kweichow Moutai Co Ltd","group":"SSE (CHINA)","sector":"Consumer & Industrial"},{"sym":"601336.SHG","name":"New China Life Insurance","group":"SSE (CHINA)","sector":"Consumer & Industrial"},{"sym":"601857.SHG","name":"PetroChina Co Ltd","group":"SSE (CHINA)","sector":"Energy & Resources"},{"sym":"601318.SHG","name":"Ping An Insurance Group","group":"SSE (CHINA)","sector":"Finance & Banking"},{"sym":"600104.SHG","name":"SAIC Motor Corporation","group":"SSE (CHINA)","sector":"Consumer & Industrial"},{"sym":"600887.SHG","name":"Yili Group","group":"SSE (CHINA)","sector":"Energy & Resources"},{"sym":"ACCL.TA","name":"Accel Solutions Group Ltd","group":"TASE (ISRAEL)","sector":"Industrial & Tech"},{"sym":"ACKR.TA","name":"Ackerstein Group Ltd","group":"TASE (ISRAEL)","sector":"Materials & Energy"},{"sym":"AFRE.TA","name":"Africa Israel Residences Ltd","group":"TASE (ISRAEL)","sector":"Finance & Banking"},{"sym":"ALBA.TA","name":"Al-Bad Massuot Yitzhak Ltd","group":"TASE (ISRAEL)","sector":"Materials & Energy"},{"sym":"ALHE.TA","name":"Alony Hetz Properties Ltd","group":"TASE (ISRAEL)","sector":"Finance & Banking"},{"sym":"AMOT.TA","name":"Amot Investments Ltd","group":"TASE (ISRAEL)","sector":"Finance & Banking"},{"sym":"ARAD.TA","name":"Arad Ltd","group":"TASE (ISRAEL)","sector":"Materials & Energy"},{"sym":"ASHG.TA","name":"Ashtrom Group Ltd","group":"TASE (ISRAEL)","sector":"Materials & Energy"},{"sym":"AUDC.TA","name":"AudioCodes Ltd","group":"TASE (ISRAEL)","sector":"Industrial & Tech"},{"sym":"5117700.TA","name":"Ayalon Money Market IL","group":"TASE (ISRAEL)","sector":"Finance & Banking"},{"sym":"BVC.TA","name":"Batm Advanced Communications Ltd","group":"TASE (ISRAEL)","sector":"Industrial & Tech"},{"sym":"BEZQ.TA","name":"Bezeq Israeli Telecom Corp Ltd","group":"TASE (ISRAEL)","sector":"Finance & Banking"},{"sym":"CAMT.TA","name":"Camtek Ltd","group":"TASE (ISRAEL)","sector":"Industrial & Tech"},{"sym":"DLEKG.TA","name":"Delek Group","group":"TASE (ISRAEL)","sector":"Materials & Energy"},{"sym":"ESLT.TA","name":"Elbit Systems Ltd","group":"TASE (ISRAEL)","sector":"Industrial & Tech"},{"sym":"ELRN.TA","name":"Elron Electronic Industries Ltd","group":"TASE (ISRAEL)","sector":"Industrial & Tech"},{"sym":"ICL.TA","name":"ICL Israel Chemicals Ltd","group":"TASE (ISRAEL)","sector":"Materials & Energy"},{"sym":"DSCT.TA","name":"Israel Discount Bank Ltd","group":"TASE (ISRAEL)","sector":"Finance & Banking"},{"sym":"BMO.TO","name":"Bank of Montreal","group":"TSX (KANADA)","sector":"Canadian Finance & Banking"},{"sym":"BNS.TO","name":"Bank of Nova Scotia","group":"TSX (KANADA)","sector":"Canadian Finance & Banking"},{"sym":"BCE.TO","name":"BCE Inc.","group":"TSX (KANADA)","sector":"Canadian Energy & Transportation"},{"sym":"BAM.TO","name":"Brookfield Asset Mgmt","group":"TSX (KANADA)","sector":"Canadian Tech & Growth"},{"sym":"CM.TO","name":"Canadian Imperial Bank","group":"TSX (KANADA)","sector":"Canadian Finance & Banking"},{"sym":"CNR.TO","name":"Canadian National Railway","group":"TSX (KANADA)","sector":"Canadian Energy & Transportation"},{"sym":"CNQ.TO","name":"Canadian Natural Resources","group":"TSX (KANADA)","sector":"Canadian Energy & Transportation"},{"sym":"CP.TO","name":"Canadian Pacific Railway","group":"TSX (KANADA)","sector":"Canadian Energy & Transportation"},{"sym":"ENB.TO","name":"Enbridge Inc.","group":"TSX (KANADA)","sector":"Canadian Energy & Transportation"},{"sym":"POW.TO","name":"Power Corporation","group":"TSX (KANADA)","sector":"Canadian Tech & Growth"},{"sym":"RY.TO","name":"Royal Bank of Canada","group":"TSX (KANADA)","sector":"Canadian Finance & Banking"},{"sym":"SHOP.TO","name":"Shopify Inc.","group":"TSX (KANADA)","sector":"Canadian Tech & Growth"},{"sym":"SU.TO","name":"Suncor Energy Inc.","group":"TSX (KANADA)","sector":"Canadian Energy & Transportation"},{"sym":"TRI.TO","name":"Thomson Reuters","group":"TSX (KANADA)","sector":"Canadian Tech & Growth"},{"sym":"TD.TO","name":"Toronto-Dominion Bank","group":"TSX (KANADA)","sector":"Canadian Finance & Banking"},{"sym":"2303.TW","name":"Acer Incorporated","group":"TWSE (TAIWAN)","sector":"Financial & Banking"},{"sym":"2886.TW","name":"Asahi Kasei","group":"TWSE (TAIWAN)","sector":"Industrial & Consumer"},{"sym":"2881.TW","name":"Cathay Pacific Airways","group":"TWSE (TAIWAN)","sector":"Semiconductors & Tech"},{"sym":"5880.TW","name":"China Times Publishing","group":"TWSE (TAIWAN)","sector":"Industrial & Consumer"},{"sym":"2882.TW","name":"Compal Electronics","group":"TWSE (TAIWAN)","sector":"Semiconductors & Tech"},{"sym":"2891.TW","name":"CTCI Corporation","group":"TWSE (TAIWAN)","sector":"Semiconductors & Tech"},{"sym":"2308.TW","name":"Delta Electronics","group":"TWSE (TAIWAN)","sector":"Industrial & Consumer"},{"sym":"2317.TW","name":"Foxconn Electronics","group":"TWSE (TAIWAN)","sector":"Semiconductors & Tech"},{"sym":"2884.TW","name":"Industrial Technology Research","group":"TWSE (TAIWAN)","sector":"Industrial & Consumer"},{"sym":"2454.TW","name":"MediaTek Inc","group":"TWSE (TAIWAN)","sector":"Semiconductors & Tech"},{"sym":"6505.TW","name":"MediaTek Inc","group":"TWSE (TAIWAN)","sector":"Industrial & Consumer"},{"sym":"2002.TW","name":"Tainan Spinning","group":"TWSE (TAIWAN)","sector":"Financial & Banking"},{"sym":"1303.TW","name":"Taiwan Cement Corporation","group":"TWSE (TAIWAN)","sector":"Financial & Banking"},{"sym":"1301.TW","name":"Taiwan Fertilizer Company","group":"TWSE (TAIWAN)","sector":"Financial & Banking"},{"sym":"1402.TW","name":"Taiwan Glass Ind","group":"TWSE (TAIWAN)","sector":"Industrial & Consumer"},{"sym":"1326.TW","name":"Taiwan Plastic Corporation","group":"TWSE (TAIWAN)","sector":"Financial & Banking"},{"sym":"2330.TW","name":"Taiwan Semiconductor Manufacturing","group":"TWSE (TAIWAN)","sector":"Semiconductors & Tech"},{"sym":"3711.TW","name":"Taiwan Sugar Corporation","group":"TWSE (TAIWAN)","sector":"Industrial & Consumer"},{"sym":"2201.TW","name":"Walton Advanced Engineering","group":"TWSE (TAIWAN)","sector":"Industrial & Consumer"},{"sym":"2412.TW","name":"Wistron Corporation","group":"TWSE (TAIWAN)","sector":"Semiconductors & Tech"},{"sym":"ABBV.US","name":"AbbVie Inc.","group":"USA","sector":"Healthcare & Pharma"},{"sym":"GOOGL.US","name":"Alphabet Inc.","group":"USA","sector":"Tech Giants & AI"},{"sym":"AMZN.US","name":"Amazon.com Inc.","group":"USA","sector":"Tech Giants & AI"},{"sym":"AAPL.US","name":"Apple Inc.","group":"USA","sector":"Tech Giants & AI"},{"sym":"BAC.US","name":"Bank of America","group":"USA","sector":"Finance & Banking"},{"sym":"CVX.US","name":"Chevron Corp.","group":"USA","sector":"Energy & Materials"},{"sym":"C.US","name":"Citigroup Inc.","group":"USA","sector":"Finance & Banking"},{"sym":"COP.US","name":"ConocoPhillips","group":"USA","sector":"Energy & Materials"},{"sym":"XOM.US","name":"Exxon Mobil","group":"USA","sector":"Energy & Materials"},{"sym":"GS.US","name":"Goldman Sachs","group":"USA","sector":"Finance & Banking"},{"sym":"JNJ.US","name":"Johnson & Johnson","group":"USA","sector":"Healthcare & Pharma"},{"sym":"JPM.US","name":"JPMorgan Chase","group":"USA","sector":"Finance & Banking"},{"sym":"META.US","name":"Meta Platforms Inc.","group":"USA","sector":"Tech Giants & AI"},{"sym":"MSFT.US","name":"Microsoft Corp.","group":"USA","sector":"Tech Giants & AI"},{"sym":"NVDA.US","name":"NVIDIA Corp.","group":"USA","sector":"Tech Giants & AI"},{"sym":"PFE.US","name":"Pfizer Inc.","group":"USA","sector":"Healthcare & Pharma"},{"sym":"SLB.US","name":"Schlumberger","group":"USA","sector":"Energy & Materials"},{"sym":"UNH.US","name":"UnitedHealth Group","group":"USA","sector":"Healthcare & Pharma"},{"sym":"ADKO.VI","name":"Addiko Bank AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Finance & Banking"},{"sym":"AGR.VI","name":"AGRANA Beteiligungs AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Consumer & Agrar"},{"sym":"AMAG.VI","name":"AMAG Austria Metall AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Industrial & Energy"},{"sym":"ANDR.VI","name":"Andritz AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Industrial & Energy"},{"sym":"ATS.VI","name":"AT & S Austria Technologie AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Industrial & Energy"},{"sym":"BG.VI","name":"BAWAG Group AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Finance & Banking"},{"sym":"BKS.VI","name":"BKS Bank AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Finance & Banking"},{"sym":"CAI.VI","name":"CA Immobilien Anlagen AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Finance & Banking"},{"sym":"DOC.VI","name":"DO & CO Aktiengesellschaft","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Consumer & Agrar"},{"sym":"EBS.VI","name":"Erste Group Bank AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Finance & Banking"},{"sym":"EVN.VI","name":"EVN AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Industrial & Energy"},{"sym":"FACC.VI","name":"FACC AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Consumer & Agrar"},{"sym":"FLU.VI","name":"Flughafen Wien AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Consumer & Agrar"},{"sym":"LNZ.VI","name":"Lenzing Aktiengesellschaft","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Industrial & Energy"},{"sym":"MMK.VI","name":"Mayr-Melnhof Karton AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Consumer & Agrar"},{"sym":"OMV.VI","name":"OMV Aktiengesellschaft","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Industrial & Energy"},{"sym":"RBI.VI","name":"Raiffeisen Bank International AG","group":"WIENER BÖRSE (ÖSTERREICH)","sector":"Finance & Banking"},{"sym":"11B.WAR","name":"11 bit studios SA","group":"WSE (POLEN)","sector":"Tech & E-Commerce"},{"sym":"4MS.WAR","name":"4Mass SA","group":"WSE (POLEN)","sector":"Tech & E-Commerce"},{"sym":"ALR.WAR","name":"Alior Bank SA","group":"WSE (POLEN)","sector":"Finance & Banking"},{"sym":"ALE.WAR","name":"Allegro.eu SA","group":"WSE (POLEN)","sector":"Tech & E-Commerce"},{"sym":"AMC.WAR","name":"Amica SA","group":"WSE (POLEN)","sector":"Tech & E-Commerce"},{"sym":"APT.WAR","name":"Apator SA","group":"WSE (POLEN)","sector":"Energy & Materials"},{"sym":"ASB.WAR","name":"ASBISc Enterprises PLC","group":"WSE (POLEN)","sector":"Tech & E-Commerce"},{"sym":"1AT.WAR","name":"Atal SA","group":"WSE (POLEN)","sector":"Tech & E-Commerce"},{"sym":"SAN.WAR","name":"Banco Santander SA","group":"WSE (POLEN)","sector":"Finance & Banking"},{"sym":"CDR.WAR","name":"CD PROJEKT Red Studio","group":"WSE (POLEN)","sector":"Tech & E-Commerce"},{"sym":"CPS.WAR","name":"Cyfrowy Polsat SA","group":"WSE (POLEN)","sector":"Energy & Materials"},{"sym":"DNP.WAR","name":"Dino Polska SA","group":"WSE (POLEN)","sector":"Energy & Materials"},{"sym":"JSW.WAR","name":"Jastrzebska Spotka Weglowa SA","group":"WSE (POLEN)","sector":"Energy & Materials"},{"sym":"KGH.WAR","name":"KGHM Polska Miedz SA","group":"WSE (POLEN)","sector":"Energy & Materials"},{"sym":"LPP.WAR","name":"LPP SA","group":"WSE (POLEN)","sector":"Tech & E-Commerce"},{"sym":"MBK.WAR","name":"mBank SA","group":"WSE (POLEN)","sector":"Finance & Banking"},{"sym":"PGE.WAR","name":"PGE Energia SA","group":"WSE (POLEN)","sector":"Energy & Materials"},{"sym":"PKO.WAR","name":"PKO Bank Polski SA","group":"WSE (POLEN)","sector":"Finance & Banking"},{"sym":"PZU.WAR","name":"PZU Ubezpieczenia SA","group":"WSE (POLEN)","sector":"Finance & Banking"},{"sym":"XTB.WAR","name":"XTrade Brokers Dom Maklerski","group":"WSE (POLEN)","sector":"Finance & Banking"},{"sym":"ALV.XETRA","name":"Allianz SE","group":"XETRA (DEUTSCHLAND)","sector":"German Finance & Automotive"},{"sym":"BAS.XETRA","name":"BASF SE","group":"XETRA (DEUTSCHLAND)","sector":"German Finance & Automotive"},{"sym":"BMW.XETRA","name":"BMW AG","group":"XETRA (DEUTSCHLAND)","sector":"German Finance & Automotive"},{"sym":"HEI.XETRA","name":"HeidelbergCement AG","group":"XETRA (DEUTSCHLAND)","sector":"German Materials & Energy"},{"sym":"LIN.XETRA","name":"Linde plc","group":"XETRA (DEUTSCHLAND)","sector":"German Materials & Energy"},{"sym":"MRK.XETRA","name":"Merck KGaA","group":"XETRA (DEUTSCHLAND)","sector":"German Tech & Software"},{"sym":"MUV2.XETRA","name":"Munich Re","group":"XETRA (DEUTSCHLAND)","sector":"German Materials & Energy"},{"sym":"SIE.XETRA","name":"Siemens AG","group":"XETRA (DEUTSCHLAND)","sector":"German Tech & Software"},{"sym":"VOW3.XETRA","name":"Volkswagen AG","group":"XETRA (DEUTSCHLAND)","sector":"German Finance & Automotive"},{"sym":"ADPL.ZSE","name":"AD Plastik d.d.","group":"ZSE (KROATIEN)","sector":"Consumer & Hospitality"},{"sym":"ARNT.ZSE","name":"Arena Hospitality Group d.d.","group":"ZSE (KROATIEN)","sector":"Consumer & Hospitality"},{"sym":"DLKV.ZSE","name":"Dalekovod d.d.","group":"ZSE (KROATIEN)","sector":"Industrial & Energy"},{"sym":"DDJH.ZSE","name":"Djuro Djakovic Grupa d.d.","group":"ZSE (KROATIEN)","sector":"Industrial & Energy"},{"sym":"ERNT.ZSE","name":"Ericsson Nikola Tesla d.d.","group":"ZSE (KROATIEN)","sector":"Industrial & Energy"},{"sym":"HPB.ZSE","name":"Hrvatska Postanska Banka d.d.","group":"ZSE (KROATIEN)","sector":"Finance & Banking"},{"sym":"HT.ZSE","name":"Hrvatski Telekom d.d.","group":"ZSE (KROATIEN)","sector":"Finance & Banking"},{"sym":"INA.ZSE","name":"INA-Industrija Nafte d.d.","group":"ZSE (KROATIEN)","sector":"Finance & Banking"},{"sym":"INGR.ZSE","name":"Ingra d.d.","group":"ZSE (KROATIEN)","sector":"Industrial & Energy"},{"sym":"IGH.ZSE","name":"Institut IGH d.d.","group":"ZSE (KROATIEN)","sector":"Industrial & Energy"},{"sym":"JNAF.ZSE","name":"Janaf d.d.","group":"ZSE (KROATIEN)","sector":"Finance & Banking"},{"sym":"KOEI.ZSE","name":"Koncar-Elektroindustrija d.d.","group":"ZSE (KROATIEN)","sector":"Industrial & Energy"},{"sym":"KRAS.ZSE","name":"KRAŠ d.d.","group":"ZSE (KROATIEN)","sector":"Consumer & Hospitality"},{"sym":"MAIS.ZSE","name":"Maistra d.d.","group":"ZSE (KROATIEN)","sector":"Consumer & Hospitality"},{"sym":"PODR.ZSE","name":"Podravka Prehrambena Industrija d.d.","group":"ZSE (KROATIEN)","sector":"Consumer & Hospitality"},{"sym":"RIVP.ZSE","name":"Valamar Riviera d.d.","group":"ZSE (KROATIEN)","sector":"Consumer & Hospitality"},{"sym":"ZABA.ZSE","name":"Zagrebacka Banka d.d.","group":"ZSE (KROATIEN)","sector":"Finance & Banking"}];
+  const FAST_WINDOW = 63;   // ~3 Handelsmonate
+  const SLOPE_WINDOW = 63;  // ~3 Handelsmonate
+
+  /* ── Clock ── */
+  setInterval(()=>{document.getElementById('hdr-clock').textContent=new Date().toLocaleTimeString('de-DE',{hour12:false});},1000);
+
+  /* ── Toast ── */
+  let _tt;
+  function toast(msg,type=''){
+    const t=document.getElementById('toast');
+    t.className='toast show'+(type?' '+type:'');t.textContent=msg;
+    clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2800);
+  }
+
+  function setProg(v){
+    const f=document.getElementById('prog');
+    if(v==='ind'){f.classList.add('ind');f.style.width='0%';}
+    else{f.classList.remove('ind');f.style.width=(typeof v==='number'?v:0)+'%';}
+  }
+
+  function toggleSymbols(force){
+    const col=document.getElementById('symbolsCol');
+    const scrim=document.getElementById('scrim');
+    const open = force!==undefined ? force : !col.classList.contains('open');
+    col.classList.toggle('open',open);
+    scrim.classList.toggle('show',open);
+  }
+
+  /* ── Symbol browser ── */
+  let activeSymRow=null;
+  let currentGroup=null;
+  function groupBy(list){
+    const groups={};
+    for(const s of list){ (groups[s.group] ||= []).push(s); }
+    return groups;
+  }
+  function renderSymbolList(filter){
+    const list=document.getElementById('symList');
+    const f=(filter||'').trim().toLowerCase();
+    const filtered = f
+      ? SYMBOLS.filter(s=>s.sym.toLowerCase().includes(f)||s.name.toLowerCase().includes(f)||s.group.toLowerCase().includes(f)||s.sector.toLowerCase().includes(f))
+      : SYMBOLS;
+    document.getElementById('symCount').textContent=filtered.length+' / '+SYMBOLS.length+' SYMBOLE';
+    if(!filtered.length){
+      list.innerHTML='<div class="sym-empty">Keine Treffer.<br>Anderen Suchbegriff versuchen.</div>';
+      return;
+    }
+    const groups=groupBy(filtered);
+    let html='';
+    for(const g of Object.keys(groups).sort()){
+      html+=`<div class="sym-group-head"><span>${g.toUpperCase()}</span><span class="scan-mini" onclick="event.stopPropagation();selectGroupAndScan('${g.replace(/'/g,"\\'")}')">SCAN</span></div>`;
+      for(const s of groups[g]){
+        html+=`<div class="sym-row" data-sym="${s.sym}" data-group="${g.replace(/"/g,'&quot;')}" onclick="pickSymbol('${s.sym.replace(/'/g,"\\'")}','${g.replace(/'/g,"\\'")}',this)">
+          <span class="t">${s.sym}</span>
+          <span class="n">${s.name}</span>
+        </div>`;
+      }
+    }
+    list.innerHTML=html;
+  }
+  function pickSymbol(sym,group,el){
+    document.getElementById('sym').value=sym;
+    currentGroup=group;
+    document.getElementById('grid-group-name').textContent=group;
+    if(activeSymRow)activeSymRow.classList.remove('active');
+    if(el){el.classList.add('active');activeSymRow=el;}
+    loadChart();
+    if(window.innerWidth<=1200)toggleSymbols(false);
+  }
+  function selectGroupAndScan(group){
+    currentGroup=group;
+    document.getElementById('grid-group-name').textContent=group;
+    scanCurrentGroup();
+    if(window.innerWidth<=1200)toggleSymbols(false);
+  }
+  document.getElementById('symSearch').addEventListener('input',e=>renderSymbolList(e.target.value));
+  document.getElementById('sym-total').textContent=SYMBOLS.length+' SYMBOLE · HEIKIN-ASHI';
+  renderSymbolList('');
+
+  /* ── formatters ── */
+  function fmt(v){
+    const n=parseFloat(v);
+    if(isNaN(n))return '—';
+    if(n<0.01)return n.toFixed(5);
+    if(n<1)return n.toFixed(4);
+    if(n<100)return n.toFixed(2);
+    if(n<10000)return n.toFixed(2);
+    return n.toFixed(0);
+  }
+  function fmtVol(v){
+    const n=parseInt(v)||0;
+    if(n>=1e9)return (n/1e9).toFixed(1)+'B';
+    if(n>=1e6)return (n/1e6).toFixed(1)+'M';
+    if(n>=1e3)return (n/1e3).toFixed(0)+'K';
+    return n.toString();
+  }
+  function fmtPct(n){ return (n>=0?'+':'')+n.toFixed(2)+'%'; }
+
+  /* ─────────────────────────────────────────
+     HEIKIN-ASHI + SMA + SIGNAL ENGINE
+  ───────────────────────────────────────── */
+  function computeHeikinAshi(bars){
+    const ha=[];
+    for(let i=0;i<bars.length;i++){
+      const b=bars[i];
+      const haClose=(b.open+b.high+b.low+b.close)/4;
+      const haOpen = i===0 ? (b.open+b.close)/2 : (ha[i-1].open+ha[i-1].close)/2;
+      const haHigh=Math.max(b.high,haOpen,haClose);
+      const haLow=Math.min(b.low,haOpen,haClose);
+      ha.push({date:b.date,open:haOpen,high:haHigh,low:haLow,close:haClose,volume:b.volume});
+    }
+    return ha;
+  }
+  function computeSMA(values,window){
+    const out=new Array(values.length).fill(null);
+    let sum=0;
+    for(let i=0;i<values.length;i++){
+      sum+=values[i];
+      if(i>=window)sum-=values[i-window];
+      if(i>=window-1)out[i]=sum/window;
+    }
+    return out;
+  }
+
+  function signalHAFlip(ha){
+    const n=ha.length;
+    if(n<2)return null;
+    const colorOf=c=>c.close>=c.open?'LONG':'SHORT';
+    const lastColor=colorOf(ha[n-1]);
+    let sinceIdx=0;
+    for(let i=n-1;i>0;i--){
+      if(colorOf(ha[i])!==lastColor){sinceIdx=i+1;break;}
+    }
+    const entry=ha[sinceIdx].open;
+    const cur=ha[n-1].close;
+    let pnl=(cur-entry)/entry*100;
+    if(lastColor==='SHORT')pnl=-pnl;
+    return {type:lastColor,sinceDate:ha[sinceIdx].date,sinceIdx,entry,current:cur,pnl,streak:n-sinceIdx};
+  }
+
+  function signalMacro(bars,closes,sma200){
+    const n=closes.length;
+    if(n<200||sma200[n-1]==null)return null;
+    for(let i=n-1;i>=200;i--){
+      if(sma200[i]!=null&&sma200[i-1]!=null){
+        const pCurr=closes[i],pPrev=closes[i-1],sCurr=sma200[i],sPrev=sma200[i-1];
+        if(pCurr>=sCurr&&pPrev<sPrev)return finalize('LONG',i);
+        if(pCurr<sCurr&&pPrev>=sPrev)return finalize('SHORT',i);
+      }
+    }
+    return finalize(closes[199]>=sma200[199]?'LONG':'SHORT',199);
+    function finalize(type,idx){
+      const entry=closes[idx],cur=closes[n-1];
+      let pnl=(cur-entry)/entry*100;
+      if(type==='SHORT')pnl=-pnl;
+      return {type,sinceDate:bars[idx].date,sinceIdx:idx,entry,current:cur,pnl};
+    }
+  }
+
+  function signalFastState(bars,closes,sma20){
+    const n=closes.length;
+    if(sma20[n-1]==null)return null;
+    const start=Math.max(20,n-FAST_WINDOW);
+    const stateAt=i=>closes[i]>=sma20[i]?'LONG':'SHORT';
+    const lastState=stateAt(n-1);
+    let sinceIdx=start,windowLimited=true;
+    for(let i=n-1;i>start;i--){
+      if(sma20[i-1]==null)break;
+      if(stateAt(i-1)!==lastState){sinceIdx=i;windowLimited=false;break;}
+    }
+    const entry=closes[sinceIdx],cur=closes[n-1];
+    let pnl=(cur-entry)/entry*100;
+    if(lastState==='SHORT')pnl=-pnl;
+    return {type:lastState,sinceDate:bars[sinceIdx].date,sinceIdx,entry,current:cur,pnl,windowLimited};
+  }
+
+  function signalSlope(bars,closes,sma20){
+    const n=closes.length;
+    if(sma20[n-1]==null||sma20[n-2]==null)return null;
+    const start=Math.max(21,n-SLOPE_WINDOW);
+    const slopeAt=i=>sma20[i]>=sma20[i-1]?'LONG':'SHORT';
+    const lastState=slopeAt(n-1);
+    let sinceIdx=start,windowLimited=true;
+    for(let i=n-1;i>start;i--){
+      if(sma20[i-1]==null||sma20[i-2]==null)break;
+      if(slopeAt(i-1)!==lastState){sinceIdx=i;windowLimited=false;break;}
+    }
+    const entry=closes[sinceIdx],cur=closes[n-1];
+    let pnl=(cur-entry)/entry*100;
+    if(lastState==='SHORT')pnl=-pnl;
+    return {type:lastState,sinceDate:bars[sinceIdx].date,sinceIdx,entry,current:cur,pnl,windowLimited};
+  }
+
+  // Backtested winners (research/SIGNAL-BACKTEST-REPORT.html): RSI(14) mean-
+  // reversion and monthly HA-flip both beat the daily/weekly baselines below.
+  // Both are computed on resampled bars to match exactly what was backtested.
+  function resampleGeneric(bars, keyFn){
+    const groups=new Map();
+    for(const b of bars){
+      const key=keyFn(b.date);
+      if(!groups.has(key))groups.set(key,[]);
+      groups.get(key).push(b);
+    }
+    const out=[];
+    for(const [,bs] of groups){
+      out.push({date:bs[0].date,open:bs[0].open,high:Math.max(...bs.map(x=>x.high)),low:Math.min(...bs.map(x=>x.low)),close:bs[bs.length-1].close,volume:bs.reduce((s,x)=>s+(x.volume||0),0)});
+    }
+    return out.sort((a,b)=> a.date<b.date?-1:1);
+  }
+  function resampleWeekly(bars){
+    return resampleGeneric(bars, (dateStr)=>{
+      const d=new Date(dateStr+'T00:00:00Z');
+      const day=(d.getUTCDay()+6)%7;
+      d.setUTCDate(d.getUTCDate()-day);
+      return d.toISOString().slice(0,10);
+    });
+  }
+  function resampleMonthly(bars){
+    return resampleGeneric(bars, (dateStr)=>dateStr.slice(0,7));
+  }
+  function computeRSI(closes, period){
+    period = period||14;
+    const n=closes.length;
+    const out=new Array(n).fill(null);
+    if(n<period+1)return out;
+    let gain=0,loss=0;
+    for(let i=1;i<=period;i++){const d=closes[i]-closes[i-1]; if(d>=0)gain+=d; else loss-=d;}
+    let avgGain=gain/period, avgLoss=loss/period;
+    out[period]=avgLoss===0?100:100-100/(1+avgGain/avgLoss);
+    for(let i=period+1;i<n;i++){
+      const d=closes[i]-closes[i-1];
+      const g=d>0?d:0, l=d<0?-d:0;
+      avgGain=(avgGain*(period-1)+g)/period;
+      avgLoss=(avgLoss*(period-1)+l)/period;
+      out[i]=avgLoss===0?100:100-100/(1+avgGain/avgLoss);
+    }
+    return out;
+  }
+  function signalRSIRegime(bars,closes,rsi,oversold,overbought){
+    oversold = oversold==null?30:oversold; overbought = overbought==null?70:overbought;
+    const n=closes.length;
+    let regimeStart=null, curType=null;
+    for(let i=0;i<n;i++){
+      if(rsi[i]==null)continue;
+      let type=curType;
+      if(rsi[i]<=oversold)type='LONG';
+      else if(rsi[i]>=overbought)type='SHORT';
+      if(type==null)continue;
+      if(curType!==type){curType=type;regimeStart=i;}
+    }
+    if(curType==null)return null;
+    const entry=closes[regimeStart],cur=closes[n-1];
+    let pnl=(cur-entry)/entry*100;
+    if(curType==='SHORT')pnl=-pnl;
+    return {type:curType,sinceDate:bars[regimeStart].date,sinceIdx:regimeStart,entry,current:cur,pnl};
+  }
+
+  function computeAllSignals(bars){
+    const closes=bars.map(b=>b.close);
+    const ha=computeHeikinAshi(bars);
+    const sma20=computeSMA(closes,20);
+    const sma200=computeSMA(closes,200);
+
+    const weekly=resampleWeekly(bars);
+    const weeklyCloses=weekly.map(b=>b.close);
+    const rsiWeekly=computeRSI(weeklyCloses,14);
+
+    const monthly=resampleMonthly(bars);
+    const haMonthly=computeHeikinAshi(monthly);
+
+    return {
+      ha: signalHAFlip(ha),
+      macro: signalMacro(bars,closes,sma200),
+      fast: signalFastState(bars,closes,sma20),
+      slope: signalSlope(bars,closes,sma20),
+      rsiMR: signalRSIRegime(weekly,weeklyCloses,rsiWeekly),
+      haMonthly: signalHAFlip(haMonthly),
+      haBars: ha, sma20, sma200,
+    };
+  }
+
+  /* ─────────────────────────────────────────
+     DATA FETCH (5 Jahre Basis für alle Signale)
+  ───────────────────────────────────────── */
+  async function fetchFiveYears(sym){
+    const from=new Date(Date.now()-5*365*86400000).toISOString().split('T')[0];
+    const res=await fetch(`${PROXY}/eod/historical/${sym}?from=${from}`);
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    let hist=await res.json();
+    if(!Array.isArray(hist)||!hist.length)throw new Error('Keine historischen Daten');
+    hist.sort((a,b)=>a.date.localeCompare(b.date));
+    return hist.map(d=>({
+      date:d.date,
+      open:parseFloat(d.open)||0,
+      high:parseFloat(d.high)||0,
+      low:parseFloat(d.low)||0,
+      close:parseFloat(d.close)||0,
+      volume:parseInt(d.volume)||0,
+    })).filter(d=>d.high>0);
+  }
+
+  /* ─────────────────────────────────────────
+     LIGHTWEIGHT-CHARTS
+  ───────────────────────────────────────── */
+  let chart=null, candleSeries=null, volumeSeries=null, sma20Series=null, sma200Series=null;
+  let showSMA20=true, showSMA200=true;
+
+  function toggleOverlay(which){
+    if(which==='sma20'){showSMA20=!showSMA20;document.getElementById('toggle-sma20-btn').classList.toggle('active',showSMA20);}
+    if(which==='sma200'){showSMA200=!showSMA200;document.getElementById('toggle-sma200-btn').classList.toggle('active',showSMA200);}
+    if(lastComputed)renderChart(lastComputed,lastNum);
+  }
+
+  function initChart(){
+    const wrap=document.getElementById('lwChart');
+    if(chart){chart.remove();chart=null;}
+    wrap.innerHTML='';
+    const w=wrap.offsetWidth||800, h=wrap.offsetHeight||400;
+    chart=LightweightCharts.createChart(wrap,{
+      width:w, height:h,
+      layout:{background:{type:'solid',color:'#080c10'},textColor:'#7d92a8'},
+      grid:{vertLines:{color:'#1e2d3d'},horzLines:{color:'#1e2d3d'}},
+      crosshair:{mode:LightweightCharts.CrosshairMode.Normal,
+        vertLine:{color:'#00d4ff',labelBackgroundColor:'#111820'},
+        horzLine:{color:'#00d4ff',labelBackgroundColor:'#111820'}},
+      rightPriceScale:{borderColor:'#1e2d3d'},
+      timeScale:{borderColor:'#1e2d3d',timeVisible:true},
+      handleScroll:true, handleScale:true,
+    });
+    const ro=new ResizeObserver(entries=>{
+      for(const e of entries){
+        const {width,height}=e.contentRect;
+        if(chart)chart.applyOptions({width,height});
+      }
+    });
+    ro.observe(wrap);
+    return chart;
+  }
+
+  let lastComputed=null, lastNum=200;
+
+  function renderChart(computed,num){
+    const {haBars,sma20,sma200}=computed;
+    const total=haBars.length;
+    const startIdx=Math.max(0,total-num);
+    const haSlice=haBars.slice(startIdx);
+    const sma20Slice=sma20.slice(startIdx);
+    const sma200Slice=sma200.slice(startIdx);
+
+    initChart();
+    candleSeries=chart.addCandlestickSeries({
+      upColor:'#00ff88',downColor:'#ff3b5c',
+      borderUpColor:'#00ff88',borderDownColor:'#ff3b5c',
+      wickUpColor:'#00ff88',wickDownColor:'#ff3b5c',
+    });
+    candleSeries.setData(haSlice.map(d=>({time:d.date,open:d.open,high:d.high,low:d.low,close:d.close})));
+
+    volumeSeries=chart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:'vol'});
+    chart.priceScale('vol').applyOptions({scaleMargins:{top:0.85,bottom:0},borderVisible:false});
+    volumeSeries.setData(haSlice.map(d=>({time:d.date,value:d.volume||0,color:d.close>=d.open?'rgba(0,255,136,0.2)':'rgba(255,0,60,0.2)'})));
+
+    if(showSMA20){
+      sma20Series=chart.addLineSeries({color:'#facc15',lineWidth:1.5,priceLineVisible:false});
+      sma20Series.setData(haSlice.map((d,i)=>sma20Slice[i]!=null?{time:d.date,value:sma20Slice[i]}:null).filter(Boolean));
+    }
+    if(showSMA200){
+      sma200Series=chart.addLineSeries({color:'#ef4444',lineWidth:2,lineStyle:LightweightCharts.LineStyle.Dashed,priceLineVisible:false});
+      sma200Series.setData(haSlice.map((d,i)=>sma200Slice[i]!=null?{time:d.date,value:sma200Slice[i]}:null).filter(Boolean));
+    }
+
+    chart.timeScale().fitContent();
+
+    chart.subscribeCrosshairMove(param=>{
+      if(!param.time||!candleSeries)return;
+      const d=param.seriesData.get(candleSeries);
+      if(!d)return;
+      document.getElementById('ov-open').textContent=fmt(d.open);
+      document.getElementById('ov-high').textContent=fmt(d.high);
+      document.getElementById('ov-low').textContent=fmt(d.low);
+      const ce=document.getElementById('ov-close');
+      ce.textContent=fmt(d.close);
+      ce.style.color=d.close>=d.open?'var(--green)':'var(--red)';
+      const volD=volumeSeries?param.seriesData.get(volumeSeries):null;
+      if(volD)document.getElementById('ov-vol').textContent=fmtVol(volD.value);
+    });
+
+    const last=haSlice[haSlice.length-1];
+    document.getElementById('ov-open').textContent=fmt(last.open);
+    document.getElementById('ov-high').textContent=fmt(last.high);
+    document.getElementById('ov-low').textContent=fmt(last.low);
+    const ce=document.getElementById('ov-close');
+    ce.textContent=fmt(last.close);
+    ce.style.color=last.close>=last.open?'var(--green)':'var(--red)';
+    document.getElementById('ov-vol').textContent=fmtVol(last.volume);
+  }
+
+  /* ─────────────────────────────────────────
+     SIGNAL PANEL RENDER
+  ───────────────────────────────────────── */
+  const SIG_DESC={
+    ha:'Heikin-Ashi-Kerze grün → Long folgen. Kerze rot → Short folgen. Bei Farbwechsel Position drehen.',
+    macro:'Institutioneller Trendfilter: Kurs über SMA200 → Long, Kurs unter SMA200 → Short. Basis: 5 Jahre.',
+    fast:'Kurzfristig: Schlusskurs über SMA20 → Long, darunter → Short. Ausgewertet über die letzten 3 Monate.',
+    slope:'Kurzfristig: SMA20 steigt → Long, SMA20 fällt → Short. Ausgewertet über die letzten 3 Monate.',
+    rsiMR:'Long bei überverkauft (RSI≤30), Short bei überkauft (RSI≥70), Wochenbasis. Position hält bis zum nächsten Extremwert — teils sehr lange Haltedauer. Backtest-Sieger (Profit-Faktor 3.25).',
+    haMonthly:'Wie HA-FLIP, aber auf Monatskerzen statt Wochenkerzen — deutlich weniger Whipsaw. Zweitbester Backtest-Kandidat.',
+  };
+  function renderSignalCard(elId,sig,name){
+    const el=document.getElementById(elId);
+    if(!sig){
+      el.className='no-sig';
+      el.innerHTML='Nicht genug Historie für dieses Signal.';
+      return;
+    }
+    const cls=sig.type==='LONG'?'long':'short';
+    const pnlCls=sig.pnl>=0?'up':'dn';
+    el.className='sig-card '+cls;
+    el.innerHTML=`
+      <div class="sig-head">
+        <span class="sig-name">${name}</span>
+        <span class="sig-badge badge-${cls.replace('long','long').replace('short','short')}">${sig.type}</span>
+      </div>
+      <div class="sig-row"><span>Seit</span><span>${sig.sinceDate}${sig.windowLimited?' *':''}</span></div>
+      <div class="sig-row"><span>Einstieg</span><span>${fmt(sig.entry)}</span></div>
+      <div class="sig-row"><span>Aktuell</span><span>${fmt(sig.current)}</span></div>
+      <div class="sig-row"><span>Live P&amp;L</span><span class="sig-pnl ${pnlCls}">${fmtPct(sig.pnl)}</span></div>
+      <div class="sig-desc">${SIG_DESC[elId.replace('sig-','')]}${sig.windowLimited?' * Kein Wechsel innerhalb des Fensters — Stand seit Fensterbeginn.':''}</div>
+    `;
+  }
+  function renderAllSignals(computed){
+    renderSignalCard('sig-ha',computed.ha,'HA-FLIP');
+    renderSignalCard('sig-macro',computed.macro,'MACRO SMA200');
+    renderSignalCard('sig-fast',computed.fast,'FAST SMA20');
+    renderSignalCard('sig-slope',computed.slope,'SLOPE SMA20');
+    renderSignalCard('sig-rsiMR',computed.rsiMR,'RSI-MR');
+    renderSignalCard('sig-haMonthly',computed.haMonthly,'HA-MONAT');
+  }
+
+  /* ─────────────────────────────────────────
+     MAIN LOAD (Einzelsymbol)
+  ───────────────────────────────────────── */
+  async function loadChart(){
+    const sym=document.getElementById('sym').value.trim().toUpperCase();
+    const num=parseInt(document.getElementById('num').value)||200;
+    if(!sym){toast('Symbol eingeben','err');return;}
+
+    setProg('ind');
+    document.getElementById('chart-empty').style.display='none';
+    document.getElementById('chart-sym-lbl').textContent=sym;
+    ['ov-open','ov-high','ov-low','ov-close','ov-vol'].forEach(id=>document.getElementById(id).textContent='...');
+
+    try{
+      const bars=await fetchFiveYears(sym);
+      setProg(60);
+      if(bars.length<25)throw new Error('Zu wenig Historie für Signalberechnung');
+      const computed=computeAllSignals(bars);
+      lastComputed=computed; lastNum=num;
+      renderChart(computed,num);
+      renderAllSignals(computed);
+      setProg(100);
+      setTimeout(()=>setProg(0),600);
+      toast(`✓ ${sym} · ${bars.length} Handelstage geladen`,'ok');
+    }catch(e){
+      setProg(0);
+      toast('⚠ '+e.message,'err');
+      document.getElementById('chart-empty').style.display='flex';
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     GRUPPEN-SCANNER (Batch, begrenzte Nebenläufigkeit)
+  ───────────────────────────────────────── */
+  let isScanning=false;
+  async function scanCurrentGroup(){
+    if(isScanning)return;
+    if(!currentGroup){toast('Erst eine Gruppe über die linke Liste wählen (SCAN-Button neben Gruppenname)','err');return;}
+    const members=SYMBOLS.filter(s=>s.group===currentGroup);
+    if(!members.length){toast('Keine Symbole in dieser Gruppe','err');return;}
+
+    isScanning=true;
+    document.getElementById('scan-group-btn').disabled=true;
+    document.getElementById('grid-group-name').textContent=currentGroup;
+    document.getElementById('grid-count').textContent=members.length+' SYMBOLE';
+    const grid=document.getElementById('scanner-grid');
+    grid.innerHTML=members.map(s=>`<div class="sym-card loading" data-sym="${s.sym}"><div class="card-sym">${s.sym}</div><div class="card-name">${s.name}</div><div class="card-dots">Lädt…</div></div>`).join('');
+
+    const bar=document.getElementById('scan-progress-bar');
+    let done=0;
+    const CONCURRENCY=5;
+    let idx=0;
+    async function worker(){
+      while(idx<members.length){
+        const s=members[idx++];
+        try{
+          const bars=await fetchFiveYears(s.sym);
+          const computed = bars.length>=25 ? computeAllSignals(bars) : null;
+          updateCard(s,computed);
+        }catch(e){
+          updateCard(s,null,true);
+        }
+        done++;
+        bar.style.width=(done/members.length*100)+'%';
+      }
+    }
+    function updateCard(s,computed,failed){
+      const card=grid.querySelector(`.sym-card[data-sym="${CSS.escape(s.sym)}"]`);
+      if(!card)return;
+      card.classList.remove('loading');
+      if(failed||!computed){
+        card.querySelector('.card-dots').innerHTML='<span class="card-dot dot-na">KEINE DATEN</span>';
+        return;
+      }
+      const dot=(sig,label)=>sig?`<span class="card-dot dot-${sig.type.toLowerCase()}">${label} ${sig.type==='LONG'?'▲':'▼'}</span>`:`<span class="card-dot dot-na">${label} —</span>`;
+      card.querySelector('.card-dots').innerHTML =
+        dot(computed.ha,'HA')+dot(computed.macro,'MAC')+dot(computed.fast,'FAST')+dot(computed.slope,'SLP')+dot(computed.rsiMR,'RSI')+dot(computed.haMonthly,'HA-M');
+      card.onclick=()=>{
+        pickSymbol(s.sym,s.group,null);
+      };
+    }
+
+    await Promise.all(Array.from({length:Math.min(CONCURRENCY,members.length)},worker));
+
+    isScanning=false;
+    document.getElementById('scan-group-btn').disabled=false;
+    toast(`✓ Gruppe "${currentGroup}" gescannt · ${members.length} Symbole`,'ok');
+  }
+
+  /* ─── keyboard ── */
+  document.getElementById('sym').addEventListener('keydown',e=>{if(e.key==='Enter')loadChart();});
+  document.getElementById('num').addEventListener('keydown',e=>{if(e.key==='Enter')loadChart();});
+</script>
+</body>
+</html>

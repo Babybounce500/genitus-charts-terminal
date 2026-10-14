@@ -1,0 +1,1354 @@
+
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENITUS NEWS-TERMINAL // Live Intelligence &amp; AI-Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ── TOKENS ────────────────────────────────────────────────────────── */
+:root { --sw:320px; --ease:cubic-bezier(.4,0,.2,1); }
+
+html[data-theme="dark"] {
+  --bg:       #060a13;
+  --surface:  #0b1220;
+  --card:     #0e1929;
+  --border:   #1a2744;
+  --border2:  #243558;
+  --accent:   #00c8f0;
+  --accent-d: rgba(0,200,240,.07);
+  --accent-b: rgba(0,200,240,.18);
+  --purple:   #a78bfa;
+  --purple-d: rgba(167,139,250,.07);
+  --blue:     #60a5fa;
+  --blue-d:   rgba(96,165,250,.07);
+  --green:    #34d399;
+  --green-d:  rgba(52,211,153,.07);
+  --red:      #f87171;
+  --orange:   #fb923c;
+  --orange-d: rgba(251,146,60,.07);
+  --rose:     #fb7185;
+  --rose-d:   rgba(251,113,133,.07);
+  --amber:    #f59e0b;
+  --amber-d:  rgba(245,158,11,.07);
+  --gold:     #eab308;
+  --gold-d:   rgba(234,179,8,.08);
+  --teal:     #2dd4bf;
+  --teal-d:   rgba(45,212,191,.08);
+  --text:     #f1f5f9;
+  --sub:      #94a3b8;
+  --muted:    #475569;
+  --hbg:      rgba(6,10,19,.88);
+  --ticker-bg:#0b1220;
+  --ticker-fg:#94a3b8;
+  --ticker-tag-bg:#1a2744;
+  --ticker-tag-fg:#00c8f0;
+}
+html[data-theme="light"] {
+  --bg:       #fafafa;
+  --surface:  #f1f5f9;
+  --card:     #ffffff;
+  --border:   #e2e8f0;
+  --border2:  #cbd5e1;
+  --accent:   #0284c7;
+  --accent-d: rgba(2,132,199,.06);
+  --accent-b: rgba(2,132,199,.15);
+  --purple:   #7c3aed;
+  --purple-d: rgba(124,58,237,.06);
+  --blue:     #1d4ed8;
+  --blue-d:   rgba(29,78,216,.06);
+  --green:    #047857;
+  --green-d:  rgba(4,120,87,.06);
+  --red:      #b91c1c;
+  --orange:   #ea580c;
+  --orange-d: rgba(234,88,12,.06);
+  --rose:     #e11d48;
+  --rose-d:   rgba(225,29,72,.06);
+  --amber:    #b45309;
+  --amber-d:  rgba(180,83,9,.06);
+  --gold:     #854d0e;
+  --gold-d:   rgba(133,77,14,.06);
+  --teal:     #0f766e;
+  --teal-d:   rgba(15,118,110,.06);
+  --text:     #0f172a;
+  --sub:      #475569;
+  --muted:    #94a3b8;
+  --hbg:      rgba(250,250,250,.92);
+  --ticker-bg:#f1f5f9;
+  --ticker-fg:#475569;
+  --ticker-tag-bg:#e2e8f0;
+  --ticker-tag-fg:#0284c7;
+}
+
+/* ── RESET ─────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+button{font-family:inherit;cursor:pointer}
+a{text-decoration:none;color:inherit}
+img{display:block}
+
+/* ── TICKER ─────────────────────────────────────────────────────────── */
+.ticker-bar{background:var(--ticker-bg);border-bottom:1px solid var(--border);padding:7px 0;overflow:hidden;display:none}
+.ticker-inner{display:flex;gap:48px;white-space:nowrap;width:max-content;animation:scroll 55s linear infinite}
+.ticker-inner:hover{animation-play-state:paused}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ticker-fg)}
+.ticker-item .tag{background:var(--ticker-tag-bg);color:var(--ticker-tag-fg);font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:2px 7px;border-radius:4px;flex-shrink:0}
+
+/* ── HEADER ─────────────────────────────────────────────────────────── */
+header{position:sticky;top:0;z-index:100;background:var(--hbg);backdrop-filter:blur(18px) saturate(180%);border-bottom:1px solid var(--border)}
+.h-top{max-width:1440px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:12px;height:56px}
+
+.masthead{display:flex;flex-direction:column;line-height:1;flex-shrink:0}
+.masthead-name{font-family:'DM Serif Display',Georgia,serif;font-size:24px;letter-spacing:-.5px;color:var(--text);line-height:1}
+.masthead-sub{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-top:2px}
+
+.h-divider{width:1px;height:32px;background:var(--border);flex-shrink:0}
+
+.search-wrap{flex:1;max-width:400px;position:relative}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+#search{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px 9px 34px;color:var(--text);font-size:13.5px;outline:none;transition:border .2s,box-shadow .2s}
+#search:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-b)}
+#search::placeholder{color:var(--muted)}
+
+.h-meta{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--sub);flex-shrink:0}
+#count-badge{background:var(--accent-d);border:1px solid var(--accent-b);color:var(--accent);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+#updated-time{font-size:11.5px;color:var(--muted)}
+
+.icon-btn{background:var(--surface);border:1px solid var(--border);color:var(--sub);border-radius:8px;padding:7px 11px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:border .2s,color .2s,background .2s;white-space:nowrap}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+.icon-btn svg{flex-shrink:0}
+
+/* ── NAV TABS ───────────────────────────────────────────────────────── */
+.nav-bar{background:var(--surface);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1440px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:2px;overflow-x:auto;scrollbar-width:none;height:42px}
+.nav-inner::-webkit-scrollbar{display:none}
+
+.nav-tab{background:none;border:none;padding:10px 14px;font-size:13px;font-weight:600;color:var(--sub);border-bottom:2px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;position:relative;top:1px}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--text);border-bottom-color:var(--accent)}
+.nav-tab.active.cat-fintech  {border-bottom-color:var(--purple); color:var(--purple)}
+.nav-tab.active.cat-tech     {border-bottom-color:var(--blue);   color:var(--blue)}
+.nav-tab.active.cat-business {border-bottom-color:var(--green);  color:var(--green)}
+.nav-tab.active.cat-sport    {border-bottom-color:var(--orange);  color:var(--orange)}
+.nav-tab.active.cat-croatia  {border-bottom-color:var(--rose);    color:var(--rose)}
+.nav-tab.active.cat-religion {border-bottom-color:var(--amber); color:var(--amber)}
+.nav-tab.active.cat-watchlist{border-bottom-color:var(--gold); color:var(--gold)}
+.nav-tab.active.cat-archiv   {border-bottom-color:var(--teal); color:var(--teal)}
+
+.nav-sep{width:1px;height:18px;background:var(--border);flex-shrink:0;margin:0 4px}
+
+/* Source chips */
+.chip-bar{background:var(--bg);border-bottom:1px solid var(--border);padding:0 24px}
+.chip-row{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;height:38px}
+.chip-row::-webkit-scrollbar{display:none}
+.chip-label{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);white-space:nowrap;flex-shrink:0;margin-right:2px}
+.chip{background:none;border:1px solid var(--border);color:var(--sub);border-radius:20px;padding:3px 12px;font-size:11.5px;font-weight:600;white-space:nowrap;transition:all .18s}
+.chip:hover{border-color:var(--border2);color:var(--text)}
+.chip.active{font-weight:700;border-color:transparent;color:#fff}
+.chip.active.cat-general  {background:var(--accent); color:#060a13}
+.chip.active.cat-tech     {background:var(--blue)}
+.chip.active.cat-fintech  {background:var(--purple)}
+.chip.active.cat-business {background:var(--green);  color:#060a13}
+.chip.active.cat-sport    {background:var(--orange)}
+.chip.active.cat-croatia  {background:var(--rose)}
+.chip.active.cat-religion {background:var(--amber); color:#060a13}
+
+/* ── MAIN LAYOUT ────────────────────────────────────────────────────── */
+.page{max-width:1440px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:32px}
+
+.section-hd{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.section-hd h2{font-family:'DM Serif Display',Georgia,serif;font-size:16px;color:var(--text);white-space:nowrap}
+.section-rule{flex:1;height:1px;background:var(--border);min-width:20px}
+.section-hd .section-count{font-size:11px;font-weight:700;color:var(--muted)}
+
+/* ── HERO SECTION ───────────────────────────────────────────────────── */
+.hero-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto;gap:1px;background:var(--border);border-radius:12px;overflow:hidden}
+
+.hero-card{background:var(--card);cursor:pointer;display:flex;flex-direction:column;transition:background .18s}
+.hero-card:hover{background:var(--surface)}
+.hero-card.primary{grid-column:1/3;grid-row:1/3;position:relative;min-height:360px}
+.hero-card.secondary{min-height:160px}
+
+.hero-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:0;transition:opacity .4s}
+.hero-img.loaded{opacity:1}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(6,10,19,.95) 35%,rgba(6,10,19,.2) 100%)}
+.hero-content{position:absolute;bottom:0;left:0;right:0;padding:24px}
+.hero-content .cat-pill{margin-bottom:10px}
+.hero-content h2{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(18px,2.2vw,26px);line-height:1.25;color:#fff;margin-bottom:8px}
+.hero-content .byline{font-size:12px;color:rgba(255,255,255,.55);display:flex;gap:8px;align-items:center}
+
+.secondary .hero-inner{padding:18px;display:flex;flex-direction:column;gap:8px;height:100%}
+.secondary .sec-img-wrap{width:100%;height:100px;overflow:hidden;border-radius:6px;background:var(--surface)}
+.secondary .sec-img-wrap img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}
+.secondary .sec-img-wrap img.loaded{opacity:1}
+.secondary .cat-pill{margin-bottom:4px}
+.secondary h3{font-family:'DM Serif Display',Georgia,serif;font-size:14.5px;line-height:1.35;color:var(--text);display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.secondary .byline{font-size:11px;color:var(--muted);margin-top:auto;display:flex;gap:6px}
+
+/* ── NEWS GRID ───────────────────────────────────────────────────────── */
+.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--border);border-radius:12px;overflow:hidden}
+.news-card{background:var(--card);display:flex;flex-direction:column;cursor:pointer;transition:background .18s}
+.news-card:hover{background:var(--surface)}
+
+.card-img-wrap{height:160px;overflow:hidden;position:relative;background:var(--surface)}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}
+.card-img-wrap img.loaded{opacity:1}
+
+.card-body{padding:16px;flex:1;display:flex;flex-direction:column;gap:8px}
+.cat-pill{font-size:9px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:2px 7px;border-radius:4px;display:inline-block;width:fit-content;line-height:1.6}
+.cat-pill.cat-general  {background:var(--accent-d); color:var(--accent)}
+.cat-pill.cat-tech     {background:var(--blue-d);   color:var(--blue)}
+.cat-pill.cat-fintech  {background:var(--purple-d); color:var(--purple)}
+.cat-pill.cat-business {background:var(--green-d);  color:var(--green)}
+.cat-pill.cat-sport    {background:var(--orange-d); color:var(--orange)}
+.cat-pill.cat-croatia  {background:var(--rose-d);   color:var(--rose)}
+.cat-pill.cat-religion {background:var(--amber-d); color:var(--amber)}
+.cat-pill.cat-watchlist{background:var(--gold-d); color:var(--gold)}
+
+.card-body h3{font-family:'DM Serif Display',Georgia,serif;font-size:16px;line-height:1.3;color:var(--text);display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-body p{font-size:13px;color:var(--sub);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:12px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted)}
+.card-foot .src{font-weight:700;color:var(--sub)}
+
+/* ── STATES ──────────────────────────────────────────────────────────── */
+.empty-state{grid-column:1/-1;padding:60px;text-align:center;color:var(--muted)}
+.empty-state p{font-size:14px;margin-top:8px}
+.loader{display:flex;justify-content:center;align-items:center;padding:60px;grid-column:1/-1}
+.spinner{width:26px;height:26px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--accent);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── DRAWER ──────────────────────────────────────────────────────────── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:calc(-1 * var(--sw));width:var(--sw);height:100vh;background:var(--card);border-left:1px solid var(--border);z-index:201;overflow-y:auto;transition:right .25s var(--ease);display:flex;flex-direction:column}
+.drawer.open{right:0}
+.drawer-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.drawer-hd h3{font-size:13px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--sub)}
+.drawer-close{background:none;border:none;color:var(--muted);font-size:20px;line-height:1;padding:4px}
+.drawer-close:hover{color:var(--text)}
+.drawer-body{overflow-y:auto;flex:1}
+.drawer-item{display:flex;align-items:center;gap:10px;padding:12px 20px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;transition:background .15s}
+.drawer-item:hover{background:var(--surface)}
+.drawer-item.unverified{opacity:.5;cursor:default}
+.drawer-item.unverified:hover{background:transparent}
+.drawer-item .src-name{flex:1;font-weight:600;color:var(--text)}
+.drawer-item .src-count{font-size:11px;color:var(--muted)}
+.drawer-sect{padding:10px 20px 4px;font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+
+/* ── TOAST ───────────────────────────────────────────────────────────── */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;color:var(--text);opacity:0;pointer-events:none;z-index:9999;transition:opacity .25s,transform .25s;transform:translateY(6px)}
+#toast.show{opacity:1;transform:translateY(0)}
+
+/* ── WATCHLIST / ARCHIV MODE ─────────────────────────────────────────── */
+.page.watchlist-mode > section.general-only,
+.page.archiv-mode > section.general-only { display:none }
+#watchlist-section, #archiv-section { display:none; flex-direction:column; gap:24px }
+.page.watchlist-mode #watchlist-section { display:flex }
+.page.archiv-mode #archiv-section { display:flex }
+
+/* Radar strip */
+.radar-wrap{display:flex;flex-direction:column;gap:10px}
+.radar-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.radar-chip{flex-shrink:0;display:flex;flex-direction:column;gap:2px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;transition:border-color .18s;min-width:110px}
+.radar-chip:hover{border-color:var(--border2)}
+.radar-chip.long{border-left:3px solid var(--green)}
+.radar-chip.short{border-left:3px solid var(--red)}
+.radar-chip .rc-sym{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--text)}
+.radar-chip .rc-score{font-size:10.5px;font-weight:700}
+.radar-chip.long .rc-score{color:var(--green)}
+.radar-chip.short .rc-score{color:var(--red)}
+.radar-chip .rc-sub{font-size:9.5px;color:var(--muted)}
+
+/* Stock watchlist input bar */
+.stock-bar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:14px 0; border-bottom:1px solid var(--border) }
+.stock-bar select,.stock-bar input { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:8px 12px; color:var(--text); font-family:'Inter',sans-serif; font-size:13px; font-weight:600; outline:none }
+.stock-bar select:focus,.stock-bar input:focus { border-color:var(--gold) }
+.stock-bar input { font-family:'JetBrains Mono',monospace; text-transform:uppercase; width:180px }
+.stock-bar input::placeholder { text-transform:none; color:var(--muted); font-family:'Inter',sans-serif }
+.btn-add-sym { background:var(--gold); color:#060a13; border:none; border-radius:8px; padding:8px 16px; font-weight:800; font-size:13px; cursor:pointer; flex-shrink:0; transition:opacity .18s }
+.btn-add-sym:hover { opacity:.85 }
+.stock-chips { display:flex; gap:6px; flex-wrap:wrap; margin-left:auto }
+.stock-chip { background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:5px 10px; font-size:12px; font-weight:700; color:var(--sub); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all .18s; font-family:'JetBrains Mono',monospace }
+.stock-chip:hover { border-color:var(--gold); color:var(--gold) }
+.stock-chip.active { background:var(--gold-d); border-color:var(--gold); color:var(--gold) }
+.stock-chip .rm { color:var(--muted); font-size:13px; line-height:1 }
+.stock-chip .rm:hover { color:#f87171 }
+
+/* KPI cards */
+.stock-kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px }
+.stock-kpi-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; display:flex; flex-direction:column; gap:6px }
+.kpi-label { font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--muted) }
+.kpi-val { font-size:22px; font-weight:700; color:var(--text); font-family:'JetBrains Mono',monospace }
+.kpi-bar-bg { height:5px; background:var(--surface); border-radius:3px; margin-top:4px; overflow:hidden }
+.kpi-bar-fill { height:100%; background:linear-gradient(90deg,#f87171,#34d399); transition:width .4s ease }
+.kpi-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;width:fit-content}
+.kpi-badge.long{background:var(--green-d);color:var(--green)}
+.kpi-badge.short{background:var(--rose-d);color:var(--rose)}
+.kpi-badge.manual{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
+
+.ai-cta-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn-ai{background:linear-gradient(135deg,var(--accent),var(--purple));color:#060a13;border:none;border-radius:8px;padding:10px 18px;font-weight:800;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .18s}
+.btn-ai:hover{opacity:.88}
+.btn-ai:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--sub);border-radius:8px;padding:10px 16px;font-size:12.5px;font-weight:700;cursor:pointer}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.cache-badge{font-size:11px;font-weight:700;color:var(--teal);background:var(--teal-d);padding:3px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:5px}
+
+/* Stock grid cards */
+.stock-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1px; background:var(--border); border-radius:12px; overflow:hidden }
+.stock-card { background:var(--card); display:flex; flex-direction:column; cursor:pointer; transition:background .18s; position:relative }
+.stock-card:hover { background:var(--surface) }
+.stock-card-img { height:140px; overflow:hidden; position:relative; background:var(--surface) }
+.stock-card-img img { width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .35s }
+.stock-card-img img.loaded { opacity:1 }
+.stock-sent-badge { position:absolute; top:10px; left:10px; font-size:9px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; padding:2px 8px; border-radius:4px; pointer-events:none }
+.stock-sent-badge.bull    { background:rgba(52,211,153,.2);  color:#34d399 }
+.stock-sent-badge.bear    { background:rgba(248,113,113,.2); color:#f87171 }
+.stock-sent-badge.neutral { background:var(--accent-d);      color:var(--accent) }
+.stock-sym-chip { position:absolute; top:10px; right:10px; background:rgba(6,10,19,.75); border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:10px; font-weight:700; color:var(--text); font-family:'JetBrains Mono',monospace; backdrop-filter:blur(4px); pointer-events:none }
+.stock-card-body { padding:14px; flex:1; display:flex; flex-direction:column; gap:8px }
+.stock-card-body h3 { font-family:'DM Serif Display',Georgia,serif; font-size:15px; line-height:1.3; color:var(--text); display:-webkit-box; -webkit-line-clamp:3; line-clamp:3; -webkit-box-orient:vertical; overflow:hidden }
+.stock-card-foot { display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:10px; border-top:1px solid var(--border); font-size:11.5px; color:var(--muted) }
+.stock-card-foot .src { font-weight:700; color:var(--sub) }
+.stock-foot-btns { display:flex; gap:10px; align-items:center }
+.btn-intel { background:none; border:none; color:var(--gold); font-size:11.5px; font-weight:700; cursor:pointer; padding:0 }
+.btn-bm { background:none; border:none; color:var(--muted); cursor:pointer; font-size:15px; transition:color .18s; padding:0; line-height:1 }
+.btn-bm.active { color:var(--gold) }
+
+/* Stock reader modal */
+.stock-modal-ov { position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(6px); z-index:300; opacity:0; pointer-events:none; transition:opacity .25s; display:flex; align-items:center; justify-content:center; padding:20px }
+.stock-modal-ov.open { opacity:1; pointer-events:auto }
+.stock-modal { background:var(--card); border:1px solid var(--border); border-radius:16px; width:100%; max-width:720px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 24px 60px rgba(0,0,0,.5); transform:translateY(16px); transition:transform .28s var(--ease); overflow:hidden }
+.stock-modal-ov.open .stock-modal { transform:translateY(0) }
+.stock-modal-hd { display:flex; align-items:center; justify-content:space-between; padding:16px 24px; border-bottom:1px solid var(--border); flex-shrink:0 }
+.stock-modal-hd .meta { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); font-family:'JetBrains Mono',monospace }
+.stock-modal-close { background:var(--surface); border:1px solid var(--border); color:var(--text); width:32px; height:32px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; transition:background .18s }
+.stock-modal-close:hover { background:#f87171; color:#fff; border-color:#f87171 }
+.stock-modal-bd { padding:32px 40px; overflow-y:auto; flex:1; line-height:1.75 }
+.stock-modal-bd h1 { font-family:'DM Serif Display',Georgia,serif; font-size:22px; line-height:1.3; color:var(--text); margin-bottom:18px }
+.stock-modal-bd p { font-size:14px; color:var(--sub); margin-bottom:14px }
+
+/* AI Insight modal */
+.ai-modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);z-index:400;opacity:0;pointer-events:none;transition:opacity .25s;display:flex;align-items:center;justify-content:center;padding:20px}
+.ai-modal-ov.open{opacity:1;pointer-events:auto}
+.ai-modal{background:var(--card);border:1px solid var(--accent-b);border-radius:16px;width:100%;max-width:820px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.55);overflow:hidden}
+.ai-modal-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;gap:12px}
+.ai-modal-hd .meta{font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);font-family:'JetBrains Mono',monospace}
+.ai-modal-bd{padding:26px 32px;overflow-y:auto;flex:1}
+.ai-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+@media(max-width:640px){.ai-kpi-grid{grid-template-columns:repeat(2,1fr)}}
+.ai-kpi{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+.ai-kpi-label{font-size:9px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.ai-kpi-val{font-size:15px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text)}
+.ai-chart-wrap{height:220px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:18px}
+.ai-report-box{background:var(--accent-d);border:1px solid var(--accent-b);border-radius:10px;padding:20px;white-space:pre-wrap;line-height:1.75;font-size:14px;color:var(--text)}
+.ai-report-label{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ai-export-row{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+.ai-loading{padding:60px 20px;text-align:center;color:var(--muted)}
+.ai-disclaimer{font-size:11px;color:var(--muted);margin-top:16px;padding-top:14px;border-top:1px solid var(--border);line-height:1.6}
+
+/* Archiv list */
+.archiv-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.archiv-toolbar input{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;min-width:220px}
+.archiv-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border-radius:12px;overflow:hidden}
+.archiv-row{background:var(--card);padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background .18s;flex-wrap:wrap}
+.archiv-row:hover{background:var(--surface)}
+.archiv-row .a-sym{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:13px;color:var(--text);min-width:80px}
+.archiv-row .a-date{font-size:11.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;min-width:150px}
+.archiv-row .a-price{font-size:12.5px;font-weight:700;color:var(--sub)}
+.archiv-row .a-change{font-size:12px;font-weight:700}
+.archiv-row .a-preview{flex:1;font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:150px}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────────── */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr 1fr}
+  .hero-card.primary{grid-column:1/3;min-height:280px}
+  .news-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+}
+@media(max-width:768px){
+  .chip-bar{display:none}
+  .h-meta{display:none}
+  .h-divider{display:none}
+  .news-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+}
+@media(max-width:640px){
+  .h-top{gap:8px;padding:0 12px;height:52px}
+  .masthead-name{font-size:19px}
+  .search-wrap{max-width:none}
+  #search{font-size:13px;padding:8px 10px 8px 30px}
+  .icon-btn:not(#btn-feeds):not(#btn-refresh){display:none}
+  .nav-inner{padding:0 12px;height:38px;gap:0}
+  .nav-tab{font-size:12px;padding:8px 10px}
+  .hero-grid{grid-template-columns:1fr}
+  .hero-card.primary{grid-column:1;min-height:220px}
+  .hero-card.secondary{display:none}
+  .hero-content h2{font-size:17px}
+  .hero-content .byline{font-size:11px}
+  .news-grid{grid-template-columns:1fr}
+  .card-img-wrap{height:180px}
+  .card-body{padding:14px}
+  .card-body h3{font-size:15px}
+  .page{padding:12px;gap:20px}
+  .section-hd h2{font-size:14px}
+  .ticker-item{font-size:11.5px}
+  .stock-bar { gap:6px }
+  .stock-bar input { width:120px }
+  .stock-chips { margin-left:0; width:100% }
+  .stock-kpi-row { grid-template-columns:1fr 1fr }
+  .stock-grid { grid-template-columns:1fr }
+  .stock-modal-bd { padding:20px 24px }
+  .stock-modal-bd h1 { font-size:18px }
+  .ai-modal-bd{padding:18px 20px}
+  #toast{left:16px;right:16px;bottom:16px;text-align:center}
+}
+@media(max-width:380px){
+  :root{--sw:100vw}
+  .h-top{padding:0 10px}
+  .masthead-sub{display:none}
+  .card-body h3{font-size:14px}
+  .card-body p{-webkit-line-clamp:2;line-clamp:2}
+  .stock-kpi-row { grid-template-columns:1fr }
+}
+@media(hover:none){
+  .news-card:hover,.hero-card:hover{background:var(--card)}
+  .icon-btn:hover{border-color:var(--border);color:var(--sub)}
+  button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-bar" id="ticker-bar">
+  <div class="ticker-inner" id="ticker-inner"></div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="h-top">
+    <div class="masthead">
+      <div class="masthead-name">NewsTerminal</div>
+      <div class="masthead-sub">Live Intelligence · AI-Insights</div>
+    </div>
+
+    <div class="h-divider"></div>
+
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="search" type="text" placeholder="Suche… (Slash /)" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="h-meta">
+      <span id="count-badge">— Artikel</span>
+      <span id="updated-time"></span>
+    </div>
+
+    <button class="icon-btn" onclick="toggleTheme()" title="Theme wechseln" aria-label="Theme">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+
+    <button class="icon-btn" id="btn-refresh" onclick="loadAll(true)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+      Refresh
+    </button>
+
+    <button class="icon-btn" onclick="exportCSV()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      CSV
+    </button>
+
+    <button class="icon-btn" id="btn-feeds" onclick="openDrawer()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      Feeds
+    </button>
+  </div>
+
+  <!-- NAV TABS -->
+  <div class="nav-bar">
+    <div class="nav-inner">
+      <button class="nav-tab active" data-cat="all" onclick="setCategory('all',this)">Alle</button>
+      <div class="nav-sep"></div>
+      <button class="nav-tab cat-general" data-cat="general" onclick="setCategory('general',this)">Allgemein</button>
+      <button class="nav-tab cat-fintech"  data-cat="fintech"  onclick="setCategory('fintech',this)">Fintech &amp; Crypto</button>
+      <button class="nav-tab cat-tech"     data-cat="tech"     onclick="setCategory('tech',this)">Technologie</button>
+      <button class="nav-tab cat-business" data-cat="business" onclick="setCategory('business',this)">Business</button>
+      <button class="nav-tab cat-sport"    data-cat="sport"    onclick="setCategory('sport',this)">Sport</button>
+      <button class="nav-tab cat-croatia"  data-cat="croatia"  onclick="setCategory('croatia',this)">Kroatien</button>
+      <button class="nav-tab cat-religion" data-cat="religion" onclick="setCategory('religion',this)">Religion</button>
+      <div class="nav-sep"></div>
+      <button class="nav-tab cat-watchlist" data-cat="watchlist" onclick="setCategory('watchlist',this)">📡 Watchlist &amp; Radar</button>
+      <button class="nav-tab cat-archiv"    data-cat="archiv"    onclick="setCategory('archiv',this)">🗄 AI-Archiv</button>
+    </div>
+  </div>
+</header>
+
+<!-- SOURCE CHIPS -->
+<div class="chip-bar">
+  <div class="chip-row">
+    <span class="chip-label">Quelle</span>
+    <div id="chip-list" style="display:flex;gap:6px;align-items:center"></div>
+  </div>
+</div>
+
+<!-- DRAWER -->
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-hd">
+    <h3>Feed Center</h3>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-sect">Andere Terminals</div>
+    <a href="STOCKS-TERMINAL.html" class="drawer-item" style="text-decoration:none"><span class="src-name">Stocks-Terminal</span></a>
+    <a href="SIGNALS-TERMINAL.html" class="drawer-item" style="text-decoration:none"><span class="src-name">Signals-Terminal</span></a>
+    <a href="LEGENDARY-TERMINAL.html" class="drawer-item" style="text-decoration:none"><span class="src-name">Legendary-Terminal</span></a>
+    <a href="VOLATILITY-SCREENER.html" class="drawer-item" style="text-decoration:none"><span class="src-name">Volatility-Screener</span></a>
+    <a href="NEWS-SENTIMENT-TERMINAL.html" class="drawer-item" style="text-decoration:none"><span class="src-name">News-Sentiment-Terminal</span></a>
+    <a href="../viewer/best-of/index.html" class="drawer-item" style="text-decoration:none"><span class="src-name">Best-Of-Bibliothek</span></a>
+    <a href="PORTFOLIO-RISK-ENGINE.html" class="drawer-item" style="text-decoration:none"><span class="src-name">Risk-Engine</span></a>
+    <a href="../index.html" class="drawer-item" style="text-decoration:none"><span class="src-name">Workshell</span></a>
+    <div id="drawer-body"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="page">
+  <!-- Hero -->
+  <section class="general-only">
+    <div class="section-hd">
+      <h2>Top Meldungen</h2>
+      <div class="section-rule"></div>
+    </div>
+    <div class="hero-grid" id="hero-grid">
+      <div style="grid-column:1/-1;background:var(--card);padding:60px;text-align:center">
+        <div style="height:14px;width:120px;margin:0 auto 8px;background:var(--surface)"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- News Grid -->
+  <section class="general-only">
+    <div class="section-hd">
+      <h2 id="grid-title">Aktuelle Meldungen</h2>
+      <div class="section-rule"></div>
+      <span class="section-count" id="grid-count"></span>
+    </div>
+    <div class="news-grid" id="news-grid">
+      <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--muted);background:var(--card)">Lädt…</div>
+    </div>
+  </section>
+
+  <!-- WATCHLIST & RADAR -->
+  <section id="watchlist-section">
+    <div class="radar-wrap">
+      <div class="section-hd">
+        <h2>📡 Kuratiertes Radar</h2>
+        <div class="section-rule"></div>
+        <span class="section-count">aus VOLATILITY-SCREENER Long-/Short-Score</span>
+      </div>
+      <div class="radar-row" id="radar-long"></div>
+      <div class="radar-row" id="radar-short"></div>
+    </div>
+
+    <div class="stock-bar">
+      <select id="stock-quick-sel" onchange="selectDropSym(this.value)">
+        <option value="" disabled selected>⚡ Quick Add</option>
+        <optgroup label="US Mega Caps">
+          <option value="AAPL.US">Apple (AAPL)</option>
+          <option value="NVDA.US">Nvidia (NVDA)</option>
+          <option value="TSLA.US">Tesla (TSLA)</option>
+          <option value="MSFT.US">Microsoft (MSFT)</option>
+          <option value="AMZN.US">Amazon (AMZN)</option>
+          <option value="GOOGL.US">Alphabet (GOOGL)</option>
+          <option value="META.US">Meta (META)</option>
+        </optgroup>
+        <optgroup label="Europe">
+          <option value="BMW.XETRA">BMW (XETRA)</option>
+          <option value="SAP.XETRA">SAP (XETRA)</option>
+          <option value="SIE.XETRA">Siemens (XETRA)</option>
+          <option value="VOW.XETRA">VW (XETRA)</option>
+        </optgroup>
+        <optgroup label="Crypto">
+          <option value="BTC-USD.CC">Bitcoin (BTC)</option>
+          <option value="ETH-USD.CC">Ethereum (ETH)</option>
+        </optgroup>
+      </select>
+      <input id="stock-sym-input" type="text" placeholder="SYMBOL.US / .XETRA…" onkeypress="if(event.key==='Enter')addStockSymbol()">
+      <button class="btn-add-sym" onclick="addStockSymbol()">+ Add</button>
+      <div class="stock-chips" id="wl-chips"></div>
+    </div>
+    <div class="stock-kpi-row">
+      <div class="stock-kpi-card">
+        <div class="kpi-label">Asset</div>
+        <div class="kpi-val" id="kpi-sym">—</div>
+      </div>
+      <div class="stock-kpi-card">
+        <div class="kpi-label">Keyword-Sentiment</div>
+        <div class="kpi-val" id="kpi-sent-val">—</div>
+        <div class="kpi-bar-bg"><div class="kpi-bar-fill" id="kpi-sent-bar" style="width:50%"></div></div>
+      </div>
+      <div class="stock-kpi-card">
+        <div class="kpi-label">Feed Volume</div>
+        <div class="kpi-val" id="kpi-vol">—</div>
+      </div>
+      <div class="stock-kpi-card">
+        <div class="kpi-label">Kuratierung</div>
+        <div class="kpi-badge manual" id="kpi-curation">— manuell</div>
+      </div>
+    </div>
+
+    <div class="ai-cta-row">
+      <button class="btn-ai" id="btn-gen-insight" onclick="openInsight(currentSym)">🤖 AI-Insight generieren</button>
+      <span id="ai-cache-hint"></span>
+    </div>
+
+    <div class="section-hd">
+      <h2>Market Intelligence</h2>
+      <div class="section-rule"></div>
+    </div>
+    <div class="stock-grid" id="stock-grid">
+      <div style="grid-column:1/-1;padding:50px;text-align:center;color:var(--muted);background:var(--card)">Wähle ein Symbol aus der Watchlist…</div>
+    </div>
+  </section>
+
+  <!-- AI-ARCHIV -->
+  <section id="archiv-section">
+    <div class="section-hd">
+      <h2>🗄 AI-Insight-Archiv</h2>
+      <div class="section-rule"></div>
+      <span class="section-count" id="archiv-count"></span>
+    </div>
+    <div class="archiv-toolbar">
+      <input id="archiv-search" type="text" placeholder="Symbol filtern…" oninput="renderArchiv()">
+      <button class="btn-ghost" onclick="clearArchivSearch()">Zurücksetzen</button>
+    </div>
+    <div class="archiv-list" id="archiv-list"></div>
+  </section>
+</main>
+
+<!-- STOCK READER MODAL -->
+<div class="stock-modal-ov" id="stock-modal-ov" onclick="closeStockModal()">
+  <div class="stock-modal" onclick="event.stopPropagation()">
+    <div class="stock-modal-hd">
+      <div class="meta" id="stock-modal-meta">MARKET INTEL</div>
+      <button class="stock-modal-close" onclick="closeStockModal()">✕</button>
+    </div>
+    <div class="stock-modal-bd" id="stock-modal-body"></div>
+  </div>
+</div>
+
+<!-- AI INSIGHT MODAL -->
+<div class="ai-modal-ov" id="ai-modal-ov" onclick="closeAiModal(event)">
+  <div class="ai-modal" onclick="event.stopPropagation()">
+    <div class="ai-modal-hd">
+      <div class="meta" id="ai-modal-meta">AI-INSIGHT</div>
+      <button class="stock-modal-close" onclick="closeAiModal()">✕</button>
+    </div>
+    <div class="ai-modal-bd" id="ai-modal-body"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────────
+const PROXY    = 'https://rss-server.replit.app/api/feed?url=';
+const EOD_API  = 'https://theserver-open-ai.replit.app';
+const CACHE_TTL_GENERAL = 20 * 60 * 1000;   // 20 min RSS feed cache
+const CACHE_TTL_STOCK   = 60 * 60 * 1000;   // 60 min per-symbol news cache
+const WATCHLIST_REFRESH = 15 * 60 * 1000;   // in-page "cron": refresh watchlist news every 15 min while open
+
+const CURATED = {"generatedAt":"2026-08-11T17:11:32.520Z","topLong":[{"symbol":"IREN.US","name":"IREN Ltd","library":"watchlist","longScore":46.4,"bigDayUpPct":47,"squeezeStatus":"SQUEEZE"},{"symbol":"MSTR.US","name":"MicroStrategy","library":"watchlist","longScore":42.8,"bigDayUpPct":49.5,"squeezeStatus":"SQUEEZE"},{"symbol":"BMNR.US","name":"BitMine Immersion","library":"watchlist","longScore":41.9,"bigDayUpPct":43.2,"squeezeStatus":"SQUEEZE"},{"symbol":"DDJH.ZSE","name":"Djuro Djakovic Grupa d.d.","library":"watchlist","longScore":41.6,"bigDayUpPct":51,"squeezeStatus":"SQUEEZE"},{"symbol":"AGIX-USD.CC","name":"Singularity NET","library":"crypto","longScore":41.5,"bigDayUpPct":46.7,"squeezeStatus":"SQUEEZE"},{"symbol":"IBRX.US","name":"ImmunityBio Inc.","library":"watchlist","longScore":41,"bigDayUpPct":44.8,"squeezeStatus":"SQUEEZE"},{"symbol":"OP-USD.CC","name":"Optimism","library":"crypto","longScore":40.5,"bigDayUpPct":48,"squeezeStatus":"SQUEEZE"},{"symbol":"INOD.US","name":"Innodata Inc.","library":"watchlist","longScore":40.4,"bigDayUpPct":49.8,"squeezeStatus":"SQUEEZE"},{"symbol":"PLUG.US","name":"Plug Power Inc.","library":"watchlist","longScore":39,"bigDayUpPct":44,"squeezeStatus":"SQUEEZE"},{"symbol":"XEN-USD.CC","name":"XEN Crypto","library":"crypto","longScore":39,"bigDayUpPct":39.5,"squeezeStatus":"SQUEEZE"},{"symbol":"LINK-USD.CC","name":"Chainlink","library":"crypto","longScore":38.7,"bigDayUpPct":49.8,"squeezeStatus":"SQUEEZE"},{"symbol":"ENJ-USD.CC","name":"Enjin","library":"crypto","longScore":38.7,"bigDayUpPct":47.8,"squeezeStatus":"SQUEEZE"},{"symbol":"ZEC-USD.CC","name":"Zcash","library":"crypto","longScore":38.6,"bigDayUpPct":49.6,"squeezeStatus":"SQUEEZE"},{"symbol":"MANA-USD.CC","name":"Decentraland","library":"crypto","longScore":37.1,"bigDayUpPct":47.8,"squeezeStatus":"SQUEEZE"},{"symbol":"AXS-USD.CC","name":"Axie Infinity","library":"crypto","longScore":36.8,"bigDayUpPct":47.1,"squeezeStatus":"SQUEEZE"}],"topShort":[{"symbol":"XEN-USD.CC","name":"XEN Crypto","library":"crypto","shortScore":59.6,"bigDayDownPct":60.5,"squeezeStatus":"SQUEEZE"},{"symbol":"BMNR.US","name":"BitMine Immersion","library":"watchlist","shortScore":55,"bigDayDownPct":56.8,"squeezeStatus":"SQUEEZE"},{"symbol":"IREN.US","name":"IREN Ltd","library":"watchlist","shortScore":52.4,"bigDayDownPct":53,"squeezeStatus":"SQUEEZE"},{"symbol":"IBRX.US","name":"ImmunityBio Inc.","library":"watchlist","shortScore":50.5,"bigDayDownPct":55.2,"squeezeStatus":"SQUEEZE"},{"symbol":"PLUG.US","name":"Plug Power Inc.","library":"watchlist","shortScore":49.6,"bigDayDownPct":56,"squeezeStatus":"SQUEEZE"},{"symbol":"AGIX-USD.CC","name":"Singularity NET","library":"crypto","shortScore":47.4,"bigDayDownPct":53.3,"squeezeStatus":"SQUEEZE"},{"symbol":"OP-USD.CC","name":"Optimism","library":"crypto","shortScore":43.9,"bigDayDownPct":52,"squeezeStatus":"SQUEEZE"},{"symbol":"ILV-USD.CC","name":"Illuvium","library":"crypto","shortScore":43.9,"bigDayDownPct":55,"squeezeStatus":"SQUEEZE"},{"symbol":"MSTR.US","name":"MicroStrategy","library":"watchlist","shortScore":43.7,"bigDayDownPct":50.5,"squeezeStatus":"SQUEEZE"},{"symbol":"ENJ-USD.CC","name":"Enjin","library":"crypto","shortScore":42.2,"bigDayDownPct":52.2,"squeezeStatus":"SQUEEZE"},{"symbol":"AXS-USD.CC","name":"Axie Infinity","library":"crypto","shortScore":41.3,"bigDayDownPct":52.9,"squeezeStatus":"SQUEEZE"},{"symbol":"INOD.US","name":"Innodata Inc.","library":"watchlist","shortScore":40.7,"bigDayDownPct":50.2,"squeezeStatus":"SQUEEZE"},{"symbol":"MANA-USD.CC","name":"Decentraland","library":"crypto","shortScore":40.4,"bigDayDownPct":52.2,"squeezeStatus":"SQUEEZE"},{"symbol":"DDJH.ZSE","name":"Djuro Djakovic Grupa d.d.","library":"watchlist","shortScore":40,"bigDayDownPct":49,"squeezeStatus":"SQUEEZE"},{"symbol":"ZEC-USD.CC","name":"Zcash","library":"crypto","shortScore":39.2,"bigDayDownPct":50.4,"squeezeStatus":"SQUEEZE"}]};
+
+const FEEDS = [
+  { name:'BBC News',      url:'https://feeds.bbci.co.uk/news/rss.xml',                      cat:'general',  verified:true  },
+  { name:'Spiegel',       url:'https://www.spiegel.de/schlagzeilen/index.rss',               cat:'general',  verified:true  },
+  { name:'N-TV',          url:'https://www.n-tv.de/rss',                                     cat:'general',  verified:true  },
+  { name:'FAZ',           url:'https://www.faz.net/rss/aktuell/',                            cat:'general',  verified:true  },
+  { name:'Stern',         url:'https://www.stern.de/feed/standard/alle-nachrichten/',        cat:'general',  verified:true  },
+  { name:'Zeit Online',   url:'https://newsfeed.zeit.de/index',                              cat:'general',  verified:true  },
+  { name:'The Guardian',  url:'https://www.theguardian.com/world/rss',                       cat:'general',  verified:false },
+  { name:'DW Deutsch',    url:'https://rss.dw.com/rdf/rss-de-all',                           cat:'general',  verified:false },
+  { name:'Tagesschau',    url:'https://www.tagesschau.de/xml/rss2/',                         cat:'general',  verified:false },
+  { name:'Sky News',      url:'https://feeds.skynews.com/feeds/rss/world.xml',               cat:'general',  verified:true  },
+  { name:'CoinDesk',      url:'https://www.coindesk.com/arc/outboundfeeds/rss/',              cat:'fintech',  verified:true  },
+  { name:'CoinTelegraph', url:'https://cointelegraph.com/rss',                                cat:'fintech',  verified:true  },
+  { name:'Decrypt',       url:'https://decrypt.co/feed',                                      cat:'fintech',  verified:true  },
+  { name:'Bitcoinist',    url:'https://bitcoinist.com/feed/',                                 cat:'fintech',  verified:true  },
+  { name:'NewsBTC',       url:'https://www.newsbtc.com/feed/',                                cat:'fintech',  verified:true  },
+  { name:'BeInCrypto',    url:'https://beincrypto.com/feed/',                                 cat:'fintech',  verified:true  },
+  { name:'Wired',         url:'https://www.wired.com/feed/rss',                              cat:'tech',     verified:true  },
+  { name:'Ars Technica',  url:'https://feeds.arstechnica.com/arstechnica/index',              cat:'tech',     verified:true  },
+  { name:'Heise Online',  url:'https://www.heise.de/rss/heise-atom.xml',                     cat:'tech',     verified:false },
+  { name:'Golem.de',      url:'https://rss.golem.de/rss.php?feed=ATOM1.0',                   cat:'tech',     verified:false },
+  { name:'t3n',           url:'https://t3n.de/rss.xml',                                       cat:'tech',     verified:false },
+  { name:'Bloomberg',     url:'https://feeds.bloomberg.com/markets/news.rss',                cat:'business', verified:true  },
+  { name:'Handelsblatt',  url:'https://www.handelsblatt.com/contentexport/feed/schlagzeilen',cat:'business', verified:true  },
+  { name:'WiWo',          url:'https://www.wiwo.de/rss/',                                     cat:'business', verified:false },
+  { name:'BBC Sport',     url:'https://feeds.bbci.co.uk/sport/rss.xml',                     cat:'sport',    verified:true  },
+  { name:'Marca',         url:'https://www.marca.com/rss/portada.xml',                      cat:'sport',    verified:true  },
+  { name:'Vecernji list', url:'https://www.vecernji.hr/feeds/latest',                        cat:'croatia',  verified:true  },
+  { name:'24sata.hr',     url:'https://www.24sata.hr/feeds/news.xml',                        cat:'croatia',  verified:true  },
+  { name:'Jutarnji list', url:'https://www.jutarnji.hr/feed',                                cat:'croatia',  verified:true  },
+  { name:'Vatican News',  url:'https://www.vaticannews.va/de.rss.xml',                       cat:'religion', verified:true  },
+  { name:'Vatican EN',    url:'https://www.vaticannews.va/en.rss.xml',                       cat:'religion', verified:true  },
+  { name:'CNA',           url:'https://www.catholicnewsagency.com/feed',                     cat:'religion', verified:false },
+];
+
+const BASE = 'https://appgpt.replit.app/stock_images_final/';
+const FALLBACKS = {
+  general: ['architecture_buildin_491014fe.jpg','architecture_buildin_89073148.jpg','architecture_buildin_f8e978b6.jpg','architecture_buildin_52e96278.jpg','airplane_aircraft_fl_99d0fbaa.jpg','airplane_aircraft_fl_aa495c5f.jpg','abstract_pattern_geo_7bea714d.jpg','abstract_pattern_geo_6dc1fb9b.jpg'],
+  tech: ['5g_network_telecommu_7df2cd51.jpg','5g_network_telecommu_acc568eb.jpg','5g_network_telecommu_ee1fcb6e.jpg','ai_assistants_chatbo_4d7722c6.jpg','artificial_intellige_0fb53ac6.jpg','artificial_intellige_1a97ccfe.jpg','artificial_intellige_45ab1447.jpg','automation_robotics__4f40b942.jpg','artificial_neural_ne_9ecc34c8.jpg','api_integration_soft_d4e4fbff.jpg'],
+  fintech: ['accountant_tax_finan_721c12c3.jpg','accountant_tax_finan_b076f71c.jpg','accountant_tax_finan_35c8aa28.jpg','accountant_tax_finan_4c1c4a82.jpg','accountant_tax_finan_75859a1e.jpg','accountant_tax_finan_9ace6653.jpg','accountant_tax_finan_de993cb2.jpg','accountant_tax_finan_989f9fea.jpg'],
+  business: ['agile_sprint_plannin_67042bf8.jpg','agile_sprint_plannin_f8bbf124.jpg','agile_sprint_plannin_6b196f8b.jpg','agile_sprint_plannin_2b7b2d11.jpg','agile_sprint_plannin_fb49a2c9.jpg','agile_sprint_plannin_1c5a0e36.jpg','agile_sprint_plannin_197621df.jpg','agile_sprint_plannin_f270a84e.jpg'],
+  sport: ['airplane_aircraft_fl_99d0fbaa.jpg','abstract_pattern_geo_7bea714d.jpg','architecture_buildin_52e96278.jpg','abstract_pattern_geo_6dc1fb9b.jpg','architecture_buildin_89073148.jpg','airplane_aircraft_fl_4fe7f54a.jpg'],
+  croatia: ['architecture_buildin_491014fe.jpg','architecture_buildin_f8e978b6.jpg','abstract_pattern_geo_8a907a2b.jpg','architecture_buildin_1d9c4ee7.jpg','architecture_buildin_b000455f.jpg','abstract_pattern_geo_f3ca16a3.jpg'],
+  religion: ['architecture_buildin_1d9c4ee7.jpg','abstract_pattern_geo_f3ca16a3.jpg','architecture_buildin_f8e978b6.jpg','abstract_pattern_geo_8a907a2b.jpg','architecture_buildin_52e96278.jpg','architecture_buildin_b000455f.jpg'],
+};
+const STOCK_FB = {
+  bull:    ['accountant_tax_finan_721c12c3.jpg','agile_sprint_plannin_f8bbf124.jpg','agile_sprint_plannin_f270a84e.jpg'],
+  bear:    ['accountant_tax_finan_4c1c4a82.jpg','agile_sprint_plannin_197621df.jpg','accountant_tax_finan_9ace6653.jpg'],
+  neutral: ['accountant_tax_finan_b076f71c.jpg','agile_sprint_plannin_6b196f8b.jpg','agile_sprint_plannin_2b7b2d11.jpg'],
+};
+
+function hashCode(str) { let h=0; for(let i=0;i<str.length;i++) h=(Math.imul(31,h)+str.charCodeAt(i))|0; return Math.abs(h); }
+function pickFallback(cat, title='') { const pool=FALLBACKS[cat]||FALLBACKS.general; return BASE+pool[hashCode(title)%pool.length]; }
+
+const CAT_LABELS = { general:'Allgemein', tech:'Tech', fintech:'Fintech', business:'Business', sport:'Sport', croatia:'Kroatien', religion:'Religion', watchlist:'Watchlist' };
+
+// ── STATE ───────────────────────────────────────────────────────────────
+let articles = [], currentCat = 'all', currentSrc = null, query = '', loading = false, io = null;
+let displayPool = [];
+
+// ── THEME ───────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('nt-theme', t);
+}
+(function initTheme() {
+  const saved = localStorage.getItem('nt-theme');
+  const pref  = window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', saved || pref);
+})();
+
+// ── HELPERS ─────────────────────────────────────────────────────────────
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function timeAgo(date) { const m=Math.floor((Date.now()-date)/60000); if(m<1) return 'Jetzt'; if(m<60) return m+'min'; if(m<1440) return Math.floor(m/60)+'h'; return Math.floor(m/1440)+'d'; }
+function readTime(text) { const words=(text||'').trim().split(/\s+/).length; return Math.max(1,Math.round(words/200))+' min'; }
+function imgEl(src, title, cls, cat) {
+  const fb = pickFallback(cat, title); const url = src || fb;
+  return `<img class="${cls}" data-src="${esc(url)}" alt="${esc(title)}" onload="this.classList.add('loaded')" onerror="this.src='${esc(fb)}';this.classList.add('loaded')">`;
+}
+function pill(cat) { return `<span class="cat-pill cat-${cat}">${CAT_LABELS[cat]||cat}</span>`; }
+function openLink(url) { if (url && url !== '#') window.open(url, '_blank', 'noopener,noreferrer'); }
+let tt;
+function toast(msg, ms=2500) { const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>el.classList.remove('show'),ms); }
+function todayISO(off=0){ return new Date(Date.now()+off*86400000).toISOString().split('T')[0]; }
+
+// ── LAZY LOAD ───────────────────────────────────────────────────────────
+function initLazy() {
+  if (io) io.disconnect();
+  io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (!e.isIntersecting) return; const img=e.target; if(img.dataset.src){img.src=img.dataset.src;delete img.dataset.src;} io.unobserve(img); });
+  }, { rootMargin: '150px 0px' });
+  document.querySelectorAll('[data-src]').forEach(img => io.observe(img));
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// INDEXEDDB LAYER — persistent client-side storage. Replaces the
+// sessionStorage/in-memory caches the old NEWSFLOW/NEWSFLOW-EOD/GOLDSHIELD
+// tools each maintained separately. Three stores:
+//  - generalCache: RSS feed responses (TTL-checked, survives across days)
+//  - newsCache:    per-symbol EOD news wire (TTL-checked)
+//  - insights:     generated AI reports, one record per symbol+day, kept
+//                   indefinitely -- this is the browsable "Archiv"
+// ══════════════════════════════════════════════════════════════════════
+const IDB_NAME = 'genitus-news-terminal', IDB_VERSION = 1;
+let idbPromise = null;
+function openDB() {
+  if (idbPromise) return idbPromise;
+  idbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('generalCache')) db.createObjectStore('generalCache', { keyPath: 'url' });
+      if (!db.objectStoreNames.contains('newsCache')) db.createObjectStore('newsCache', { keyPath: 'symbol' });
+      if (!db.objectStoreNames.contains('insights')) {
+        const s = db.createObjectStore('insights', { keyPath: 'id' });
+        s.createIndex('bySymbol', 'symbol', { unique: false });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  return idbPromise;
+}
+async function idbGet(store, key) {
+  try { const db = await openDB(); return await new Promise((res, rej) => { const tx=db.transaction(store,'readonly'); const r=tx.objectStore(store).get(key); r.onsuccess=()=>res(r.result||null); r.onerror=()=>rej(r.error); }); }
+  catch { return null; }
+}
+async function idbPut(store, value) {
+  try { const db = await openDB(); return await new Promise((res, rej) => { const tx=db.transaction(store,'readwrite'); tx.objectStore(store).put(value); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
+  catch (e) { console.warn('idbPut failed', e); }
+}
+async function idbGetAll(store) {
+  try { const db = await openDB(); return await new Promise((res, rej) => { const tx=db.transaction(store,'readonly'); const r=tx.objectStore(store).getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error); }); }
+  catch { return []; }
+}
+
+// ── FETCH: GENERAL RSS ─────────────────────────────────────────────────
+function parseItem(a, feed) {
+  const enc = a.enclosure || {};
+  const img = a.thumbnail || a.urlToImage || a.image || a.imgUrl ||
+    (enc.type?.startsWith('image') ? (enc.link || enc.url) : '') ||
+    (typeof enc === 'string' && enc.startsWith('http') ? enc : '') || '';
+  return {
+    title: (a.title || '').trim(),
+    desc: (a.description || a.content || a.summary || '').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim().slice(0,280),
+    link: a.link || a.url || '#', image: img,
+    date: new Date(a.pubDate || a.publishedAt || a.isoDate || Date.now()),
+    cat: feed.cat, source: feed.name, verified: feed.verified,
+  };
+}
+async function fetchFeed(feed) {
+  const cached = await idbGet('generalCache', feed.url);
+  if (cached && Date.now() - cached.ts < CACHE_TTL_GENERAL) return cached.articles;
+  let result = [];
+  try {
+    const r = await fetch(PROXY + encodeURIComponent(feed.url), { signal: AbortSignal.timeout(15000) });
+    const d = await r.json();
+    const items = d.articles || d.items || [];
+    result = items.map(a => parseItem(a, feed)).filter(a => a.title);
+  } catch {}
+  idbPut('generalCache', { url: feed.url, ts: Date.now(), articles: result });
+  return result;
+}
+
+async function loadAll(force = false) {
+  if (loading) return;
+  loading = true;
+  const btn = document.getElementById('btn-refresh');
+  btn.disabled = true;
+  if (force) { const db = await openDB(); db.transaction('generalCache','readwrite').objectStore('generalCache').clear(); }
+
+  const results = await Promise.allSettled(FEEDS.map(fetchFeed));
+  const raw = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+
+  const seen = new Set();
+  articles = raw.filter(a => { const k=a.title.slice(0,55).toLowerCase(); return seen.has(k)?false:seen.add(k); }).sort((a,b)=>b.date-a.date);
+
+  const imgFreq = {};
+  articles.forEach(a => { if (a.image) imgFreq[a.image] = (imgFreq[a.image]||0)+1; });
+  articles.forEach(a => { if (a.image && imgFreq[a.image] > 3) a.image = ''; });
+
+  const display = articles.filter(a => a.verified && a.image);
+  renderAll(display);
+  renderTicker(display);
+  renderDrawer();
+
+  document.getElementById('updated-time').textContent = new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('count-badge').textContent = display.length + ' Artikel';
+
+  loading = false; btn.disabled = false;
+  toast(`${articles.length} Artikel geladen`);
+  setTimeout(loadAll, 5 * 60 * 1000);
+}
+
+function getFiltered() {
+  let a = displayPool;
+  if (currentCat !== 'all') a = a.filter(x => x.cat === currentCat);
+  if (currentSrc) a = a.filter(x => x.source === currentSrc);
+  if (query) { const q=query.toLowerCase(); a = a.filter(x => x.title.toLowerCase().includes(q) || x.desc.toLowerCase().includes(q)); }
+  return a;
+}
+
+function renderAll(pool) {
+  if (pool) displayPool = pool;
+  const arts = getFiltered();
+  renderChips();
+  renderHero(arts.slice(0,3));
+  renderGrid(arts.slice(3));
+  const rest = Math.max(0, arts.length - 3);
+  document.getElementById('grid-count').textContent = rest ? rest + ' Artikel' : '';
+  initLazy();
+}
+
+function renderHero(arts) {
+  const el = document.getElementById('hero-grid');
+  if (!arts.length) { el.innerHTML = '<div style="grid-column:1/-1;background:var(--card);padding:60px;text-align:center;color:var(--muted)">Keine Artikel</div>'; return; }
+  const [primary, ...secondaries] = arts;
+  el.innerHTML = `
+    <div class="hero-card primary" onclick="openLink('${esc(primary.link)}')">
+      ${imgEl(primary.image, primary.title, 'hero-img', primary.cat)}
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        ${pill(primary.cat)}
+        <h2>${esc(primary.title)}</h2>
+        <div class="byline"><span>${esc(primary.source)}</span><span>·</span><span>${timeAgo(primary.date)}</span><span>·</span><span>${readTime(primary.desc)} Lesezeit</span></div>
+      </div>
+    </div>
+    ${secondaries.map(a => `
+      <div class="hero-card secondary" onclick="openLink('${esc(a.link)}')">
+        <div class="hero-inner">
+          <div class="sec-img-wrap">${imgEl(a.image, a.title, '', a.cat)}</div>
+          ${pill(a.cat)}
+          <h3>${esc(a.title)}</h3>
+          <div class="byline"><span>${esc(a.source)}</span><span>·</span><span>${timeAgo(a.date)}</span></div>
+        </div>
+      </div>`).join('')}`;
+}
+
+function renderGrid(arts) {
+  const el = document.getElementById('news-grid');
+  if (!arts.length) { el.innerHTML = `<div class="empty-state"><p>Keine Artikel gefunden</p></div>`; return; }
+  el.innerHTML = arts.map(a => `
+    <div class="news-card" onclick="openLink('${esc(a.link)}')">
+      <div class="card-img-wrap">${imgEl(a.image, a.title, '', a.cat)}</div>
+      <div class="card-body">
+        ${pill(a.cat)}
+        <h3>${esc(a.title)}</h3>
+        <p>${esc(a.desc)}</p>
+        <div class="card-foot"><span class="src">${esc(a.source)}</span><span>${timeAgo(a.date)} · ${readTime(a.desc)}</span></div>
+      </div>
+    </div>`).join('');
+}
+
+function renderChips() {
+  const verified = FEEDS.filter(f => f.verified);
+  const feeds = currentCat === 'all' ? verified : verified.filter(f => f.cat === currentCat);
+  document.getElementById('chip-list').innerHTML = feeds.map(f => {
+    const active = currentSrc === f.name;
+    return `<button class="chip cat-${f.cat}${active?' active':''}" onclick="setSrc('${esc(f.name)}')">${esc(f.name)}</button>`;
+  }).join('');
+}
+
+function renderTicker(pool) {
+  const src = pool || displayPool;
+  if (!src.length) return;
+  const items = src.slice(0, 16);
+  const html = [...items, ...items].map(a => `<span class="ticker-item"><span class="tag">${esc(CAT_LABELS[a.cat]||a.cat)}</span>${esc(a.title)}</span>`).join('');
+  document.getElementById('ticker-inner').innerHTML = html;
+  document.getElementById('ticker-bar').style.display = 'block';
+}
+
+function renderDrawer() {
+  const cats = ['general','fintech','tech','business','sport','croatia','religion'];
+  const bycat = Object.fromEntries(cats.map(c => [c, FEEDS.filter(f => f.cat === c)]));
+  const counts = {};
+  displayPool.forEach(a => { counts[a.source] = (counts[a.source]||0)+1; });
+  document.getElementById('drawer-body').innerHTML = cats.map(cat =>
+    `<div class="drawer-sect">${CAT_LABELS[cat]}</div>` +
+    bycat[cat].map(f => `<div class="drawer-item${f.verified?'':' unverified'}" onclick="${f.verified?`pickSrc('${esc(f.name)}')`:''}">
+      <span class="cat-pill cat-${f.cat}" style="font-size:9px">${CAT_LABELS[f.cat]}</span>
+      <span class="src-name">${esc(f.name)}${f.verified?' <span style="color:var(--green);font-size:10px">✓</span>':' <span style="color:var(--muted);font-size:10px">○</span>'}</span>
+      <span class="src-count">${counts[f.name]||0}</span>
+    </div>`).join('')
+  ).join('');
+}
+
+// ── CONTROLS ─────────────────────────────────────────────────────────────
+function setCategory(cat, btn) {
+  currentCat = cat; currentSrc = null;
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+
+  const isWatchlist = cat === 'watchlist', isArchiv = cat === 'archiv';
+  document.querySelector('.page').classList.toggle('watchlist-mode', isWatchlist);
+  document.querySelector('.page').classList.toggle('archiv-mode', isArchiv);
+  document.querySelector('.chip-bar').style.display = (isWatchlist||isArchiv) ? 'none' : '';
+
+  if (isWatchlist) { renderRadar(); renderWatchlistChips(); fetchStockNews(); }
+  else if (isArchiv) { renderArchiv(); }
+  else { currentCat = (cat==='watchlist'||cat==='archiv') ? 'all' : cat; renderAll(); }
+}
+
+function setSrc(name) { currentSrc = currentSrc===name?null:name; renderAll(); }
+function pickSrc(name) { currentSrc = currentSrc===name?null:name; closeDrawer(); renderAll(); }
+function openDrawer() { document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('open'); }
+function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
+
+function exportCSV() {
+  if (!articles.length) { toast('Keine Artikel zum Exportieren'); return; }
+  const heads = ['Title','Description','URL','Source','Category','Published'];
+  const csvCell = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
+  const rows = articles.map(a => [a.title,a.desc,a.link,a.source,a.cat,a.date.toISOString()].map(csvCell).join(','));
+  const csv = '﻿' + [heads.join(','), ...rows].join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const el = document.createElement('a'); el.href=url; el.download=`newsterminal_${new Date().toISOString().slice(0,10)}_${articles.length}articles.csv`; el.click();
+  URL.revokeObjectURL(url);
+  toast(`${articles.length} Artikel exportiert`);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// WATCHLIST & RADAR — merges NEWSFLOW-EOD's per-symbol wire reader with
+// a curated default list pulled from VOLATILITY-SCREENER's Long-/Short-
+// Score leaderboards (build-time snapshot, see CURATED constant above).
+// ══════════════════════════════════════════════════════════════════════
+let stockArticles = [];
+let activeSymbols = CURATED.topLong.slice(0,2).map(c=>c.symbol).concat(CURATED.topShort.slice(0,1).map(c=>c.symbol));
+if (!activeSymbols.length) activeSymbols = ['AAPL.US','NVDA.US','TSLA.US'];
+let currentSym = activeSymbols[0] || '';
+let stockBookmarks = JSON.parse(localStorage.getItem('nt-stock-bm') || '[]');
+
+function getStockSent(title) {
+  const t = (title||'').toUpperCase();
+  if (/FALL|DROP|CRASH|LOSS|DOWN\b|RISK|DECLINE|SLUMP|PLUNGE|SELL|BEAR|DEFICIT|WARN|CUT\b/.test(t)) return 'bear';
+  if (/RISE|GAIN|SURGE|UP\b|BULLISH|BUY|EARNINGS|GROWTH|BEAT|RECORD|HIGH\b|PROFIT|RALLY|BOOST/.test(t)) return 'bull';
+  return 'neutral';
+}
+function sentLabel(s) { return s==='bull'?'▲ Bullish':s==='bear'?'▼ Bearish':'● Neutral'; }
+
+function renderRadar() {
+  const mk = (c, dir) => `<div class="radar-chip ${dir}" onclick="selectDropSym('${esc(c.symbol)}')">
+    <span class="rc-sym">${esc(c.symbol.split('.')[0])}</span>
+    <span class="rc-score">${dir==='long'?'🟢 '+c.longScore.toFixed(1):'🔴 '+c.shortScore.toFixed(1)}</span>
+    <span class="rc-sub">${dir==='long'?c.bigDayUpPct.toFixed(0)+'% Aufwärtstage':c.bigDayDownPct.toFixed(0)+'% Abwärtstage'}</span>
+  </div>`;
+  document.getElementById('radar-long').innerHTML = CURATED.topLong.map(c=>mk(c,'long')).join('') || '<span style="color:var(--muted);font-size:12px">Keine Long-Kandidaten</span>';
+  document.getElementById('radar-short').innerHTML = CURATED.topShort.map(c=>mk(c,'short')).join('') || '<span style="color:var(--muted);font-size:12px">Keine Short-Kandidaten</span>';
+}
+
+function renderWatchlistChips() {
+  document.getElementById('wl-chips').innerHTML = activeSymbols.map(s => `<div class="stock-chip${s===currentSym?' active':''}" onclick="selectSym('${esc(s)}')">
+    <span>${esc(s.split('.')[0])}</span><span class="rm" onclick="removeSym(event,'${esc(s)}')" title="Entfernen">✕</span>
+  </div>`).join('');
+}
+function selectSym(sym) { currentSym = sym; renderWatchlistChips(); fetchStockNews(); }
+function addStockSymbol() {
+  const inp = document.getElementById('stock-sym-input');
+  const val = inp.value.trim().toUpperCase();
+  if (!val) return;
+  const sym = val.includes('.') ? val : val + '.US';
+  if (!activeSymbols.includes(sym)) activeSymbols.push(sym);
+  currentSym = sym; inp.value = '';
+  renderWatchlistChips(); fetchStockNews();
+}
+function removeSym(e, sym) {
+  e.stopPropagation();
+  activeSymbols = activeSymbols.filter(s => s !== sym);
+  if (currentSym === sym) currentSym = activeSymbols[0] || '';
+  renderWatchlistChips(); fetchStockNews();
+}
+function selectDropSym(val) {
+  if (!val) return;
+  if (!activeSymbols.includes(val)) activeSymbols.push(val);
+  currentSym = val;
+  const sel = document.getElementById('stock-quick-sel'); if (sel) sel.value = '';
+  renderWatchlistChips(); fetchStockNews();
+}
+
+function curationBadge(sym) {
+  const l = CURATED.topLong.find(c=>c.symbol===sym);
+  const s = CURATED.topShort.find(c=>c.symbol===sym);
+  if (l) return { cls:'long', text:'🟢 Long-Kandidat ('+l.longScore.toFixed(1)+')' };
+  if (s) return { cls:'short', text:'🔴 Short-Kandidat ('+s.shortScore.toFixed(1)+')' };
+  return { cls:'manual', text:'— manuell hinzugefügt' };
+}
+
+function calcStockKPIs() {
+  document.getElementById('kpi-sym').textContent = currentSym ? currentSym.split('.')[0] : '—';
+  const total = stockArticles.length;
+  document.getElementById('kpi-vol').textContent = total ? total + ' Items' : '—';
+  const cb = curationBadge(currentSym);
+  const badgeEl = document.getElementById('kpi-curation');
+  badgeEl.textContent = cb.text; badgeEl.className = 'kpi-badge ' + cb.cls;
+  if (!total) { document.getElementById('kpi-sent-val').textContent='—'; document.getElementById('kpi-sent-bar').style.width='50%'; return; }
+  const bulls = stockArticles.filter(a => getStockSent(a.title)==='bull').length;
+  const pct = Math.round((bulls/total)*100);
+  document.getElementById('kpi-sent-val').textContent = pct + '% Bullish';
+  document.getElementById('kpi-sent-bar').style.width = pct + '%';
+}
+
+async function fetchStockNewsRaw(sym) {
+  const r = await fetch(`${EOD_API}/eod/news?s=${encodeURIComponent(sym)}&offset=0&limit=30`, { signal: AbortSignal.timeout(15000) });
+  if (!r.ok) throw new Error('HTTP '+r.status);
+  const data = await r.json();
+  return Array.isArray(data) ? data : [];
+}
+async function fetchStockNewsCached(sym, force=false) {
+  if (!force) {
+    const cached = await idbGet('newsCache', sym);
+    if (cached && Date.now() - cached.ts < CACHE_TTL_STOCK) return cached.items;
+  }
+  const items = await fetchStockNewsRaw(sym);
+  idbPut('newsCache', { symbol: sym, ts: Date.now(), items });
+  return items;
+}
+
+async function fetchStockNews() {
+  const grid = document.getElementById('stock-grid');
+  updateAiCta();
+  if (!currentSym) { grid.innerHTML = '<div style="grid-column:1/-1;padding:50px;text-align:center;color:var(--muted);background:var(--card)">Wähle ein Asset aus der Watchlist.</div>'; calcStockKPIs(); return; }
+  grid.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  try { stockArticles = await fetchStockNewsCached(currentSym); }
+  catch { stockArticles = []; grid.innerHTML = '<div style="grid-column:1/-1;padding:50px;text-align:center;color:var(--muted);background:var(--card)">EOD API nicht erreichbar.</div>'; calcStockKPIs(); return; }
+  calcStockKPIs();
+  renderStockGrid();
+}
+
+function renderStockGrid() {
+  const grid = document.getElementById('stock-grid');
+  if (!stockArticles.length) { grid.innerHTML = '<div style="grid-column:1/-1;padding:50px;text-align:center;color:var(--muted);background:var(--card)">Keine Artikel für dieses Symbol.</div>'; return; }
+  const sym = currentSym.split('.')[0];
+  grid.innerHTML = stockArticles.map((a,i) => {
+    const sent = getStockSent(a.title);
+    const pool = STOCK_FB[sent];
+    const imgUrl = BASE + pool[hashCode(a.title)%pool.length];
+    const isBm = stockBookmarks.some(b => b.title === a.title);
+    return `<div class="stock-card" onclick="openStockModal(${i})">
+      <div class="stock-card-img">
+        <img data-src="${esc(imgUrl)}" alt="${esc(a.title)}" onload="this.classList.add('loaded')" onerror="this.classList.add('loaded')">
+        <span class="stock-sent-badge ${sent}">${sentLabel(sent)}</span>
+        <span class="stock-sym-chip">${esc(sym)}</span>
+      </div>
+      <div class="stock-card-body">
+        <h3>${esc(a.title)}</h3>
+        <div class="stock-card-foot">
+          <span class="src">${esc(a.source||'EOD Wire')}</span>
+          <div class="stock-foot-btns">
+            <button class="btn-intel" onclick="event.stopPropagation();openStockModal(${i})">Intel ▸</button>
+            <button class="btn-bm${isBm?' active':''}" onclick="toggleStockBm(event,${i})" title="Lesezeichen">★</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  initLazy();
+}
+
+function openStockModal(i) {
+  const a = stockArticles[i]; if (!a) return;
+  const dateStr = a.date ? new Date(a.date).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : 'EOD Wire';
+  document.getElementById('stock-modal-meta').textContent = (a.source||'MARKET INTEL') + '  //  ' + dateStr;
+  const raw = a.content || a.description || 'Kein ausführlicher Inhalt verfügbar.';
+  const paras = raw.split(/\n+/).filter(p=>p.trim()).map(p=>`<p>${esc(p.trim())}</p>`).join('');
+  document.getElementById('stock-modal-body').innerHTML = `<h1>${esc(a.title)}</h1>${paras}${a.link?`<p><a href="${esc(a.link)}" target="_blank" rel="noopener" style="color:var(--gold);font-weight:700">→ Originalartikel öffnen</a></p>`:''}`;
+  document.getElementById('stock-modal-ov').classList.add('open');
+}
+function closeStockModal() { document.getElementById('stock-modal-ov').classList.remove('open'); }
+function toggleStockBm(e, i) {
+  e.stopPropagation();
+  const a = stockArticles[i];
+  const idx = stockBookmarks.findIndex(b => b.title === a.title);
+  if (idx > -1) stockBookmarks.splice(idx,1); else stockBookmarks.push(a);
+  localStorage.setItem('nt-stock-bm', JSON.stringify(stockBookmarks));
+  renderStockGrid();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// AI-INSIGHT GENERATOR — ports GOLDSHIELD's LLM report logic, but checks
+// IndexedDB first (one record per symbol+day) before spending a model
+// call, and persists every generated report so it can be re-opened
+// instantly later from the Archiv tab.
+// ══════════════════════════════════════════════════════════════════════
+let aiChartInst = null;
+
+function insightId(sym, dateStr) { return sym + '_' + (dateStr || todayISO()); }
+
+function updateAiCta() {
+  const hint = document.getElementById('ai-cache-hint');
+  const btn = document.getElementById('btn-gen-insight');
+  if (!currentSym) { hint.innerHTML=''; btn.disabled=true; return; }
+  btn.disabled = false;
+  btn.textContent = '🤖 AI-Insight generieren (' + currentSym.split('.')[0] + ')';
+  idbGet('insights', insightId(currentSym)).then(rec => {
+    hint.innerHTML = rec ? `<span class="cache-badge">📦 heute bereits generiert · ${new Date(rec.generatedAt).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</span>` : '';
+  });
+}
+
+async function fetchHistory(symbol, from, to) {
+  try {
+    const res = await fetch(`${EOD_API}/eod/historical/${encodeURIComponent(symbol)}?from=${from}&to=${to}&period=d`);
+    if (!res.ok) return [];
+    const json = await res.json();
+    return Array.isArray(json) ? json : (json.data || []);
+  } catch { return []; }
+}
+
+function filterNewsForSymbol(news, symbol) {
+  const base = symbol.split('.')[0].toUpperCase();
+  return news.filter(item => (item.title||'').toUpperCase().includes(base) || (item.content||'').toUpperCase().includes(base));
+}
+
+function buildFallbackSummary(symbol, news) {
+  const themes = {};
+  news.forEach(item => {
+    const title = (item.title||'').toUpperCase();
+    let category = 'Sonstiges';
+    if (/LAWSUIT|LEGAL|PFAS/.test(title)) category = 'Recht & Litigation';
+    else if (/PRODUCT|AI|ALLIANCE|INNOVATION/.test(title)) category = 'Innovation & Strategie';
+    else if (/EARNINGS|REVENUE|DIVIDEND/.test(title)) category = 'Finanzielle Performance';
+    else if (/STOCK|PRICE|MARKET/.test(title)) category = 'Markt & Bewertung';
+    (themes[category] = themes[category]||[]).push(item);
+  });
+  let s = `KURZANALYSE ${symbol} (Fallback ohne LLM-Zugriff)\n\n${symbol} hat ${news.length} aktuelle Meldungen. Themenverteilung:\n\n`;
+  Object.entries(themes).forEach(([t, items]) => { s += `- ${t}: ${items.length} Meldung(en) — ${items.slice(0,2).map(i=>i.title).join('; ')}\n`; });
+  s += `\nHinweis: Dies ist eine regelbasierte Zusammenfassung, kein LLM-Report — die KI-API war nicht erreichbar.`;
+  return s;
+}
+
+async function generateAISummary(symbol, news) {
+  if (!news.length) return 'Keine relevanten News für dieses Symbol gefunden.';
+  const newsText = news.slice(0,15).map((n,i) => `[${i+1}] ${n.title}\n${n.content||'N/A'}`).join('\n\n');
+  try {
+    const response = await fetch(`${EOD_API}/api/chat`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: 'Du bist ein institutioneller Finanzanalyst. Deine Aufgabe ist es, Unternehmensnachrichten zu analysieren und einen fundierten, datengetriebenen Investment-Research-Report zu erstellen -- klar strukturiert, mit expliziter Nennung von Katalysatoren und Risiken, ohne die Fakten zu beschönigen.' },
+          { role: 'user', content: `Aktie: ${symbol}\n\nAktuelle News:\n${newsText}\n\nErstelle einen strukturierten Report (ca. 600-800 Wörter) auf Deutsch mit den Abschnitten:\n1. ZUSAMMENFASSUNG\n2. WICHTIGSTE THEMEN (Katalysatoren, Risiken, strategische Entwicklungen)\n3. RISIKOEINSCHÄTZUNG\n4. EINORDNUNG (kein Kursziel, sondern Kontext: was würde die Einschätzung ändern)\n\nZitiere konkrete Punkte aus den News wo möglich. Sei ehrlich über Unsicherheiten -- keine erfundenen Zahlen.` }
+        ],
+        temperature: 0.6, max_tokens: 2200,
+      }),
+      signal: AbortSignal.timeout(45000),
+    });
+    if (!response.ok) return buildFallbackSummary(symbol, news);
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || buildFallbackSummary(symbol, news);
+  } catch { return buildFallbackSummary(symbol, news); }
+}
+
+async function openInsight(symbol, forceRegen=false) {
+  if (!symbol) return;
+  document.getElementById('ai-modal-ov').classList.add('open');
+  document.getElementById('ai-modal-meta').textContent = symbol + '  //  AI-INSIGHT';
+
+  if (!forceRegen) {
+    const cached = await idbGet('insights', insightId(symbol));
+    if (cached) { renderInsight(cached, true); return; }
+  }
+
+  document.getElementById('ai-modal-body').innerHTML = `<div class="ai-loading"><div class="spinner" style="margin:0 auto 14px"></div>Sammle Marktdaten &amp; generiere KI-Analyse…</div>`;
+
+  const from = todayISO(-370), to = todayISO();
+  const [historyData, rawNews] = await Promise.all([ fetchHistory(symbol, from, to), fetchStockNewsCached(symbol) ]);
+  if (!historyData.length) { document.getElementById('ai-modal-body').innerHTML = '<div class="ai-loading">⚠ Keine Kursdaten verfügbar.</div>'; return; }
+
+  const prices = historyData.map(d => parseFloat(d.adjusted_close || d.close || 0)).filter(p=>!isNaN(p)&&p>0);
+  const dates = historyData.map(d => d.date);
+  const lastPrice = prices[prices.length-1], firstPrice = prices[0];
+  const change = firstPrice ? ((lastPrice-firstPrice)/firstPrice)*100 : 0;
+  const week52High = Math.max(...prices), week52Low = Math.min(...prices);
+  const position = week52High>week52Low ? ((lastPrice-week52Low)/(week52High-week52Low))*100 : 50;
+  const filteredNews = filterNewsForSymbol(rawNews, symbol);
+  const summary = await generateAISummary(symbol, filteredNews);
+
+  const record = {
+    id: insightId(symbol), symbol, date: todayISO(), generatedAt: new Date().toISOString(),
+    price: lastPrice, change, week52High, week52Low, position,
+    newsCount: filteredNews.length, summary, dates, indexed: prices.map(p => (p/firstPrice)*100),
+  };
+  await idbPut('insights', record);
+  renderInsight(record, false);
+  updateAiCta();
+}
+
+function renderInsight(rec, fromCache) {
+  const cacheNote = fromCache ? `<span class="cache-badge">📦 aus Archiv · generiert ${new Date(rec.generatedAt).toLocaleString('de-DE')}</span>` : '';
+  document.getElementById('ai-modal-body').innerHTML = `
+    <div class="ai-kpi-grid">
+      <div class="ai-kpi"><div class="ai-kpi-label">Kurs</div><div class="ai-kpi-val">${rec.price.toFixed(2)}</div></div>
+      <div class="ai-kpi"><div class="ai-kpi-label">Δ 1J</div><div class="ai-kpi-val">${rec.change>=0?'+':''}${rec.change.toFixed(2)}%</div></div>
+      <div class="ai-kpi"><div class="ai-kpi-label">52W Hoch</div><div class="ai-kpi-val">${rec.week52High.toFixed(2)}</div></div>
+      <div class="ai-kpi"><div class="ai-kpi-label">52W Tief</div><div class="ai-kpi-val">${rec.week52Low.toFixed(2)}</div></div>
+      <div class="ai-kpi"><div class="ai-kpi-label">Position</div><div class="ai-kpi-val">${rec.position.toFixed(0)}%</div></div>
+    </div>
+    <div class="ai-chart-wrap"><canvas id="ai-chart"></canvas></div>
+    <div class="ai-report-box">
+      <div class="ai-report-label">🤖 AI-Analyse (GPT-4o-mini) · ${rec.newsCount} News-Quellen ${cacheNote}</div>
+      ${esc(rec.summary)}
+    </div>
+    <div class="ai-export-row">
+      <button class="btn-ghost" onclick='downloadInsight(${JSON.stringify(JSON.stringify(rec))}, "txt")'>Export TXT</button>
+      <button class="btn-ghost" onclick='downloadInsight(${JSON.stringify(JSON.stringify(rec))}, "json")'>Export JSON</button>
+      <button class="btn-ghost" onclick="openInsight('${esc(rec.symbol)}', true)">🔄 Neu generieren</button>
+    </div>
+    <div class="ai-disclaimer">Automatisch generierte Analyse auf Basis öffentlicher News-Feeds, kein Anlagerat. LLM-Ausgaben können Fehler enthalten -- Zahlen und Fakten vor einer Entscheidung gegenprüfen. Ein Report pro Symbol &amp; Kalendertag wird in IndexedDB gespeichert (Archiv-Tab); "Neu generieren" überschreibt den heutigen Eintrag.</div>
+  `;
+  if (aiChartInst) { aiChartInst.destroy(); aiChartInst = null; }
+  const ctx = document.getElementById('ai-chart')?.getContext('2d');
+  if (ctx && rec.indexed) {
+    const isLight = document.documentElement.getAttribute('data-theme')==='light';
+    const grid = isLight?'rgba(0,0,0,.08)':'rgba(255,255,255,.06)';
+    const tick = isLight?'#475569':'#94a3b8';
+    aiChartInst = new Chart(ctx, { type:'line', data:{ labels: rec.dates, datasets:[{ data: rec.indexed, borderColor:'#00c8f0', backgroundColor:'rgba(0,200,240,.12)', borderWidth:2, pointRadius:0, tension:.15, fill:true }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ticks:{color:tick,maxTicksLimit:6,font:{size:9}},grid:{display:false}}, y:{ticks:{color:tick,font:{size:10}},grid:{color:grid}} } } });
+  }
+}
+
+function downloadInsight(recJson, format) {
+  const rec = JSON.parse(recJson);
+  const date = rec.date;
+  let content, filename, type;
+  if (format === 'txt') {
+    content = `AI-INSIGHT — ${rec.symbol}\n${'='.repeat(70)}\nDatum: ${date} | Generiert: ${new Date(rec.generatedAt).toLocaleString('de-DE')}\nKurs: ${rec.price.toFixed(2)} | 52W: ${rec.week52Low.toFixed(2)}-${rec.week52High.toFixed(2)} | Δ1J: ${rec.change>=0?'+':''}${rec.change.toFixed(2)}%\n\n${rec.summary}\n`;
+    filename = `AI-INSIGHT-${rec.symbol}-${date}.txt`; type = 'text/plain';
+  } else {
+    content = JSON.stringify(rec, null, 2);
+    filename = `AI-INSIGHT-${rec.symbol}-${date}.json`; type = 'application/json';
+  }
+  const el = document.createElement('a');
+  el.href = 'data:' + type + ';charset=utf-8,' + encodeURIComponent(content);
+  el.download = filename; el.click();
+  toast('Exportiert: ' + filename);
+}
+
+function closeAiModal(e) {
+  if (e && e.target !== document.getElementById('ai-modal-ov')) return;
+  document.getElementById('ai-modal-ov').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// AI-ARCHIV — browses every insight ever persisted to IndexedDB.
+// ══════════════════════════════════════════════════════════════════════
+async function renderArchiv() {
+  const all = await idbGetAll('insights');
+  all.sort((a,b) => new Date(b.generatedAt) - new Date(a.generatedAt));
+  const q = (document.getElementById('archiv-search').value || '').trim().toUpperCase();
+  const filtered = q ? all.filter(r => r.symbol.toUpperCase().includes(q)) : all;
+  document.getElementById('archiv-count').textContent = filtered.length + ' Reports';
+  const list = document.getElementById('archiv-list');
+  if (!filtered.length) { list.innerHTML = '<div class="empty-state" style="background:var(--card)"><p>Noch keine AI-Insights generiert. Wechsle zu "Watchlist &amp; Radar" und klicke auf "AI-Insight generieren".</p></div>'; return; }
+  list.innerHTML = filtered.map(r => `
+    <div class="archiv-row" onclick="openInsightFromArchiv('${esc(r.id)}')">
+      <span class="a-sym">${esc(r.symbol.split('.')[0])}</span>
+      <span class="a-date">${new Date(r.generatedAt).toLocaleString('de-DE')}</span>
+      <span class="a-price">${r.price.toFixed(2)}</span>
+      <span class="a-change" style="color:${r.change>=0?'var(--green)':'var(--red)'}">${r.change>=0?'+':''}${r.change.toFixed(2)}%</span>
+      <span class="a-preview">${esc((r.summary||'').slice(0,140).replace(/\n/g,' '))}…</span>
+    </div>`).join('');
+}
+async function openInsightFromArchiv(id) {
+  const rec = await idbGet('insights', id);
+  if (!rec) return toast('Report nicht gefunden', true);
+  document.getElementById('ai-modal-ov').classList.add('open');
+  document.getElementById('ai-modal-meta').textContent = rec.symbol + '  //  AI-INSIGHT';
+  renderInsight(rec, true);
+}
+function clearArchivSearch() { document.getElementById('archiv-search').value=''; renderArchiv(); }
+
+// ── IN-PAGE "CRON": periodic watchlist news refresh while tab is open ──
+setInterval(() => { if (document.querySelector('.page').classList.contains('watchlist-mode') && currentSym) fetchStockNews(); }, WATCHLIST_REFRESH);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && document.querySelector('.page').classList.contains('watchlist-mode')) fetchStockNews(); });
+
+// ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement !== document.getElementById('search')) { e.preventDefault(); document.getElementById('search').focus(); }
+  if (e.key === 'Escape') { closeDrawer(); closeStockModal(); closeAiModal({target:document.getElementById('ai-modal-ov')}); document.getElementById('search').blur(); }
+  if (e.key === 'r' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT') loadAll(true);
+});
+document.getElementById('search').addEventListener('input', e => { query = e.target.value.trim(); renderAll(); });
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+loadAll();
+</script>
+</body>
+</html>

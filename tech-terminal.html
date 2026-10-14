@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../../REPLIT-export/favicon.svg" type="image/svg+xml">
+<title>GENITUS TECH-TERMINAL // Nasdaq Health-Check & Fibonacci</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--surface:#0d1117;--panel:#111820;--border:#1e2d3d;--accent:#00d4ff;--gold:#f0c040;--green:#00ff88;--red:#ff3b5c;--muted:#7d92a8;--text:#c8d8e8;--bright:#ffffff;--mono:'Space Mono',monospace;--sans:'Rajdhani',sans-serif;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.5;}
+  header{background:var(--surface);border-bottom:2px solid var(--border);padding:20px 24px;}
+  header h1{font-family:var(--mono);font-size:22px;color:var(--bright);letter-spacing:1px;}
+  header p{color:var(--muted);font-size:13px;margin-top:6px;max-width:900px;}
+  nav{display:flex;gap:10px;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  nav a{font-family:var(--mono);font-size:11px;padding:8px 14px;border:1px solid var(--border);border-radius:5px;color:var(--text);text-decoration:none;}
+  nav a:hover{border-color:var(--accent);color:var(--accent);}
+  main{max-width:1300px;margin:0 auto;padding:24px;}
+  section{margin-bottom:40px;}
+  section > h2{font-family:var(--mono);font-size:16px;letter-spacing:2px;color:var(--gold);border-bottom:2px solid var(--border);padding-bottom:10px;margin-bottom:16px;text-transform:uppercase;}
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;}
+  .card.wide{grid-column:1/-1;}
+  .card h3,.card h4{font-family:var(--mono);font-size:13px;color:var(--accent);margin-bottom:10px;}
+  .bench-head{font-family:var(--mono);font-size:13px;color:var(--bright);margin:20px 0 10px;text-transform:uppercase;letter-spacing:1px;}
+  .stats-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .stat{flex:1;min-width:110px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 10px;}
+  .stat .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+  .stat .v{font-family:var(--mono);font-size:18px;font-weight:700;margin-top:2px;}
+  .stat .sub{font-size:10px;color:var(--muted);margin-top:2px;}
+  .up{color:var(--green);} .dn{color:var(--red);} .muted{color:var(--muted);}
+  .meta{font-size:11px;color:var(--muted);margin-bottom:10px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  th{text-align:left;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--border);text-transform:uppercase;font-size:10px;position:sticky;top:0;background:var(--surface);}
+  td{padding:6px 8px;border-bottom:1px solid var(--border);}
+  .mono{font-family:var(--mono);}
+  tr.unhealthy{background:rgba(255,59,92,0.06);}
+  .health-wrap{max-height:600px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;}
+  .setup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;}
+  .setup{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px;border-left:3px solid var(--border);}
+  .setup-long{border-left-color:var(--green);}
+  .setup-short{border-left-color:var(--red);}
+  .setup-head{display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px;}
+  .setup-name{font-size:11px;color:var(--muted);margin-bottom:4px;}
+  .setup-meta{font-size:10px;color:var(--muted);margin-bottom:8px;}
+  table.levels th,table.levels td{font-size:11px;padding:4px 6px;}
+  .summary-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+  .summary-bar .pill{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-family:var(--mono);font-size:12px;}
+</style>
+</head>
+<body>
+<header>
+  <h1>💻 TECH-TERMINAL</h1>
+  <p>Kuratierte Auswahl NASDAQ-gelisteter Tech-/Tech-naher Aktien, keine vollstaendige Nasdaq-Composite-Liste (~3000 Titel) - jeder Eintrag gegen die Live-EOD-API health-gecheckt. Health-Check gegen die Live-EOD-API, Stand 12.8.2026, 13:00:42.</p>
+</header>
+<nav>
+  <a href="../../REPLIT-export/index.html">🏠 Workshell</a>
+  <a href="mega-nasdaq-terminal.html">🚀 Mega-Nasdaq-Terminal</a>
+  <a href="dachboden-terminal.html">🎯 Dach/Boden-Terminal</a>
+  <a href="fibonacci-terminal.html">🌀 Fibonacci-Terminal (alle Aktien)</a>
+</nav>
+<main>
+
+<section>
+  <h2>Symbol-Health-Check</h2>
+  <div class="summary-bar">
+    <div class="pill">Kandidaten: 109</div>
+    <div class="pill up">Gesund: 107</div>
+    <div class="pill dn">Fehlerhaft: 2</div>
+  </div>
+  <div class="health-wrap">
+  <table><thead><tr><th>Symbol</th><th>Name</th><th>Sektor</th><th>Status</th><th>Letzter Kurs am</th><th>Kurs</th></tr></thead><tbody>
+    
+  <tr class="">
+    <td class="mono">AAPL.US</td><td>Apple</td><td>Hardware</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">304.91</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ADBE.US</td><td>Adobe</td><td>Software</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">263.71</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ADI.US</td><td>Analog Devices</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">385.30</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ADP.US</td><td>Automatic Data Processing</td><td>HR-Software</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">271.09</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ADSK.US</td><td>Autodesk</td><td>Design-Software</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">251.59</td>
+  </tr>
+  <tr class="">
+    <td class="mono">AFRM.US</td><td>Affirm</td><td>Fintech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">76.70</td>
+  </tr>
+  <tr class="">
+    <td class="mono">AKAM.US</td><td>Akamai</td><td>CDN/Cloud</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">116.67</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ALGN.US</td><td>Align Technology</td><td>Medizintechnik</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">172.96</td>
+  </tr>
+  <tr class="">
+    <td class="mono">AMAT.US</td><td>Applied Materials</td><td>Halbleiter-Equipment</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">525.61</td>
+  </tr>
+  <tr class="">
+    <td class="mono">AMD.US</td><td>AMD</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">474.32</td>
+  </tr>
+  <tr class="">
+    <td class="mono">AMGN.US</td><td>Amgen</td><td>Biotech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">414.30</td>
+  </tr>
+  <tr class="">
+    <td class="mono">AMZN.US</td><td>Amazon</td><td>Internet/Cloud</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">272.27</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ANET.US</td><td>Arista Networks</td><td>Netzwerk</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">197.85</td>
+  </tr>
+  <tr class="unhealthy">
+    <td class="mono">ANSS.US</td><td>Ansys</td><td>Simulations-Software</td>
+    <td><span class="dn">✗ Keine Daten</span></td>
+    <td>—</td>
+    <td class="mono">—</td>
+  </tr>
+  <tr class="">
+    <td class="mono">AVGO.US</td><td>Broadcom</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">416.08</td>
+  </tr>
+  <tr class="">
+    <td class="mono">BIIB.US</td><td>Biogen</td><td>Biotech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">203.89</td>
+  </tr>
+  <tr class="">
+    <td class="mono">BKNG.US</td><td>Booking Holdings</td><td>Reise/Internet</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">212.87</td>
+  </tr>
+  <tr class="">
+    <td class="mono">CDNS.US</td><td>Cadence Design</td><td>EDA-Software</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">327.53</td>
+  </tr>
+  <tr class="">
+    <td class="mono">CDW.US</td><td>CDW Corp</td><td>IT-Distribution</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">135.37</td>
+  </tr>
+  <tr class="">
+    <td class="mono">CEG.US</td><td>Constellation Energy</td><td>Energie</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">278.36</td>
+  </tr>
+  <tr class="">
+    <td class="mono">CHKP.US</td><td>Check Point Software</td><td>Security</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">129.12</td>
+  </tr>
+  <tr class="">
+    <td class="mono">CMCSA.US</td><td>Comcast</td><td>Medien/Telekom</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">25.65</td>
+  </tr>
+  <tr class="">
+    <td class="mono">COIN.US</td><td>Coinbase</td><td>Fintech/Krypto</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">148.58</td>
+  </tr>
+  <tr class="">
+    <td class="mono">COST.US</td><td>Costco</td><td>Konsum</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">944.32</td>
+  </tr>
+  <tr class="">
+    <td class="mono">CPRT.US</td><td>Copart</td><td>Internet-Marktplatz</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">29.40</td>
+  </tr>
+  <tr class="">
+    <td class="mono">CRWD.US</td><td>CrowdStrike</td><td>Security-SaaS</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">221.90</td>
+  </tr>
+  <tr class="">
+    <td class="mono">CSCO.US</td><td>Cisco</td><td>Netzwerk</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">120.43</td>
+  </tr>
+  <tr class="">
+    <td class="mono">CSX.US</td><td>CSX Corp</td><td>Logistik</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">49.94</td>
+  </tr>
+  <tr class="">
+    <td class="mono">CTSH.US</td><td>Cognizant</td><td>IT-Dienstleistung</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">58.60</td>
+  </tr>
+  <tr class="">
+    <td class="mono">DDOG.US</td><td>Datadog</td><td>DevOps-SaaS</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">246.78</td>
+  </tr>
+  <tr class="">
+    <td class="mono">DLTR.US</td><td>Dollar Tree</td><td>Konsum</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">128.06</td>
+  </tr>
+  <tr class="">
+    <td class="mono">DOCU.US</td><td>DocuSign</td><td>SaaS</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">59.34</td>
+  </tr>
+  <tr class="">
+    <td class="mono">DXCM.US</td><td>DexCom</td><td>Medizintechnik</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">89.53</td>
+  </tr>
+  <tr class="">
+    <td class="mono">EA.US</td><td>Electronic Arts</td><td>Gaming</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-05</td>
+    <td class="mono">209.70</td>
+  </tr>
+  <tr class="">
+    <td class="mono">EBAY.US</td><td>eBay</td><td>E-Commerce</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">106.01</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ENPH.US</td><td>Enphase Energy</td><td>Halbleiter/Solar</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">42.30</td>
+  </tr>
+  <tr class="">
+    <td class="mono">EPAM.US</td><td>EPAM Systems</td><td>IT-Dienstleistung</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">99.90</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ETSY.US</td><td>Etsy</td><td>E-Commerce</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">79.48</td>
+  </tr>
+  <tr class="">
+    <td class="mono">EXPE.US</td><td>Expedia</td><td>Reise/Internet</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">321.07</td>
+  </tr>
+  <tr class="">
+    <td class="mono">FAST.US</td><td>Fastenal</td><td>Industrie</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">52.38</td>
+  </tr>
+  <tr class="">
+    <td class="mono">FFIV.US</td><td>F5 Inc.</td><td>Netzwerk-Software</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">414.00</td>
+  </tr>
+  <tr class="">
+    <td class="mono">FSLR.US</td><td>First Solar</td><td>Solar-Tech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">240.91</td>
+  </tr>
+  <tr class="">
+    <td class="mono">FTNT.US</td><td>Fortinet</td><td>Security</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">161.89</td>
+  </tr>
+  <tr class="">
+    <td class="mono">GILD.US</td><td>Gilead Sciences</td><td>Biotech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">135.77</td>
+  </tr>
+  <tr class="">
+    <td class="mono">GOOG.US</td><td>Alphabet (C)</td><td>Internet</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">343.00</td>
+  </tr>
+  <tr class="">
+    <td class="mono">GOOGL.US</td><td>Alphabet (A)</td><td>Internet</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">343.80</td>
+  </tr>
+  <tr class="">
+    <td class="mono">GRMN.US</td><td>Garmin</td><td>Hardware</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">309.65</td>
+  </tr>
+  <tr class="">
+    <td class="mono">HON.US</td><td>Honeywell</td><td>Industrie/Tech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">230.12</td>
+  </tr>
+  <tr class="">
+    <td class="mono">HOOD.US</td><td>Robinhood</td><td>Fintech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">94.38</td>
+  </tr>
+  <tr class="">
+    <td class="mono">IDXX.US</td><td>IDEXX Laboratories</td><td>Medizintechnik</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">586.64</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ILMN.US</td><td>Illumina</td><td>Genomik</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">192.84</td>
+  </tr>
+  <tr class="">
+    <td class="mono">INTC.US</td><td>Intel</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">97.71</td>
+  </tr>
+  <tr class="">
+    <td class="mono">INTU.US</td><td>Intuit</td><td>Software</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">336.44</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ISRG.US</td><td>Intuitive Surgical</td><td>Medizintechnik</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">401.23</td>
+  </tr>
+  <tr class="unhealthy">
+    <td class="mono">JNPR.US</td><td>Juniper Networks</td><td>Netzwerk</td>
+    <td><span class="dn">✗ Keine Daten</span></td>
+    <td>—</td>
+    <td class="mono">—</td>
+  </tr>
+  <tr class="">
+    <td class="mono">KDP.US</td><td>Keurig Dr Pepper</td><td>Konsum</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">29.18</td>
+  </tr>
+  <tr class="">
+    <td class="mono">KEYS.US</td><td>Keysight Technologies</td><td>Messtechnik</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">343.70</td>
+  </tr>
+  <tr class="">
+    <td class="mono">KHC.US</td><td>Kraft Heinz</td><td>Konsum</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">24.65</td>
+  </tr>
+  <tr class="">
+    <td class="mono">KLAC.US</td><td>KLA Corp</td><td>Halbleiter-Equipment</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">200.47</td>
+  </tr>
+  <tr class="">
+    <td class="mono">LRCX.US</td><td>Lam Research</td><td>Halbleiter-Equipment</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">311.41</td>
+  </tr>
+  <tr class="">
+    <td class="mono">LULU.US</td><td>Lululemon</td><td>Konsum</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">125.61</td>
+  </tr>
+  <tr class="">
+    <td class="mono">MAR.US</td><td>Marriott International</td><td>Reise</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">349.49</td>
+  </tr>
+  <tr class="">
+    <td class="mono">MCHP.US</td><td>Microchip Technology</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">81.02</td>
+  </tr>
+  <tr class="">
+    <td class="mono">MDB.US</td><td>MongoDB</td><td>Datenbank-SaaS</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">439.16</td>
+  </tr>
+  <tr class="">
+    <td class="mono">MDLZ.US</td><td>Mondelez</td><td>Konsum</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">61.78</td>
+  </tr>
+  <tr class="">
+    <td class="mono">META.US</td><td>Meta Platforms</td><td>Internet</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">599.12</td>
+  </tr>
+  <tr class="">
+    <td class="mono">MRNA.US</td><td>Moderna</td><td>Biotech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">60.57</td>
+  </tr>
+  <tr class="">
+    <td class="mono">MRVL.US</td><td>Marvell Technology</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">212.31</td>
+  </tr>
+  <tr class="">
+    <td class="mono">MSFT.US</td><td>Microsoft</td><td>Software</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">503.81</td>
+  </tr>
+  <tr class="">
+    <td class="mono">MTCH.US</td><td>Match Group</td><td>Internet</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">36.80</td>
+  </tr>
+  <tr class="">
+    <td class="mono">MU.US</td><td>Micron</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">868.52</td>
+  </tr>
+  <tr class="">
+    <td class="mono">NFLX.US</td><td>Netflix</td><td>Streaming</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">74.79</td>
+  </tr>
+  <tr class="">
+    <td class="mono">NTAP.US</td><td>NetApp</td><td>Storage</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">198.47</td>
+  </tr>
+  <tr class="">
+    <td class="mono">NVDA.US</td><td>Nvidia</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">217.50</td>
+  </tr>
+  <tr class="">
+    <td class="mono">NXPI.US</td><td>NXP Semiconductors</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">236.38</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ODFL.US</td><td>Old Dominion Freight Line</td><td>Logistik</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">209.44</td>
+  </tr>
+  <tr class="">
+    <td class="mono">OKTA.US</td><td>Okta</td><td>Identity-SaaS</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">150.33</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ON.US</td><td>ON Semiconductor</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">81.11</td>
+  </tr>
+  <tr class="">
+    <td class="mono">PANW.US</td><td>Palo Alto Networks</td><td>Security</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">383.80</td>
+  </tr>
+  <tr class="">
+    <td class="mono">PAYX.US</td><td>Paychex</td><td>HR-Software</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">121.30</td>
+  </tr>
+  <tr class="">
+    <td class="mono">PCAR.US</td><td>PACCAR</td><td>Industrie</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">132.53</td>
+  </tr>
+  <tr class="">
+    <td class="mono">PEP.US</td><td>PepsiCo</td><td>Konsum</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">138.41</td>
+  </tr>
+  <tr class="">
+    <td class="mono">PINS.US</td><td>Pinterest</td><td>Social Media</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">23.75</td>
+  </tr>
+  <tr class="">
+    <td class="mono">PTC.US</td><td>PTC Inc.</td><td>Software</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">150.44</td>
+  </tr>
+  <tr class="">
+    <td class="mono">PYPL.US</td><td>PayPal</td><td>Fintech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">59.00</td>
+  </tr>
+  <tr class="">
+    <td class="mono">QCOM.US</td><td>Qualcomm</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">162.68</td>
+  </tr>
+  <tr class="">
+    <td class="mono">QRVO.US</td><td>Qorvo</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">96.68</td>
+  </tr>
+  <tr class="">
+    <td class="mono">REGN.US</td><td>Regeneron</td><td>Biotech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">797.00</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ROKU.US</td><td>Roku</td><td>Streaming-Hardware</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">150.91</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ROST.US</td><td>Ross Stores</td><td>Konsum</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">251.81</td>
+  </tr>
+  <tr class="">
+    <td class="mono">SBUX.US</td><td>Starbucks</td><td>Konsum</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">106.66</td>
+  </tr>
+  <tr class="">
+    <td class="mono">SIRI.US</td><td>Sirius XM</td><td>Medien</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">28.51</td>
+  </tr>
+  <tr class="">
+    <td class="mono">SNAP.US</td><td>Snap Inc.</td><td>Social Media</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">5.51</td>
+  </tr>
+  <tr class="">
+    <td class="mono">SNPS.US</td><td>Synopsys</td><td>EDA-Software</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">410.91</td>
+  </tr>
+  <tr class="">
+    <td class="mono">STX.US</td><td>Seagate Technology</td><td>Storage</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">820.52</td>
+  </tr>
+  <tr class="">
+    <td class="mono">SWKS.US</td><td>Skyworks Solutions</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">68.33</td>
+  </tr>
+  <tr class="">
+    <td class="mono">TEAM.US</td><td>Atlassian</td><td>Software</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">154.08</td>
+  </tr>
+  <tr class="">
+    <td class="mono">TER.US</td><td>Teradyne</td><td>Halbleiter-Equipment</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">379.56</td>
+  </tr>
+  <tr class="">
+    <td class="mono">TSLA.US</td><td>Tesla</td><td>Hardware/EV</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">332.81</td>
+  </tr>
+  <tr class="">
+    <td class="mono">TTD.US</td><td>The Trade Desk</td><td>AdTech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">13.56</td>
+  </tr>
+  <tr class="">
+    <td class="mono">TTWO.US</td><td>Take-Two Interactive</td><td>Gaming</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">250.50</td>
+  </tr>
+  <tr class="">
+    <td class="mono">TWLO.US</td><td>Twilio</td><td>Cloud-Kommunikation</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">255.95</td>
+  </tr>
+  <tr class="">
+    <td class="mono">TXN.US</td><td>Texas Instruments</td><td>Halbleiter</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">281.24</td>
+  </tr>
+  <tr class="">
+    <td class="mono">UPST.US</td><td>Upstart</td><td>Fintech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">29.89</td>
+  </tr>
+  <tr class="">
+    <td class="mono">VRSK.US</td><td>Verisk Analytics</td><td>Daten/Analytics</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">180.97</td>
+  </tr>
+  <tr class="">
+    <td class="mono">VRTX.US</td><td>Vertex Pharmaceuticals</td><td>Biotech</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">529.65</td>
+  </tr>
+  <tr class="">
+    <td class="mono">WDAY.US</td><td>Workday</td><td>Enterprise-SaaS</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">181.27</td>
+  </tr>
+  <tr class="">
+    <td class="mono">WDC.US</td><td>Western Digital</td><td>Storage</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">437.93</td>
+  </tr>
+  <tr class="">
+    <td class="mono">ZS.US</td><td>Zscaler</td><td>Security-SaaS</td>
+    <td><span class="up">✓ OK</span></td>
+    <td>2026-08-11</td>
+    <td class="mono">178.55</td>
+  </tr>
+  </tbody></table>
+  </div>
+</section>
+
+<section>
+  <h2>🔴🟢 Aktuelle Fibonacci-Setups (nur Tech)</h2>
+  
+  <div class="card wide">
+    <h3>Nasdaq Composite · Fibonacci-Akkumulation (4 Tranchen) — stärkste aktuelle Tech-Setups</h3>
+    <div class="setup-grid">
+    
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">HON.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Honeywell · Industrie/Tech</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 230.12 · Excess +105.0%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">197.19</td><td>10%</td></tr><tr><td>50%</td><td class="mono">179.89</td><td>20%</td></tr><tr><td>38%</td><td class="mono">162.58</td><td>30%</td></tr><tr><td>0%</td><td class="mono">107.77</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-short">
+        <div class="setup-head"><span class="mono">KLAC.US</span><span class="dn">SHORT</span></div>
+        <div class="setup-name">KLA Corp · Halbleiter-Equipment</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 200.47 · Excess -89.7%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">1029.17</td><td>10%</td></tr><tr><td>50%</td><td class="mono">1300.55</td><td>20%</td></tr><tr><td>38%</td><td class="mono">1571.93</td><td>30%</td></tr><tr><td>0%</td><td class="mono">2431.29</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">TEAM.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Atlassian · Software</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 154.08 · Excess +75.3%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">125.13</td><td>10%</td></tr><tr><td>50%</td><td class="mono">115.31</td><td>20%</td></tr><tr><td>38%</td><td class="mono">105.50</td><td>30%</td></tr><tr><td>0%</td><td class="mono">74.41</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">NTAP.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">NetApp · Storage</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 198.47 · Excess +64.6%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">168.69</td><td>10%</td></tr><tr><td>50%</td><td class="mono">158.09</td><td>20%</td></tr><tr><td>38%</td><td class="mono">147.48</td><td>30%</td></tr><tr><td>0%</td><td class="mono">113.90</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">PANW.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Palo Alto Networks · Security</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 383.80 · Excess +57.2%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">318.21</td><td>10%</td></tr><tr><td>50%</td><td class="mono">296.43</td><td>20%</td></tr><tr><td>38%</td><td class="mono">274.64</td><td>30%</td></tr><tr><td>0%</td><td class="mono">205.65</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">EXPE.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Expedia · Reise/Internet</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 321.07 · Excess +46.6%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">283.83</td><td>10%</td></tr><tr><td>50%</td><td class="mono">268.83</td><td>20%</td></tr><tr><td>38%</td><td class="mono">253.83</td><td>30%</td></tr><tr><td>0%</td><td class="mono">206.35</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+    </div>
+  </div>
+  <div class="card wide">
+    <h3>Nasdaq Composite · 3er Fibonacci-Pyramide (3 Tranchen) — stärkste aktuelle Tech-Setups</h3>
+    <div class="setup-grid">
+    
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">HON.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Honeywell · Industrie/Tech</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 230.12 · Excess +105.0%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">197.19</td><td>20%</td></tr><tr><td>50%</td><td class="mono">179.89</td><td>30%</td></tr><tr><td>38%</td><td class="mono">162.58</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-short">
+        <div class="setup-head"><span class="mono">KLAC.US</span><span class="dn">SHORT</span></div>
+        <div class="setup-name">KLA Corp · Halbleiter-Equipment</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 200.47 · Excess -89.7%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">1029.17</td><td>20%</td></tr><tr><td>50%</td><td class="mono">1300.55</td><td>30%</td></tr><tr><td>38%</td><td class="mono">1571.93</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">TEAM.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Atlassian · Software</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 154.08 · Excess +75.3%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">125.13</td><td>20%</td></tr><tr><td>50%</td><td class="mono">115.31</td><td>30%</td></tr><tr><td>38%</td><td class="mono">105.50</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">NTAP.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">NetApp · Storage</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 198.47 · Excess +64.6%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">168.69</td><td>20%</td></tr><tr><td>50%</td><td class="mono">158.09</td><td>30%</td></tr><tr><td>38%</td><td class="mono">147.48</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">PANW.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Palo Alto Networks · Security</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 383.80 · Excess +57.2%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">318.21</td><td>20%</td></tr><tr><td>50%</td><td class="mono">296.43</td><td>30%</td></tr><tr><td>38%</td><td class="mono">274.64</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">EXPE.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Expedia · Reise/Internet</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 321.07 · Excess +46.6%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">283.83</td><td>20%</td></tr><tr><td>50%</td><td class="mono">268.83</td><td>30%</td></tr><tr><td>38%</td><td class="mono">253.83</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+    </div>
+  </div>
+  <div class="card wide">
+    <h3>S&P 500 · Fibonacci-Akkumulation (4 Tranchen) — stärkste aktuelle Tech-Setups</h3>
+    <div class="setup-grid">
+    
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">HON.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Honeywell · Industrie/Tech</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 230.12 · Excess +101.5%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">197.19</td><td>10%</td></tr><tr><td>50%</td><td class="mono">179.89</td><td>20%</td></tr><tr><td>38%</td><td class="mono">162.58</td><td>30%</td></tr><tr><td>0%</td><td class="mono">107.77</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-short">
+        <div class="setup-head"><span class="mono">KLAC.US</span><span class="dn">SHORT</span></div>
+        <div class="setup-name">KLA Corp · Halbleiter-Equipment</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 200.47 · Excess -93.2%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">1029.17</td><td>10%</td></tr><tr><td>50%</td><td class="mono">1300.55</td><td>20%</td></tr><tr><td>38%</td><td class="mono">1571.93</td><td>30%</td></tr><tr><td>0%</td><td class="mono">2431.29</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">TEAM.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Atlassian · Software</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 154.08 · Excess +71.9%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">125.13</td><td>10%</td></tr><tr><td>50%</td><td class="mono">115.31</td><td>20%</td></tr><tr><td>38%</td><td class="mono">105.50</td><td>30%</td></tr><tr><td>0%</td><td class="mono">74.41</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">NTAP.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">NetApp · Storage</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 198.47 · Excess +61.2%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">168.69</td><td>10%</td></tr><tr><td>50%</td><td class="mono">158.09</td><td>20%</td></tr><tr><td>38%</td><td class="mono">147.48</td><td>30%</td></tr><tr><td>0%</td><td class="mono">113.90</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">PANW.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Palo Alto Networks · Security</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 383.80 · Excess +53.7%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">318.21</td><td>10%</td></tr><tr><td>50%</td><td class="mono">296.43</td><td>20%</td></tr><tr><td>38%</td><td class="mono">274.64</td><td>30%</td></tr><tr><td>0%</td><td class="mono">205.65</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">EXPE.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Expedia · Reise/Internet</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 321.07 · Excess +43.1%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">283.83</td><td>10%</td></tr><tr><td>50%</td><td class="mono">268.83</td><td>20%</td></tr><tr><td>38%</td><td class="mono">253.83</td><td>30%</td></tr><tr><td>0%</td><td class="mono">206.35</td><td>40%</td></tr>
+  </tbody></table>
+      </div>
+    </div>
+  </div>
+  <div class="card wide">
+    <h3>S&P 500 · 3er Fibonacci-Pyramide (3 Tranchen) — stärkste aktuelle Tech-Setups</h3>
+    <div class="setup-grid">
+    
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">HON.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Honeywell · Industrie/Tech</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 230.12 · Excess +101.5%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">197.19</td><td>20%</td></tr><tr><td>50%</td><td class="mono">179.89</td><td>30%</td></tr><tr><td>38%</td><td class="mono">162.58</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-short">
+        <div class="setup-head"><span class="mono">KLAC.US</span><span class="dn">SHORT</span></div>
+        <div class="setup-name">KLA Corp · Halbleiter-Equipment</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 200.47 · Excess -93.2%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">1029.17</td><td>20%</td></tr><tr><td>50%</td><td class="mono">1300.55</td><td>30%</td></tr><tr><td>38%</td><td class="mono">1571.93</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">TEAM.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Atlassian · Software</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 154.08 · Excess +71.9%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">125.13</td><td>20%</td></tr><tr><td>50%</td><td class="mono">115.31</td><td>30%</td></tr><tr><td>38%</td><td class="mono">105.50</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">NTAP.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">NetApp · Storage</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 198.47 · Excess +61.2%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">168.69</td><td>20%</td></tr><tr><td>50%</td><td class="mono">158.09</td><td>30%</td></tr><tr><td>38%</td><td class="mono">147.48</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">PANW.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Palo Alto Networks · Security</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 383.80 · Excess +53.7%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">318.21</td><td>20%</td></tr><tr><td>50%</td><td class="mono">296.43</td><td>30%</td></tr><tr><td>38%</td><td class="mono">274.64</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+      <div class="setup setup-long">
+        <div class="setup-head"><span class="mono">EXPE.US</span><span class="up">LONG</span></div>
+        <div class="setup-name">Expedia · Reise/Internet</div>
+        <div class="setup-meta">Stand 2026-08-10 · Kurs 321.07 · Excess +43.1%</div>
+        <table class="levels"><thead><tr><th>Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">283.83</td><td>20%</td></tr><tr><td>50%</td><td class="mono">268.83</td><td>30%</td></tr><tr><td>38%</td><td class="mono">253.83</td><td>50%</td></tr>
+  </tbody></table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Fibonacci-Backtest (nur Tech, 107 Symbole)</h2>
+  
+  <h3 class="bench-head">Benchmark: Nasdaq Composite</h3>
+  <div class="cards-grid">
+  
+    <div class="card">
+      <h4>Fibonacci-Akkumulation (4 Tranchen)</h4>
+      <div class="stats-row"><div class="stat"><div class="k">Gesamt</div>
+    <div class="v up">+2.6%</div>
+    <div class="sub">33641 Trades · WinRate 57.6% · PF 1.80</div>
+  </div><div class="stat"><div class="k">Long</div>
+    <div class="v up">+5.3%</div>
+    <div class="sub">14578 Trades · WinRate 67.8% · PF 3.11</div>
+  </div><div class="stat"><div class="k">Short</div>
+    <div class="v up">+0.5%</div>
+    <div class="sub">19063 Trades · WinRate 49.9% · PF 1.14</div>
+  </div></div>
+      <p class="meta">91 Tech-Symbole</p>
+      <table><thead><tr><th>Symbol</th><th>Sektor</th><th>Trades</th><th>Ø Rendite</th></tr></thead><tbody>
+        <tr><td class="mono">ENPH.US</td><td>Halbleiter/Solar</td><td>357</td><td class="up">+10.3%</td></tr><tr><td class="mono">ETSY.US</td><td>E-Commerce</td><td>360</td><td class="up">+9.6%</td></tr><tr><td class="mono">NFLX.US</td><td>Streaming</td><td>314</td><td class="up">+7.2%</td></tr><tr><td class="mono">SIRI.US</td><td>Medien</td><td>383</td><td class="up">+6.9%</td></tr><tr><td class="mono">INTC.US</td><td>Halbleiter</td><td>380</td><td class="up">+6.8%</td></tr><tr><td class="mono">ON.US</td><td>Halbleiter</td><td>387</td><td class="up">+6.5%</td></tr><tr><td class="mono">MU.US</td><td>Halbleiter</td><td>356</td><td class="up">+6.5%</td></tr><tr><td class="mono">FSLR.US</td><td>Solar-Tech</td><td>338</td><td class="up">+6.3%</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <h4>3er Fibonacci-Pyramide (3 Tranchen)</h4>
+      <div class="stats-row"><div class="stat"><div class="k">Gesamt</div>
+    <div class="v up">+1.7%</div>
+    <div class="sub">31814 Trades · WinRate 55.8% · PF 1.43</div>
+  </div><div class="stat"><div class="k">Long</div>
+    <div class="v up">+4.4%</div>
+    <div class="sub">14317 Trades · WinRate 65.0% · PF 2.42</div>
+  </div><div class="stat"><div class="k">Short</div>
+    <div class="v dn">-0.5%</div>
+    <div class="sub">17497 Trades · WinRate 48.4% · PF 0.90</div>
+  </div></div>
+      <p class="meta">91 Tech-Symbole</p>
+      <table><thead><tr><th>Symbol</th><th>Sektor</th><th>Trades</th><th>Ø Rendite</th></tr></thead><tbody>
+        <tr><td class="mono">ETSY.US</td><td>E-Commerce</td><td>355</td><td class="up">+8.3%</td></tr><tr><td class="mono">ENPH.US</td><td>Halbleiter/Solar</td><td>352</td><td class="up">+8.1%</td></tr><tr><td class="mono">NFLX.US</td><td>Streaming</td><td>303</td><td class="up">+7.0%</td></tr><tr><td class="mono">ON.US</td><td>Halbleiter</td><td>375</td><td class="up">+5.9%</td></tr><tr><td class="mono">INTC.US</td><td>Halbleiter</td><td>372</td><td class="up">+5.8%</td></tr><tr><td class="mono">SIRI.US</td><td>Medien</td><td>362</td><td class="up">+5.7%</td></tr><tr><td class="mono">FSLR.US</td><td>Solar-Tech</td><td>333</td><td class="up">+5.2%</td></tr><tr><td class="mono">MU.US</td><td>Halbleiter</td><td>348</td><td class="up">+5.2%</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+  <h3 class="bench-head">Benchmark: S&P 500</h3>
+  <div class="cards-grid">
+  
+    <div class="card">
+      <h4>Fibonacci-Akkumulation (4 Tranchen)</h4>
+      <div class="stats-row"><div class="stat"><div class="k">Gesamt</div>
+    <div class="v up">+2.9%</div>
+    <div class="sub">32944 Trades · WinRate 58.9% · PF 1.93</div>
+  </div><div class="stat"><div class="k">Long</div>
+    <div class="v up">+5.4%</div>
+    <div class="sub">15136 Trades · WinRate 68.1% · PF 3.20</div>
+  </div><div class="stat"><div class="k">Short</div>
+    <div class="v up">+0.8%</div>
+    <div class="sub">17808 Trades · WinRate 51.1% · PF 1.21</div>
+  </div></div>
+      <p class="meta">91 Tech-Symbole</p>
+      <table><thead><tr><th>Symbol</th><th>Sektor</th><th>Trades</th><th>Ø Rendite</th></tr></thead><tbody>
+        <tr><td class="mono">ENPH.US</td><td>Halbleiter/Solar</td><td>357</td><td class="up">+10.6%</td></tr><tr><td class="mono">ETSY.US</td><td>E-Commerce</td><td>357</td><td class="up">+9.9%</td></tr><tr><td class="mono">NFLX.US</td><td>Streaming</td><td>311</td><td class="up">+7.6%</td></tr><tr><td class="mono">INTC.US</td><td>Halbleiter</td><td>375</td><td class="up">+7.4%</td></tr><tr><td class="mono">MU.US</td><td>Halbleiter</td><td>353</td><td class="up">+6.9%</td></tr><tr><td class="mono">SIRI.US</td><td>Medien</td><td>375</td><td class="up">+6.9%</td></tr><tr><td class="mono">AMD.US</td><td>Halbleiter</td><td>367</td><td class="up">+6.6%</td></tr><tr><td class="mono">ON.US</td><td>Halbleiter</td><td>381</td><td class="up">+6.4%</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <h4>3er Fibonacci-Pyramide (3 Tranchen)</h4>
+      <div class="stats-row"><div class="stat"><div class="k">Gesamt</div>
+    <div class="v up">+2.0%</div>
+    <div class="sub">31814 Trades · WinRate 56.8% · PF 1.52</div>
+  </div><div class="stat"><div class="k">Long</div>
+    <div class="v up">+4.5%</div>
+    <div class="sub">14969 Trades · WinRate 65.4% · PF 2.50</div>
+  </div><div class="stat"><div class="k">Short</div>
+    <div class="v dn">-0.2%</div>
+    <div class="sub">16845 Trades · WinRate 49.2% · PF 0.95</div>
+  </div></div>
+      <p class="meta">91 Tech-Symbole</p>
+      <table><thead><tr><th>Symbol</th><th>Sektor</th><th>Trades</th><th>Ø Rendite</th></tr></thead><tbody>
+        <tr><td class="mono">ENPH.US</td><td>Halbleiter/Solar</td><td>352</td><td class="up">+8.5%</td></tr><tr><td class="mono">ETSY.US</td><td>E-Commerce</td><td>355</td><td class="up">+8.3%</td></tr><tr><td class="mono">NFLX.US</td><td>Streaming</td><td>303</td><td class="up">+7.3%</td></tr><tr><td class="mono">INTC.US</td><td>Halbleiter</td><td>372</td><td class="up">+6.3%</td></tr><tr><td class="mono">ON.US</td><td>Halbleiter</td><td>375</td><td class="up">+5.7%</td></tr><tr><td class="mono">MU.US</td><td>Halbleiter</td><td>348</td><td class="up">+5.6%</td></tr><tr><td class="mono">SIRI.US</td><td>Medien</td><td>362</td><td class="up">+5.5%</td></tr><tr><td class="mono">AMD.US</td><td>Halbleiter</td><td>365</td><td class="up">+4.9%</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="meta">Backtest generiert: 12.8.2026, 13:03:04 · 13 Wochen Lookback, 8 Wochen Fill-Fenster</p>
+</section>
+
+</main>
+</body>
+</html>

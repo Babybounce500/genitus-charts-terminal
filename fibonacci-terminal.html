@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../../REPLIT-export/favicon.svg" type="image/svg+xml">
+<title>GENITUS FIBONACCI-TERMINAL // Tranchen-Akkumulation</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--surface:#0d1117;--panel:#111820;--border:#1e2d3d;--accent:#00d4ff;--gold:#f0c040;--green:#00ff88;--red:#ff3b5c;--muted:#7d92a8;--text:#c8d8e8;--bright:#ffffff;--mono:'Space Mono',monospace;--sans:'Rajdhani',sans-serif;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.5;}
+  header{background:var(--surface);border-bottom:2px solid var(--border);padding:20px 24px;}
+  header h1{font-family:var(--mono);font-size:22px;color:var(--bright);letter-spacing:1px;}
+  header p{color:var(--muted);font-size:13px;margin-top:6px;max-width:900px;}
+  nav{display:flex;gap:10px;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  nav a{font-family:var(--mono);font-size:11px;padding:8px 14px;border:1px solid var(--border);border-radius:5px;color:var(--text);text-decoration:none;}
+  nav a:hover{border-color:var(--accent);color:var(--accent);}
+  main{max-width:1300px;margin:0 auto;padding:24px;}
+  section{margin-bottom:40px;}
+  section > h2{font-family:var(--mono);font-size:16px;letter-spacing:2px;color:var(--gold);border-bottom:2px solid var(--border);padding-bottom:10px;margin-bottom:16px;text-transform:uppercase;}
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;}
+  .card.wide{grid-column:1/-1;}
+  .card h3,.card h4{font-family:var(--mono);font-size:13px;color:var(--accent);margin-bottom:10px;}
+  .bench-head{font-family:var(--mono);font-size:13px;color:var(--bright);margin:20px 0 10px;text-transform:uppercase;letter-spacing:1px;}
+  .stats-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .stat{flex:1;min-width:110px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 10px;}
+  .stat .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+  .stat .v{font-family:var(--mono);font-size:18px;font-weight:700;margin-top:2px;}
+  .stat .sub{font-size:10px;color:var(--muted);margin-top:2px;}
+  .up{color:var(--green);} .dn{color:var(--red);} .muted{color:var(--muted);}
+  .meta{font-size:11px;color:var(--muted);margin-bottom:10px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  th{text-align:left;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--border);text-transform:uppercase;font-size:10px;}
+  td{padding:6px 8px;border-bottom:1px solid var(--border);}
+  .mono{font-family:var(--mono);}
+  .setup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;}
+  .setup{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px;border-left:3px solid var(--border);}
+  .setup-long{border-left-color:var(--green);}
+  .setup-short{border-left-color:var(--red);}
+  .setup-head{display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px;}
+  .setup-name{font-size:11px;color:var(--muted);margin-bottom:4px;}
+  .setup-meta{font-size:10px;color:var(--muted);margin-bottom:8px;}
+  table.levels th,table.levels td{font-size:11px;padding:4px 6px;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌀 FIBONACCI-TERMINAL</h1>
+  <p>Fibonacci-Tranchen-Akkumulation aus dem Original-Tradingplan (62/50/38/0%-Level, 13-Wochen-Hoch/Tief), Richtung per relativer Stärke vs. Benchmark statt SMA-Trendfilter: outperformt → LONG-Limits auf dem Weg nach unten, underperformt → SHORT-Limits auf dem Weg nach oben. 489 Watchlist-Aktien, 13 Wochen Lookback, 8 Wochen Fill-Fenster.</p>
+</header>
+<nav>
+  <a href="../../REPLIT-export/index.html">🏠 Workshell</a>
+  <a href="../viewer/fibonacci-signals/index.html">🌀 Fibonacci-Signale-Bibliothek</a>
+  <a href="mega-nasdaq-terminal.html">🚀 Mega-Nasdaq-Terminal</a>
+  <a href="dachboden-terminal.html">🎯 Dach/Boden-Terminal</a>
+  <a href="tech-terminal.html">💻 Tech-Terminal</a>
+</nav>
+<main>
+
+<section>
+  <h2>🔴🟢 Aktuelle Setups</h2>
+  
+    <div class="card wide">
+      <h3>Nasdaq Composite · Fibonacci-Akkumulation (4 Tranchen: 62/50/38/0%) — stärkste aktuelle Setups</h3>
+      <div class="setup-grid">
+      
+        <div class="setup setup-short">
+          <div class="setup-head"><span class="mono">DLEKG.TA</span><span class="dn">SHORT</span></div>
+          <div class="setup-name">Delek Group</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 8035.00 · Excess -92.3%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">42335.54</td><td>10%</td></tr><tr><td>50%</td><td class="mono">53283.50</td><td>20%</td></tr><tr><td>38%</td><td class="mono">64231.46</td><td>30%</td></tr><tr><td>0%</td><td class="mono">98900.00</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">ASB.WAR</span><span class="up">LONG</span></div>
+          <div class="setup-name">ASBISc Enterprises PLC</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 124.00 · Excess +79.4%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">103.27</td><td>10%</td></tr><tr><td>50%</td><td class="mono">96.00</td><td>20%</td></tr><tr><td>38%</td><td class="mono">88.73</td><td>30%</td></tr><tr><td>0%</td><td class="mono">65.70</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-short">
+          <div class="setup-head"><span class="mono">ELUX-B.ST</span><span class="dn">SHORT</span></div>
+          <div class="setup-name">AB Electrolux (publ)</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 29.84 · Excess -68.1%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">50.61</td><td>10%</td></tr><tr><td>50%</td><td class="mono">59.71</td><td>20%</td></tr><tr><td>38%</td><td class="mono">68.80</td><td>30%</td></tr><tr><td>0%</td><td class="mono">97.61</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">RAND.AS</span><span class="up">LONG</span></div>
+          <div class="setup-name">Randstad NV</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 39.38 · Excess +62.2%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">33.69</td><td>10%</td></tr><tr><td>50%</td><td class="mono">31.75</td><td>20%</td></tr><tr><td>38%</td><td class="mono">29.80</td><td>30%</td></tr><tr><td>0%</td><td class="mono">23.64</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">XTB.WAR</span><span class="up">LONG</span></div>
+          <div class="setup-name">XTrade Brokers Dom Maklerski</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 169.06 · Excess +59.5%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">142.99</td><td>10%</td></tr><tr><td>50%</td><td class="mono">134.50</td><td>20%</td></tr><tr><td>38%</td><td class="mono">126.01</td><td>30%</td></tr><tr><td>0%</td><td class="mono">99.14</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">ADEN.SW</span><span class="up">LONG</span></div>
+          <div class="setup-name">Adecco Group AG Class N</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 23.62 · Excess +57.4%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">20.50</td><td>10%</td></tr><tr><td>50%</td><td class="mono">19.35</td><td>20%</td></tr><tr><td>38%</td><td class="mono">18.20</td><td>30%</td></tr><tr><td>0%</td><td class="mono">14.54</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="card wide">
+      <h3>Nasdaq Composite · 3er Fibonacci-Pyramide (3 Tranchen: 62/50/38%) — stärkste aktuelle Setups</h3>
+      <div class="setup-grid">
+      
+        <div class="setup setup-short">
+          <div class="setup-head"><span class="mono">DLEKG.TA</span><span class="dn">SHORT</span></div>
+          <div class="setup-name">Delek Group</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 8035.00 · Excess -92.3%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">42335.54</td><td>20%</td></tr><tr><td>50%</td><td class="mono">53283.50</td><td>30%</td></tr><tr><td>38%</td><td class="mono">64231.46</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">ASB.WAR</span><span class="up">LONG</span></div>
+          <div class="setup-name">ASBISc Enterprises PLC</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 124.00 · Excess +79.4%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">103.27</td><td>20%</td></tr><tr><td>50%</td><td class="mono">96.00</td><td>30%</td></tr><tr><td>38%</td><td class="mono">88.73</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-short">
+          <div class="setup-head"><span class="mono">ELUX-B.ST</span><span class="dn">SHORT</span></div>
+          <div class="setup-name">AB Electrolux (publ)</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 29.84 · Excess -68.1%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">50.61</td><td>20%</td></tr><tr><td>50%</td><td class="mono">59.71</td><td>30%</td></tr><tr><td>38%</td><td class="mono">68.80</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">RAND.AS</span><span class="up">LONG</span></div>
+          <div class="setup-name">Randstad NV</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 39.38 · Excess +62.2%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">33.69</td><td>20%</td></tr><tr><td>50%</td><td class="mono">31.75</td><td>30%</td></tr><tr><td>38%</td><td class="mono">29.80</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">XTB.WAR</span><span class="up">LONG</span></div>
+          <div class="setup-name">XTrade Brokers Dom Maklerski</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 169.06 · Excess +59.5%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">142.99</td><td>20%</td></tr><tr><td>50%</td><td class="mono">134.50</td><td>30%</td></tr><tr><td>38%</td><td class="mono">126.01</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">ADEN.SW</span><span class="up">LONG</span></div>
+          <div class="setup-name">Adecco Group AG Class N</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 23.62 · Excess +57.4%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">20.50</td><td>20%</td></tr><tr><td>50%</td><td class="mono">19.35</td><td>30%</td></tr><tr><td>38%</td><td class="mono">18.20</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="card wide">
+      <h3>S&P 500 · Fibonacci-Akkumulation (4 Tranchen: 62/50/38/0%) — stärkste aktuelle Setups</h3>
+      <div class="setup-grid">
+      
+        <div class="setup setup-short">
+          <div class="setup-head"><span class="mono">DLEKG.TA</span><span class="dn">SHORT</span></div>
+          <div class="setup-name">Delek Group</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 8035.00 · Excess -95.8%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">42335.54</td><td>10%</td></tr><tr><td>50%</td><td class="mono">53283.50</td><td>20%</td></tr><tr><td>38%</td><td class="mono">64231.46</td><td>30%</td></tr><tr><td>0%</td><td class="mono">98900.00</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">ASB.WAR</span><span class="up">LONG</span></div>
+          <div class="setup-name">ASBISc Enterprises PLC</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 124.00 · Excess +75.9%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">103.27</td><td>10%</td></tr><tr><td>50%</td><td class="mono">96.00</td><td>20%</td></tr><tr><td>38%</td><td class="mono">88.73</td><td>30%</td></tr><tr><td>0%</td><td class="mono">65.70</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-short">
+          <div class="setup-head"><span class="mono">ELUX-B.ST</span><span class="dn">SHORT</span></div>
+          <div class="setup-name">AB Electrolux (publ)</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 29.84 · Excess -71.6%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">50.61</td><td>10%</td></tr><tr><td>50%</td><td class="mono">59.71</td><td>20%</td></tr><tr><td>38%</td><td class="mono">68.80</td><td>30%</td></tr><tr><td>0%</td><td class="mono">97.61</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">RAND.AS</span><span class="up">LONG</span></div>
+          <div class="setup-name">Randstad NV</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 39.38 · Excess +58.7%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">33.69</td><td>10%</td></tr><tr><td>50%</td><td class="mono">31.75</td><td>20%</td></tr><tr><td>38%</td><td class="mono">29.80</td><td>30%</td></tr><tr><td>0%</td><td class="mono">23.64</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">XTB.WAR</span><span class="up">LONG</span></div>
+          <div class="setup-name">XTrade Brokers Dom Maklerski</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 169.06 · Excess +56.1%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">142.99</td><td>10%</td></tr><tr><td>50%</td><td class="mono">134.50</td><td>20%</td></tr><tr><td>38%</td><td class="mono">126.01</td><td>30%</td></tr><tr><td>0%</td><td class="mono">99.14</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">ADEN.SW</span><span class="up">LONG</span></div>
+          <div class="setup-name">Adecco Group AG Class N</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 23.62 · Excess +53.9%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">20.50</td><td>10%</td></tr><tr><td>50%</td><td class="mono">19.35</td><td>20%</td></tr><tr><td>38%</td><td class="mono">18.20</td><td>30%</td></tr><tr><td>0%</td><td class="mono">14.54</td><td>40%</td></tr>
+  </tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="card wide">
+      <h3>S&P 500 · 3er Fibonacci-Pyramide (3 Tranchen: 62/50/38%) — stärkste aktuelle Setups</h3>
+      <div class="setup-grid">
+      
+        <div class="setup setup-short">
+          <div class="setup-head"><span class="mono">DLEKG.TA</span><span class="dn">SHORT</span></div>
+          <div class="setup-name">Delek Group</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 8035.00 · Excess -95.8%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">42335.54</td><td>20%</td></tr><tr><td>50%</td><td class="mono">53283.50</td><td>30%</td></tr><tr><td>38%</td><td class="mono">64231.46</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">ASB.WAR</span><span class="up">LONG</span></div>
+          <div class="setup-name">ASBISc Enterprises PLC</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 124.00 · Excess +75.9%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">103.27</td><td>20%</td></tr><tr><td>50%</td><td class="mono">96.00</td><td>30%</td></tr><tr><td>38%</td><td class="mono">88.73</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-short">
+          <div class="setup-head"><span class="mono">ELUX-B.ST</span><span class="dn">SHORT</span></div>
+          <div class="setup-name">AB Electrolux (publ)</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 29.84 · Excess -71.6%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">50.61</td><td>20%</td></tr><tr><td>50%</td><td class="mono">59.71</td><td>30%</td></tr><tr><td>38%</td><td class="mono">68.80</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">RAND.AS</span><span class="up">LONG</span></div>
+          <div class="setup-name">Randstad NV</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 39.38 · Excess +58.7%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">33.69</td><td>20%</td></tr><tr><td>50%</td><td class="mono">31.75</td><td>30%</td></tr><tr><td>38%</td><td class="mono">29.80</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">XTB.WAR</span><span class="up">LONG</span></div>
+          <div class="setup-name">XTrade Brokers Dom Maklerski</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 169.06 · Excess +56.1%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">142.99</td><td>20%</td></tr><tr><td>50%</td><td class="mono">134.50</td><td>30%</td></tr><tr><td>38%</td><td class="mono">126.01</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+        <div class="setup setup-long">
+          <div class="setup-head"><span class="mono">ADEN.SW</span><span class="up">LONG</span></div>
+          <div class="setup-name">Adecco Group AG Class N</div>
+          <div class="setup-meta">Stand 2026-08-10 · Kurs 23.62 · Excess +53.9%</div>
+          <table class="levels"><thead><tr><th>Fib-Level</th><th>Preis</th><th>Größe</th></tr></thead><tbody>
+    <tr><td>62%</td><td class="mono">20.50</td><td>20%</td></tr><tr><td>50%</td><td class="mono">19.35</td><td>30%</td></tr><tr><td>38%</td><td class="mono">18.20</td><td>50%</td></tr>
+  </tbody></table>
+        </div>
+      </div>
+    </div>
+</section>
+
+<section>
+  <h2>Backtest-Ergebnisse</h2>
+  
+    <h3 class="bench-head">Benchmark: Nasdaq Composite</h3>
+    <div class="cards-grid">
+    
+      <div class="card">
+        <h4>Fibonacci-Akkumulation (4 Tranchen: 62/50/38/0%)</h4>
+        <div class="stats-row"><div class="stat"><div class="k">Gesamt</div>
+    <div class="v up">+2.0%</div>
+    <div class="sub">128769 Trades · WinRate 57.2% · PF 1.73</div>
+  </div><div class="stat"><div class="k">Long</div>
+    <div class="v up">+4.0%</div>
+    <div class="sub">47861 Trades · WinRate 64.5% · PF 2.73</div>
+  </div><div class="stat"><div class="k">Short</div>
+    <div class="v up">+0.8%</div>
+    <div class="sub">80908 Trades · WinRate 52.8% · PF 1.27</div>
+  </div></div>
+        <p class="meta">421 Symbole</p>
+        <table><thead><tr><th>Symbol</th><th>Trades</th><th>Ø Rendite</th><th>WinRate</th></tr></thead><tbody>
+          <tr><td class="mono">MARA.US</td><td>341</td><td class="up">+35.5%</td><td>60.4%</td></tr><tr><td class="mono">DDJH.ZSE</td><td>57</td><td class="up">+12.6%</td><td>86.0%</td></tr><tr><td class="mono">ACCL.TA</td><td>345</td><td class="up">+10.6%</td><td>76.2%</td></tr><tr><td class="mono">NTLA.US</td><td>392</td><td class="up">+9.3%</td><td>66.8%</td></tr><tr><td class="mono">ATS.VI</td><td>307</td><td class="up">+7.6%</td><td>63.5%</td></tr><tr><td class="mono">INOD.US</td><td>382</td><td class="up">+7.5%</td><td>61.8%</td></tr><tr><td class="mono">SMCI.US</td><td>367</td><td class="up">+7.3%</td><td>59.4%</td></tr><tr><td class="mono">EUZ.XETRA</td><td>284</td><td class="up">+7.1%</td><td>65.8%</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <h4>3er Fibonacci-Pyramide (3 Tranchen: 62/50/38%)</h4>
+        <div class="stats-row"><div class="stat"><div class="k">Gesamt</div>
+    <div class="v up">+1.3%</div>
+    <div class="sub">121167 Trades · WinRate 55.4% · PF 1.38</div>
+  </div><div class="stat"><div class="k">Long</div>
+    <div class="v up">+3.2%</div>
+    <div class="sub">46628 Trades · WinRate 61.9% · PF 2.13</div>
+  </div><div class="stat"><div class="k">Short</div>
+    <div class="v up">+0.1%</div>
+    <div class="sub">74539 Trades · WinRate 51.3% · PF 1.02</div>
+  </div></div>
+        <p class="meta">421 Symbole</p>
+        <table><thead><tr><th>Symbol</th><th>Trades</th><th>Ø Rendite</th><th>WinRate</th></tr></thead><tbody>
+          <tr><td class="mono">MARA.US</td><td>331</td><td class="up">+32.4%</td><td>57.1%</td></tr><tr><td class="mono">DDJH.ZSE</td><td>57</td><td class="up">+11.2%</td><td>82.5%</td></tr><tr><td class="mono">ACCL.TA</td><td>338</td><td class="up">+9.6%</td><td>74.6%</td></tr><tr><td class="mono">NTLA.US</td><td>390</td><td class="up">+7.6%</td><td>63.8%</td></tr><tr><td class="mono">ATS.VI</td><td>303</td><td class="up">+6.6%</td><td>60.7%</td></tr><tr><td class="mono">EUZ.XETRA</td><td>277</td><td class="up">+6.2%</td><td>62.1%</td></tr><tr><td class="mono">SMCI.US</td><td>358</td><td class="up">+6.1%</td><td>55.3%</td></tr><tr><td class="mono">ASB.WAR</td><td>292</td><td class="up">+6.0%</td><td>70.2%</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <h3 class="bench-head">Benchmark: S&P 500</h3>
+    <div class="cards-grid">
+    
+      <div class="card">
+        <h4>Fibonacci-Akkumulation (4 Tranchen: 62/50/38/0%)</h4>
+        <div class="stats-row"><div class="stat"><div class="k">Gesamt</div>
+    <div class="v up">+2.3%</div>
+    <div class="sub">126346 Trades · WinRate 58.6% · PF 1.87</div>
+  </div><div class="stat"><div class="k">Long</div>
+    <div class="v up">+4.1%</div>
+    <div class="sub">50139 Trades · WinRate 65.5% · PF 2.85</div>
+  </div><div class="stat"><div class="k">Short</div>
+    <div class="v up">+1.1%</div>
+    <div class="sub">76207 Trades · WinRate 54.1% · PF 1.38</div>
+  </div></div>
+        <p class="meta">421 Symbole</p>
+        <table><thead><tr><th>Symbol</th><th>Trades</th><th>Ø Rendite</th><th>WinRate</th></tr></thead><tbody>
+          <tr><td class="mono">MARA.US</td><td>340</td><td class="up">+38.7%</td><td>61.8%</td></tr><tr><td class="mono">DDJH.ZSE</td><td>57</td><td class="up">+12.6%</td><td>87.7%</td></tr><tr><td class="mono">ACCL.TA</td><td>343</td><td class="up">+10.5%</td><td>77.6%</td></tr><tr><td class="mono">NTLA.US</td><td>393</td><td class="up">+8.8%</td><td>65.6%</td></tr><tr><td class="mono">CAMT.TA</td><td>313</td><td class="up">+8.2%</td><td>69.6%</td></tr><tr><td class="mono">INOD.US</td><td>382</td><td class="up">+7.7%</td><td>62.0%</td></tr><tr><td class="mono">ADJ.XETRA</td><td>314</td><td class="up">+7.4%</td><td>71.0%</td></tr><tr><td class="mono">MSTR.US</td><td>366</td><td class="up">+7.4%</td><td>58.2%</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <h4>3er Fibonacci-Pyramide (3 Tranchen: 62/50/38%)</h4>
+        <div class="stats-row"><div class="stat"><div class="k">Gesamt</div>
+    <div class="v up">+1.5%</div>
+    <div class="sub">121167 Trades · WinRate 56.6% · PF 1.47</div>
+  </div><div class="stat"><div class="k">Long</div>
+    <div class="v up">+3.4%</div>
+    <div class="sub">49363 Trades · WinRate 62.9% · PF 2.22</div>
+  </div><div class="stat"><div class="k">Short</div>
+    <div class="v up">+0.3%</div>
+    <div class="sub">71804 Trades · WinRate 52.3% · PF 1.07</div>
+  </div></div>
+        <p class="meta">421 Symbole</p>
+        <table><thead><tr><th>Symbol</th><th>Trades</th><th>Ø Rendite</th><th>WinRate</th></tr></thead><tbody>
+          <tr><td class="mono">MARA.US</td><td>331</td><td class="up">+35.8%</td><td>58.0%</td></tr><tr><td class="mono">DDJH.ZSE</td><td>57</td><td class="up">+11.2%</td><td>84.2%</td></tr><tr><td class="mono">ACCL.TA</td><td>338</td><td class="up">+9.4%</td><td>76.3%</td></tr><tr><td class="mono">CAMT.TA</td><td>307</td><td class="up">+7.2%</td><td>68.1%</td></tr><tr><td class="mono">NTLA.US</td><td>390</td><td class="up">+7.1%</td><td>63.3%</td></tr><tr><td class="mono">ADJ.XETRA</td><td>309</td><td class="up">+6.6%</td><td>69.9%</td></tr><tr><td class="mono">SHOP.TO</td><td>289</td><td class="up">+6.3%</td><td>65.4%</td></tr><tr><td class="mono">ATS.VI</td><td>303</td><td class="up">+6.0%</td><td>60.1%</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+</section>
+
+<section>
+  <p class="meta">Generiert: 12.8.2026, 13:02:36</p>
+</section>
+
+</main>
+</body>
+</html>
