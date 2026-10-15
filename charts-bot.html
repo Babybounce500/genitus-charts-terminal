@@ -315,6 +315,21 @@
     <button class="ctrl-btn btn-muted" id="watchlist-toggle" type="button" aria-pressed="false">Merken</button>
     <button class="ctrl-btn btn-market" id="watchlist-compare" type="button">Marktcheck</button>
   </div>
+  <div class="ctrl ctrl-market-browser">
+    <label class="ctrl-field">
+      <span class="ctrl-lbl">MARKT (25 KATEGORIEN)</span>
+      <select class="ctrl-select" id="market-select">
+        <option value="">— Markt wählen —</option>
+      </select>
+    </label>
+    <label class="ctrl-field">
+      <span class="ctrl-lbl">SYMBOL IM MARKT</span>
+      <select class="ctrl-select" id="market-symbol-select" disabled>
+        <option value="">— erst Markt wählen —</option>
+      </select>
+    </label>
+    <button class="ctrl-btn btn-accent" id="market-load" type="button" disabled>Laden</button>
+  </div>
   <div class="ctrl-secondary">
     <div class="overlay-toggles" aria-label="Chart-Overlays">
       <label class="toggle-chip"><input type="checkbox" id="show-volume" checked> Volumen</label>
@@ -470,6 +485,58 @@
     ]}]},
     {id:'crypto', label:'Krypto', sectors:[{name:'Top Coins', stocks:[
       ['BTC-USD.CC','Bitcoin'],['ETH-USD.CC','Ethereum'],['SOL-USD.CC','Solana'],['XRP-USD.CC','XRP'],
+    ]}]},
+    {id:'semis', label:'Halbleiter', sectors:[{name:'Chipdesign & Fertigung', stocks:[
+      ['NVDA.US','NVIDIA Corp.'],['AMD.US','Advanced Micro Devices'],['INTC.US','Intel Corp.'],['TSM.US','Taiwan Semiconductor ADR'],
+      ['QCOM.US','Qualcomm Inc.'],['TXN.US','Texas Instruments'],['MU.US','Micron Technology'],['AVGO.US','Broadcom Inc.'],
+      ['ASML.US','ASML Holding ADR'],['LRCX.US','Lam Research'],['KLAC.US','KLA Corp.'],['ON.US','ON Semiconductor'],
+      ['MRVL.US','Marvell Technology'],['ARM.US','Arm Holdings ADR'],
+    ]}]},
+    {id:'insurance', label:'Versicherungen', sectors:[{name:'Lebens- & Sachversicherer', stocks:[
+      ['BRK-B.US','Berkshire Hathaway Class B'],['PGR.US','Progressive Corp.'],['AIG.US','American International Group'],
+      ['MET.US','MetLife Inc.'],['PRU.US','Prudential Financial'],['ALL.US','Allstate Corp.'],['TRV.US','Travelers Companies'],
+      ['CB.US','Chubb Ltd.'],['AFL.US','Aflac Inc.'],
+    ]}]},
+    {id:'biotech', label:'Biotech', sectors:[{name:'Biotechnologie', stocks:[
+      ['REGN.US','Regeneron Pharmaceuticals'],['VRTX.US','Vertex Pharmaceuticals'],['BIIB.US','Biogen Inc.'],
+      ['MRNA.US','Moderna Inc.'],['BNTX.US','BioNTech SE ADR'],['ILMN.US','Illumina Inc.'],['ALNY.US','Alnylam Pharmaceuticals'],
+      ['INCY.US','Incyte Corp.'],
+    ]}]},
+    {id:'renewables', label:'Erneuerbare Energien', sectors:[{name:'Solar, Wind & Clean Power', stocks:[
+      ['ENPH.US','Enphase Energy'],['FSLR.US','First Solar Inc.'],['NEE.US','NextEra Energy'],['SEDG.US','SolarEdge Technologies'],
+      ['RUN.US','Sunrun Inc.'],['BEP.US','Brookfield Renewable Partners'],
+    ]}]},
+    {id:'utilities', label:'Versorger', sectors:[{name:'Strom & Wasser', stocks:[
+      ['DUK.US','Duke Energy Corp.'],['SO.US','Southern Co.'],['D.US','Dominion Energy'],['EXC.US','Exelon Corp.'],
+      ['AEP.US','American Electric Power'],['XEL.US','Xcel Energy'],['ED.US','Consolidated Edison'],
+    ]}]},
+    {id:'aerodefense', label:'Luft-/Raumfahrt & Rüstung', sectors:[{name:'Verteidigung & Aerospace', stocks:[
+      ['LMT.US','Lockheed Martin Corp.'],['RTX.US','RTX Corp.'],['NOC.US','Northrop Grumman'],['GD.US','General Dynamics'],
+      ['LHX.US','L3Harris Technologies'],['TXT.US','Textron Inc.'],['HII.US','Huntington Ingalls Industries'],['BA.US','Boeing Co.'],
+    ]}]},
+    {id:'media', label:'Medien & Streaming', sectors:[{name:'Entertainment & Streaming', stocks:[
+      ['NFLX.US','Netflix Inc.'],['DIS.US','Walt Disney Co.'],['WBD.US','Warner Bros. Discovery'],['PARA.US','Paramount Global'],
+      ['FOXA.US','Fox Corp.'],['SPOT.US','Spotify Technology'],
+    ]}]},
+    {id:'reits', label:'Immobilien (REITs)', sectors:[{name:'Real Estate Investment Trusts', stocks:[
+      ['O.US','Realty Income Corp.'],['PLD.US','Prologis Inc.'],['AMT.US','American Tower Corp.'],['SPG.US','Simon Property Group'],
+      ['PSA.US','Public Storage'],['EQIX.US','Equinix Inc.'],['DLR.US','Digital Realty Trust'],['AVB.US','AvalonBay Communities'],
+    ]}]},
+    {id:'mining', label:'Rohstoffe & Bergbau', sectors:[{name:'Industriemetalle & Stahl', stocks:[
+      ['RIO.US','Rio Tinto ADR'],['VALE.US','Vale S.A. ADR'],['FCX.US','Freeport-McMoRan'],['NUE.US','Nucor Corp.'],
+      ['X.US','United States Steel'],['BHP.US','BHP Group ADR'],
+    ]}]},
+    {id:'gold', label:'Gold & Edelmetalle', sectors:[{name:'Edelmetall-Minen & ETFs', stocks:[
+      ['GLD.US','SPDR Gold Shares'],['NEM.US','Newmont Corp.'],['GOLD.US','Barrick Gold Corp.'],['AEM.US','Agnico Eagle Mines'],
+      ['FNV.US','Franco-Nevada Corp.'],['WPM.US','Wheaton Precious Metals'],['SLV.US','iShares Silver Trust'],
+    ]}]},
+    {id:'travel', label:'Reise & Freizeit', sectors:[{name:'Airlines, Hotels & Kreuzfahrten', stocks:[
+      ['BKNG.US','Booking Holdings'],['ABNB.US','Airbnb Inc.'],['MAR.US','Marriott International'],['DAL.US','Delta Air Lines'],
+      ['LUV.US','Southwest Airlines'],['CCL.US','Carnival Corp.'],['RCL.US','Royal Caribbean Group'],['EXPE.US','Expedia Group'],
+    ]}]},
+    {id:'cyber', label:'Cybersecurity', sectors:[{name:'IT-Sicherheit', stocks:[
+      ['PANW.US','Palo Alto Networks'],['CRWD.US','CrowdStrike Holdings'],['FTNT.US','Fortinet Inc.'],['ZS.US','Zscaler Inc.'],
+      ['S.US','SentinelOne Inc.'],['OKTA.US','Okta Inc.'],['CYBR.US','CyberArk Software'],
     ]}]},
   ];
 
@@ -1503,8 +1570,59 @@
     updateOhlc({...last,close:displayClose},last.volume);
   }
 
+  // Double dropdown: Markt -> Symbol, built straight from CURATED_MARKETS
+  // (the same 25-market dataset the quick-search catalog consumes), so
+  // picking a sector/asset-class first narrows the second dropdown to just
+  // that market's real, live-verified tickers instead of free-text search.
+  function populateMarketSelect(){
+    const sel=$('market-select');
+    for(const market of CURATED_MARKETS){
+      const opt=document.createElement('option');
+      opt.value=market.id; opt.textContent=`${market.label} (${market.sectors.reduce((n,s)=>n+s.stocks.length,0)})`;
+      sel.appendChild(opt);
+    }
+  }
+  function populateMarketSymbolSelect(marketId){
+    const symSel=$('market-symbol-select'), loadBtn=$('market-load');
+    symSel.innerHTML='';
+    const market=CURATED_MARKETS.find(m=>m.id===marketId);
+    if(!market){
+      symSel.innerHTML='<option value="">— erst Markt wählen —</option>';
+      symSel.disabled=true; loadBtn.disabled=true;
+      return;
+    }
+    const placeholder=document.createElement('option');
+    placeholder.value=''; placeholder.textContent=`— ${market.sectors.reduce((n,s)=>n+s.stocks.length,0)} Symbole wählen —`;
+    symSel.appendChild(placeholder);
+    for(const sector of market.sectors){
+      const group=document.createElement('optgroup');
+      group.label=sector.name;
+      for(const [symbol,name] of sector.stocks){
+        const opt=document.createElement('option');
+        opt.value=symbol; opt.textContent=`${symbol} · ${name}`;
+        group.appendChild(opt);
+      }
+      symSel.appendChild(group);
+    }
+    symSel.disabled=false; loadBtn.disabled=true;
+  }
+  function wireMarketBrowser(){
+    populateMarketSelect();
+    $('market-select').addEventListener('change',event=>populateMarketSymbolSelect(event.target.value));
+    $('market-symbol-select').addEventListener('change',event=>{
+      $('market-load').disabled=!event.target.value;
+    });
+    $('market-load').addEventListener('click',()=>{
+      const symbol=$('market-symbol-select').value;
+      if(!symbol)return;
+      $('sym').value=symbol;
+      loadChart();
+    });
+  }
+
   function initializeApp(){
     renderWatchlist();
+    wireMarketBrowser();
     $('load-chart').addEventListener('click',loadChart);
     $('watchlist-compare').addEventListener('click',loadMarketCheck);
     $('watchlist-toggle').addEventListener('click',toggleCurrentWatchlist);
