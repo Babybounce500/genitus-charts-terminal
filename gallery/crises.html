@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>GENITUS KRISENARCHIV // Bärenmärkte & Crashs</title>
+<style>
+  :root {
+    --bg: #f5f4f1;
+    --bg-elevated: #ffffff;
+    --bg-sunken: #ebe9e4;
+    --border: #ddd9d1;
+    --text: #232019;
+    --text-dim: #6b6557;
+    --text-faint: #a39c8a;
+    --accent: #9a5b2e;
+    --accent-soft: #f0e3d6;
+    --chip-bg: #ebe6dc;
+    --chip-text: #4a4335;
+    --shadow: 0 1px 3px rgba(30,25,15,0.08), 0 1px 2px rgba(30,25,15,0.06);
+    --shadow-lg: 0 12px 32px rgba(30,25,15,0.24);
+    --radius: 10px;
+    --radius-sm: 6px;
+    --mono: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17140f;
+      --bg-elevated: #211d16;
+      --bg-sunken: #131110;
+      --border: #372f24;
+      --text: #ece6d8;
+      --text-dim: #b3a890;
+      --text-faint: #766c58;
+      --accent: #e0954f;
+      --accent-soft: #3a2c1c;
+      --chip-bg: #2a2419;
+      --chip-text: #d8cdb4;
+      --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+      --shadow-lg: 0 20px 48px rgba(0,0,0,0.6);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17140f;
+    --bg-elevated: #211d16;
+    --bg-sunken: #131110;
+    --border: #372f24;
+    --text: #ece6d8;
+    --text-dim: #b3a890;
+    --text-faint: #766c58;
+    --accent: #e0954f;
+    --accent-soft: #3a2c1c;
+    --chip-bg: #2a2419;
+    --chip-text: #d8cdb4;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-lg: 0 20px 48px rgba(0,0,0,0.6);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--accent-soft); }
+
+  header.top {
+    position: sticky; top: 0; z-index: 30;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    padding: max(14px, env(safe-area-inset-top)) 20px 12px;
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+  }
+  .top-row { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  h1 { font-size: 18px; margin: 0; font-weight: 650; letter-spacing: -0.01em; }
+  .subtitle { color: var(--text-dim); font-size: 12.5px; }
+  .top-nav { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+  .top-nav a {
+    font-size: 12px; color: var(--accent); text-decoration: none; border: 1px solid var(--border);
+    padding: 5px 11px; border-radius: 100px; transition: background .15s ease, border-color .15s ease;
+    white-space: nowrap;
+  }
+  .top-nav a:hover { background: var(--accent-soft); border-color: var(--accent); }
+  .stat-row { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 8px; font-size: 12px; color: var(--text-dim); }
+  .stat-row b { color: var(--text); font-weight: 650; }
+
+  .tabs { display: flex; gap: 4px; margin-top: 12px; }
+  .tab-btn {
+    appearance: none; border: 1px solid transparent; background: transparent;
+    color: var(--text-dim); font: inherit; font-size: 13px; font-weight: 600;
+    padding: 7px 13px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+  }
+  .tab-btn:hover { background: var(--bg-sunken); color: var(--text); }
+  .tab-btn.active { background: var(--accent-soft); color: var(--accent); }
+
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center;
+    margin-top: 12px;
+  }
+  input[type="search"] {
+    flex: 1 1 220px; min-width: 160px;
+    background: var(--bg-sunken); border: 1px solid var(--border); color: var(--text);
+    border-radius: var(--radius-sm); padding: 8px 11px; font: inherit; font-size: 13px;
+    transition: border-color .15s ease;
+  }
+  input[type="search"]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  select {
+    background: var(--bg-sunken); border: 1px solid var(--border); color: var(--text);
+    border-radius: var(--radius-sm); padding: 8px 9px; font: inherit; font-size: 13px;
+    transition: border-color .15s ease;
+  }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    appearance: none; border: 1px solid var(--border); background: var(--chip-bg);
+    color: var(--chip-text); font: inherit; font-size: 12px; font-weight: 600;
+    padding: 6px 11px; border-radius: 100px; cursor: pointer; white-space: nowrap;
+    transition: background .15s ease, color .15s ease, border-color .15s ease, transform .1s ease;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip:active { transform: scale(.95); }
+  .chip[data-active="1"] { background: var(--accent); color: #fff8ef; border-color: var(--accent); }
+  .chip .n { opacity: .65; font-weight: 500; margin-left: 3px; }
+
+  /* ---- filter drawer trigger + panel ---- */
+  .filter-btn {
+    appearance: none; display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border); background: var(--bg-sunken); color: var(--text);
+    font: inherit; font-size: 13px; font-weight: 600; padding: 8px 13px 8px 11px;
+    border-radius: var(--radius-sm); cursor: pointer;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .burger-icon { display: flex; flex-direction: column; gap: 3px; width: 15px; flex-shrink: 0; }
+  .burger-icon span { display: block; height: 2px; border-radius: 1px; background: currentColor; transition: transform .2s ease; }
+  .filter-badge {
+    background: var(--accent); color: #fff8ef; font-size: 10.5px; font-weight: 700;
+    min-width: 18px; height: 18px; border-radius: 100px; display: inline-flex;
+    align-items: center; justify-content: center; padding: 0 5px; line-height: 1;
+  }
+  .filter-badge[hidden] { display: none; }
+
+  .filter-backdrop {
+    position: fixed; inset: 0; background: rgba(20, 16, 10, 0.35); z-index: 60;
+    opacity: 0; pointer-events: none; transition: opacity .25s ease;
+  }
+  .filter-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .filter-drawer {
+    position: fixed; top: 0; right: 0; height: 100dvh; width: 340px; max-width: 92vw;
+    background: var(--bg-elevated); border-left: 1px solid var(--border); z-index: 70;
+    display: flex; flex-direction: column; box-shadow: var(--shadow-lg);
+    transform: translateX(100%); transition: transform .32s cubic-bezier(.32,.72,0,1);
+    padding-top: env(safe-area-inset-top); padding-right: env(safe-area-inset-right);
+  }
+  .filter-drawer.open { transform: translateX(0); }
+  .filter-drawer-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .filter-drawer-head h2 { font-size: 15px; margin: 0; font-weight: 700; }
+  .filter-close {
+    appearance: none; border: 1px solid var(--border); background: var(--bg-sunken); color: var(--text-dim);
+    width: 32px; height: 32px; border-radius: 100px; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color .15s ease, color .15s ease;
+  }
+  .filter-close:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-drawer-body {
+    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+    padding: 16px 18px;
+  }
+  .filter-section { margin-bottom: 22px; }
+  .filter-section:last-child { margin-bottom: 0; }
+  .filter-section h3 {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint);
+    margin: 0 0 10px; font-weight: 700;
+  }
+  .filter-drawer-foot {
+    padding: 14px 18px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); flex-shrink: 0;
+  }
+  .filter-reset {
+    width: 100%; appearance: none; border: 1px solid var(--border); background: transparent; color: var(--text-dim);
+    font: inherit; font-size: 13px; font-weight: 600; padding: 9px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: border-color .15s ease, color .15s ease;
+  }
+  .filter-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+  main { padding: 16px 20px 60px; max-width: 1600px; margin: 0 auto; }
+
+  .group-header {
+    display: flex; align-items: baseline; gap: 10px;
+    margin: 26px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  }
+  .group-header:first-child { margin-top: 6px; }
+  .group-header .yr { font-size: 20px; font-weight: 700; }
+  .group-header .mo { font-size: 13px; color: var(--text-dim); font-weight: 600; }
+  .group-header .cnt { font-size: 12px; color: var(--text-faint); margin-left: auto; }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 10px;
+  }
+  .card {
+    background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; cursor: pointer; box-shadow: var(--shadow);
+    transition: transform .18s cubic-bezier(.22,.9,.4,1), box-shadow .18s ease;
+    display: flex; flex-direction: column;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .card .thumb-wrap { aspect-ratio: 4/3; background: var(--bg-sunken); overflow: hidden; position: relative; }
+  .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .meta { padding: 7px 9px 9px; }
+  .card .ticker { font-weight: 700; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card .company { font-size: 10.5px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+  .card .row2 { display: flex; align-items: center; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+  .badge {
+    font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 100px;
+    background: var(--chip-bg); color: var(--chip-text); white-space: nowrap;
+  }
+  .date-tag { font-size: 10px; color: var(--text-faint); margin-left: auto; }
+  .date-tag.approx::after { content: " ~"; }
+  .src-dot { width: 5px; height: 5px; border-radius: 50%; display: inline-block; margin-right: 3px; }
+  .src-chart { background: #4f9d5f; }
+  .src-folder { background: #c9a227; }
+  .src-approx { background: #b56a4a; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-faint); }
+
+  /* Tab panes - gentle fade/rise whenever a pane becomes visible */
+  #view-charts:not([hidden]), #view-notes:not([hidden]), #view-stats:not([hidden]) {
+    animation: paneIn .22s cubic-bezier(.22,.9,.4,1);
+  }
+  @keyframes paneIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Lightbox */
+  .lightbox {
+    position: fixed; inset: 0; background: rgba(10,8,5,0.82); z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+    opacity: 0; transition: opacity .22s ease;
+  }
+  .lightbox.open { opacity: 1; }
+  .lightbox[hidden] { display: none; }
+  .lb-panel {
+    background: var(--bg-elevated); border-radius: 14px; max-width: 1100px; width: 100%;
+    max-height: 92vh; display: flex; overflow: hidden; box-shadow: var(--shadow-lg);
+    transform: scale(.96); transition: transform .25s cubic-bezier(.32,.72,0,1);
+  }
+  .lightbox.open .lb-panel { transform: scale(1); }
+  .lb-img-wrap { flex: 1.4; background: var(--bg-sunken); display: flex; align-items: center; justify-content: center; min-width: 0; }
+  .lb-img-wrap img { max-width: 100%; max-height: 92vh; object-fit: contain; }
+  .lb-side { flex: 1; min-width: 280px; max-width: 360px; padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .lb-side h2 { margin: 0 0 2px; font-size: 18px; }
+  .lb-side .sub { color: var(--text-dim); font-size: 13px; margin-bottom: 14px; }
+  .lb-field { margin-bottom: 10px; }
+  .lb-field .k { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); font-weight: 700; }
+  .lb-field .v { font-size: 13px; margin-top: 2px; }
+  .lb-field .v.mono { font-family: var(--mono); font-size: 11.5px; word-break: break-all; color: var(--text-dim); }
+  .lb-close, .lb-nav, .lb-fullscreen {
+    position: absolute; background: rgba(20,16,10,0.55); color: #fff; border: none;
+    border-radius: 100px; width: 38px; height: 38px; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s ease, transform .12s ease;
+  }
+  .lb-close:hover, .lb-nav:hover, .lb-fullscreen:hover { background: rgba(20,16,10,0.8); }
+  .lb-close:active, .lb-nav:active, .lb-fullscreen:active { transform: scale(.92); }
+  .lb-nav.prev:active { transform: translateY(-50%) scale(.92); }
+  .lb-nav.next:active { transform: translateY(-50%) scale(.92); }
+  .lb-close { top: max(32px, env(safe-area-inset-top)); right: max(32px, env(safe-area-inset-right)); }
+  .lb-fullscreen { top: max(32px, env(safe-area-inset-top)); right: max(80px, calc(env(safe-area-inset-right) + 48px)); font-size: 16px; }
+  .lb-nav.prev { left: max(32px, env(safe-area-inset-left)); top: 50%; transform: translateY(-50%); }
+  .lb-nav.next { right: max(32px, env(safe-area-inset-right)); top: 50%; transform: translateY(-50%); }
+  /* Fullscreen mode: image fills the screen edge to edge, side panel + nav tucked away */
+  .lightbox:fullscreen { background: #000; }
+  .lightbox:fullscreen .lb-panel { max-width: none; width: 100vw; height: 100vh; max-height: 100vh; border-radius: 0; background: #000; }
+  .lightbox:fullscreen .lb-img-wrap img { max-height: 100vh; }
+  .lightbox:fullscreen .lb-side { display: none; }
+  .lb-conf-bar { height: 4px; border-radius: 2px; background: var(--bg-sunken); overflow: hidden; margin-top: 4px; }
+  .lb-conf-fill { height: 100%; background: var(--accent); }
+
+  /* Notes tab */
+  .notes-list { display: flex; flex-direction: column; gap: 10px; max-width: 900px; margin: 0 auto; }
+  .note-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .note-head {
+    padding: 13px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    transition: background .15s ease;
+  }
+  .note-head:hover { background: var(--bg-sunken); }
+  .note-title { font-weight: 650; font-size: 14px; }
+  .note-path { font-size: 11px; color: var(--text-faint); font-family: var(--mono); margin-top: 2px; }
+  .note-chars { font-size: 11px; color: var(--text-faint); white-space: nowrap; }
+  .note-body {
+    padding: 0 16px 16px; white-space: pre-wrap; font-size: 12.5px; color: var(--text-dim);
+    max-height: 480px; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    border-top: 1px solid var(--border); padding-top: 12px; margin-top: -1px;
+  }
+  .note-body[hidden] { display: none; }
+
+  /* Stats tab */
+  .stats-wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 26px; }
+  .stat-block h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); margin: 0 0 10px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .bar-label { width: 170px; flex-shrink: 0; font-size: 12.5px; text-align: right; color: var(--text-dim); }
+  .bar-track { flex: 1; background: var(--bg-sunken); border-radius: 4px; height: 14px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; }
+  .bar-val { width: 44px; font-size: 12px; color: var(--text-faint); }
+
+  footer {
+    text-align: center; padding: 30px 20px calc(50px + env(safe-area-inset-bottom)); color: var(--text-faint); font-size: 11.5px;
+  }
+
+  /* ---- Tablet / small desktop ---- */
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 9px; }
+  }
+
+  /* ---- Mobile (phones, portrait & landscape) ---- */
+  @media (max-width: 720px) {
+    header.top { padding-top: max(10px, env(safe-area-inset-top)); padding-bottom: 10px; }
+    h1 { font-size: 16.5px; }
+    .subtitle { font-size: 11.5px; }
+    .top-nav { flex-basis: 100%; margin-left: 0; }
+    .top-nav a { flex: 1; text-align: center; padding: 7px 10px; }
+    .stat-row { gap: 10px 14px; font-size: 11px; }
+    .tabs { gap: 2px; }
+    .tab-btn { padding: 7px 10px; font-size: 12.5px; }
+    .controls { gap: 8px; }
+    input[type="search"] { flex: 1 1 100%; font-size: 16px; } /* 16px prevents iOS Safari auto-zoom on focus */
+    select { font-size: 16px; }
+    .filter-btn { padding: 9px 14px 9px 12px; }
+    main { padding: 12px 14px 50px; }
+
+    .grid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; }
+    .card .meta { padding: 6px 8px 8px; }
+    .card .ticker { font-size: 12px; }
+    .card .company { font-size: 10px; }
+    .badge { font-size: 9px; padding: 2px 5px; }
+    .date-tag { font-size: 9.5px; }
+    .group-header { margin: 20px 0 8px; }
+    .group-header .yr { font-size: 17px; }
+    .group-header .mo { font-size: 12px; }
+
+    .lb-panel { flex-direction: column; max-height: 96vh; border-radius: 16px 16px 0 0; }
+    .lb-img-wrap img { max-height: 38vh; }
+    .lb-side { max-width: none; padding: 16px; }
+    .lb-close { top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right)); width: 36px; height: 36px; }
+    .lb-nav { width: 42px; height: 42px; } /* bigger touch target for thumb reach */
+    .lb-nav.prev { left: max(8px, env(safe-area-inset-left)); }
+    .lb-nav.next { right: max(8px, env(safe-area-inset-right)); }
+
+    .note-head { padding: 12px 14px; }
+    .note-body { padding: 0 14px 14px; max-height: 55vh; }
+    .bar-label { width: 120px; font-size: 11.5px; }
+  }
+
+  /* ---- Very small phones (iPhone SE / mini and similar) ---- */
+  @media (max-width: 380px) {
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 7px; }
+    .stat-row { display: none; } /* too dense to be useful at this width, saves scroll space */
+    .filter-btn span:not(.burger-icon):not(.filter-badge) { display: none; } /* icon+badge only, no "Filter" label */
+  }
+
+  /* Respect reduced-motion preference: keep the UI functional but skip decorative motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <h1>📉 Krisenarchiv</h1>
+    <span class="subtitle">Bärenmärkte &amp; Crashs 1987–2026 · EOD-Kursdaten, Kerzenmusteranalyse</span>
+    <nav class="top-nav">
+      <a href="./index.html">📈 Alle Galerien</a>
+      <a href="../charts-bot.html">🕯 Live Charts-Bot</a>
+    </nav>
+  </div>
+  <div class="stat-row" id="statRow"></div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="charts">Charts</button>
+    <button class="tab-btn" data-tab="notes">Ereignis-Hintergrund</button>
+    <button class="tab-btn" data-tab="stats">Statistik</button>
+  </div>
+  <div class="controls" id="chartsControls">
+    <input type="search" id="searchBox" placeholder="Suche: Ticker, Firma, Ordner…">
+    <select id="sortSelect">
+      <option value="chrono">Chronologisch</option>
+      <option value="chrono-desc">Chronologisch (neueste zuerst)</option>
+      <option value="ticker">Alphabetisch (Ticker)</option>
+      <option value="confidence">Konfidenz</option>
+    </select>
+    <button class="filter-btn" id="filterBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="filterDrawer">
+      <span class="burger-icon"><span></span><span></span><span></span></span>
+      <span>Filter</span>
+      <span class="filter-badge" id="filterBadge" hidden>0</span>
+    </button>
+  </div>
+</header>
+
+<div class="filter-backdrop" id="filterBackdrop"></div>
+<aside class="filter-drawer" id="filterDrawer" aria-label="Filter" aria-hidden="true">
+  <div class="filter-drawer-head">
+    <h2>Filter</h2>
+    <button class="filter-close" id="filterCloseBtn" aria-label="Filter schließen" type="button">✕</button>
+  </div>
+  <div class="filter-drawer-body">
+    <div class="filter-section">
+      <h3 id="filterSectionGroupLabel">Krisen-Ereignis</h3>
+      <div class="chip-group" id="indexChips"></div>
+    </div>
+    <div class="filter-section">
+      <h3>Chart-Typ</h3>
+      <div class="chip-group" id="typeChips"></div>
+    </div>
+  </div>
+  <div class="filter-drawer-foot">
+    <button class="filter-reset" id="filterResetBtn" type="button">Filter zurücksetzen</button>
+  </div>
+</aside>
+
+<main>
+  <section id="view-charts"></section>
+  <section id="view-notes" class="notes-list" hidden></section>
+  <section id="view-stats" class="stats-wrap" hidden></section>
+</main>
+
+<div class="lightbox" id="lightbox" hidden>
+  <div class="lb-panel">
+    <div class="lb-img-wrap"><img id="lbImg" alt=""></div>
+    <div class="lb-side" id="lbSide"></div>
+  </div>
+  <button class="lb-close" id="lbClose">✕</button>
+  <button class="lb-fullscreen" id="lbFullscreen" aria-label="Vollbild" title="Vollbild">⛶</button>
+  <button class="lb-nav prev" id="lbPrev">‹</button>
+  <button class="lb-nav next" id="lbNext">›</button>
+</div>
+
+<footer>Lokal generiert aus EOD-Kursdaten · keine Anlageberatung · Bilder liegen in <code>viewer/crises/img/</code></footer>
+
+<script>
+const DATA = {"generatedAt":"2026-08-10T13:20:38.213Z","stats":{"totalOriginal":175,"totalUnique":175,"dupesRemoved":0,"analyzed":175,"fromChart":175,"fromFolder":0,"approx":0,"undated":0,"dateMin":"1987-08-01","dateMax":"2026-02-17","notesChars":6202},"indexGroups":["1987 — Black Monday","2000–2002 — Dotcom-Crash","2008–2009 — Globale Finanzkrise","2011 — Europäische Schuldenkrise","2015 — Franken-Schock (SNB)","2018 — Q4-Sell-off","2020 — Corona-Crash","2022 — Zinserhöhungs-Bärenmarkt","2022 — Krypto-Crash (Terra/Luna, FTX)","2025/26 — Meme-Coin- & Altcoin-Crash","2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","2011–13 — SolarWorld & die deutsche Solarbranche","2021–26 — Kollaps der EV-Startups","2023 — US-Regionalbankenkrise","2021–22 — Chinas Tech-Regulierungscrackdown","2021–22 — Biotech-Crash (XBI)","2022–23 — Fracht- & Schifffahrtscrash","2026 — KI-/Halbleiter-Korrektur","2019–26 — Cannabis-Sektor-Crash","2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)"],"chartTypes":["Übersicht","Crash-Detail"],"entries":[{"h":"1987-black-monday__GSPC.INDX__overview","p":"Krisenarchiv / 1987 — Black Monday / S&P 500 (GSPC.INDX) / Übersicht","f":"1987 — Black Monday","t":"GSPC.INDX","co":"S&P 500","ac":"Aktienindex","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -22.2% · Max. Drawdown: -33.5% · Signal: NEUTRAL · 87 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__DJI.INDX__overview","p":"Krisenarchiv / 1987 — Black Monday / Dow Jones Industrial (DJI.INDX) / Übersicht","f":"1987 — Black Monday","t":"DJI.INDX","co":"Dow Jones Industrial","ac":"Aktienindex","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -24.2% · Max. Drawdown: -36.1% · Signal: NEUTRAL · 78 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__IBM.US__overview","p":"Krisenarchiv / 1987 — Black Monday / IBM (IBM.US) / Übersicht","f":"1987 — Black Monday","t":"IBM.US","co":"IBM","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -27.5% · Max. Drawdown: -40.9% · Signal: BEARISCH · 57 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__GE.US__overview","p":"Krisenarchiv / 1987 — Black Monday / General Electric (GE.US) / Übersicht","f":"1987 — Black Monday","t":"GE.US","co":"General Electric","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -24.7% · Max. Drawdown: -39.5% · Signal: BEARISCH · 61 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__XOM.US__overview","p":"Krisenarchiv / 1987 — Black Monday / ExxonMobil (XOM.US) / Übersicht","f":"1987 — Black Monday","t":"XOM.US","co":"ExxonMobil","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -60.9% · Max. Drawdown: -66.6% · Signal: BEARISCH · 56 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__KO.US__overview","p":"Krisenarchiv / 1987 — Black Monday / Coca-Cola (KO.US) / Übersicht","f":"1987 — Black Monday","t":"KO.US","co":"Coca-Cola","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -19.3% · Max. Drawdown: -41.5% · Signal: BEARISCH · 61 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__PG.US__overview","p":"Krisenarchiv / 1987 — Black Monday / Procter & Gamble (PG.US) / Übersicht","f":"1987 — Black Monday","t":"PG.US","co":"Procter & Gamble","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -6.4% · Max. Drawdown: -40.7% · Signal: NEUTRAL · 75 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__BA.US__overview","p":"Krisenarchiv / 1987 — Black Monday / Boeing (BA.US) / Übersicht","f":"1987 — Black Monday","t":"BA.US","co":"Boeing","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -29.5% · Max. Drawdown: -35.4% · Signal: BEARISCH · 53 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__CAT.US__overview","p":"Krisenarchiv / 1987 — Black Monday / Caterpillar (CAT.US) / Übersicht","f":"1987 — Black Monday","t":"CAT.US","co":"Caterpillar","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -4.2% · Max. Drawdown: -43.1% · Signal: BULLISCH · 136 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__MMM.US__overview","p":"Krisenarchiv / 1987 — Black Monday / 3M (MMM.US) / Übersicht","f":"1987 — Black Monday","t":"MMM.US","co":"3M","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -11.5% · Max. Drawdown: -34.9% · Signal: BULLISCH · 59 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__DIS.US__overview","p":"Krisenarchiv / 1987 — Black Monday / Walt Disney (DIS.US) / Übersicht","f":"1987 — Black Monday","t":"DIS.US","co":"Walt Disney","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -19.0% · Max. Drawdown: -43.9% · Signal: BULLISCH · 47 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__MCD.US__overview","p":"Krisenarchiv / 1987 — Black Monday / McDonald's (MCD.US) / Übersicht","f":"1987 — Black Monday","t":"MCD.US","co":"McDonald's","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -19.6% · Max. Drawdown: -40.2% · Signal: BEARISCH · 47 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__T.US__overview","p":"Krisenarchiv / 1987 — Black Monday / AT&T (T.US) / Übersicht","f":"1987 — Black Monday","t":"T.US","co":"AT&T","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -10.1% · Max. Drawdown: -26.8% · Signal: NEUTRAL · 54 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"1987-black-monday__JPM.US__overview","p":"Krisenarchiv / 1987 — Black Monday / JPMorgan (JPM.US) / Übersicht","f":"1987 — Black Monday","t":"JPM.US","co":"JPMorgan","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 106 Kerzen","g":"1987 — Black Monday","d":"1987-08-01","dsrc":"chart","conf":null,"note":"Veränderung: -45.7% · Max. Drawdown: -54.1% · Signal: BEARISCH · 75 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__IXIC.INDX__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Nasdaq Composite (IXIC.INDX) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"IXIC.INDX","co":"Nasdaq Composite","ac":"Aktienindex","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -65.6% · Max. Drawdown: -77.4% · Signal: NEUTRAL · 79 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__IXIC.INDX__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Nasdaq Composite (IXIC.INDX) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"IXIC.INDX","co":"Nasdaq Composite","ac":"Aktienindex","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-03-10","dsrc":"chart","conf":null,"note":"Veränderung: -53.6% · Max. Drawdown: -53.8% · Signal: NEUTRAL · 127 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__GSPC.INDX__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / S&P 500 (GSPC.INDX) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"GSPC.INDX","co":"S&P 500","ac":"Aktienindex","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -39.0% · Max. Drawdown: -47.6% · Signal: BEARISCH · 57 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__GSPC.INDX__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / S&P 500 (GSPC.INDX) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"GSPC.INDX","co":"S&P 500","ac":"Aktienindex","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-03-24","dsrc":"chart","conf":null,"note":"Veränderung: -15.2% · Max. Drawdown: -17.2% · Signal: NEUTRAL · 104 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__GDAXI.INDX__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / DAX (GDAXI.INDX) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"GDAXI.INDX","co":"DAX","ac":"Aktienindex","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -57.3% · Max. Drawdown: -66.0% · Signal: NEUTRAL · 81 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__GDAXI.INDX__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / DAX (GDAXI.INDX) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"GDAXI.INDX","co":"DAX","ac":"Aktienindex","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-03-07","dsrc":"chart","conf":null,"note":"Veränderung: -15.9% · Max. Drawdown: -21.0% · Signal: NEUTRAL · 134 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__CSCO.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Cisco Systems (CSCO.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"CSCO.US","co":"Cisco Systems","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -87.6% · Max. Drawdown: -93.1% · Signal: NEUTRAL · 69 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__CSCO.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Cisco Systems (CSCO.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"CSCO.US","co":"Cisco Systems","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-03-22","dsrc":"chart","conf":null,"note":"Veränderung: -71.0% · Max. Drawdown: -76.9% · Signal: BULLISCH · 101 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__MSFT.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Microsoft (MSFT.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"MSFT.US","co":"Microsoft","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -53.6% · Max. Drawdown: -61.4% · Signal: NEUTRAL · 90 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__MSFT.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Microsoft (MSFT.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"MSFT.US","co":"Microsoft","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-03","dsrc":"chart","conf":null,"note":"Veränderung: -56.8% · Max. Drawdown: -56.8% · Signal: NEUTRAL · 119 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__INTC.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Intel (INTC.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"INTC.US","co":"Intel","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -81.0% · Max. Drawdown: -90.7% · Signal: NEUTRAL · 88 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__INTC.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Intel (INTC.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"INTC.US","co":"Intel","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-07-14","dsrc":"chart","conf":null,"note":"Veränderung: -78.9% · Max. Drawdown: -84.6% · Signal: NEUTRAL · 95 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__ORCL.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Oracle (ORCL.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"ORCL.US","co":"Oracle","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -89.6% · Max. Drawdown: -92.6% · Signal: BEARISCH · 86 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__ORCL.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Oracle (ORCL.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"ORCL.US","co":"Oracle","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-03","dsrc":"chart","conf":null,"note":"Veränderung: -70.7% · Max. Drawdown: -70.7% · Signal: BULLISCH · 131 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__AMZN.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Amazon (AMZN.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"AMZN.US","co":"Amazon","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -72.8% · Max. Drawdown: -92.4% · Signal: BULLISCH · 77 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__AMZN.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Amazon (AMZN.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"AMZN.US","co":"Amazon","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-03","dsrc":"chart","conf":null,"note":"Veränderung: -72.8% · Max. Drawdown: -72.8% · Signal: NEUTRAL · 115 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__YHOO.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Yahoo! (YHOO.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"YHOO.US","co":"Yahoo!","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -92.0% · Max. Drawdown: -95.7% · Signal: NEUTRAL · 92 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__YHOO.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Yahoo! (YHOO.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"YHOO.US","co":"Yahoo!","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-03","dsrc":"chart","conf":null,"note":"Veränderung: -76.7% · Max. Drawdown: -76.7% · Signal: NEUTRAL · 103 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__QCOM.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Qualcomm (QCOM.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"QCOM.US","co":"Qualcomm","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -75.7% · Max. Drawdown: -83.5% · Signal: NEUTRAL · 92 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__QCOM.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Qualcomm (QCOM.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"QCOM.US","co":"Qualcomm","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-03","dsrc":"chart","conf":null,"note":"Veränderung: -57.1% · Max. Drawdown: -70.4% · Signal: NEUTRAL · 97 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__EBAY.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / eBay (EBAY.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"EBAY.US","co":"eBay","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -49.7% · Max. Drawdown: -87.5% · Signal: BULLISCH · 93 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__EBAY.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / eBay (EBAY.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"EBAY.US","co":"eBay","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 199 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-03-17","dsrc":"chart","conf":null,"note":"Veränderung: -82.7% · Max. Drawdown: -88.5% · Signal: BEARISCH · 110 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__AMD.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / AMD (AMD.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"AMD.US","co":"AMD","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -80.1% · Max. Drawdown: -96.2% · Signal: BEARISCH · 86 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__AMD.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / AMD (AMD.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"AMD.US","co":"AMD","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-06-21","dsrc":"chart","conf":null,"note":"Veränderung: -75.8% · Max. Drawdown: -85.6% · Signal: NEUTRAL · 96 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__NOK.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Nokia (NOK.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"NOK.US","co":"Nokia","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -90.9% · Max. Drawdown: -95.0% · Signal: BULLISCH · 75 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__NOK.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Nokia (NOK.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"NOK.US","co":"Nokia","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-03-27","dsrc":"chart","conf":null,"note":"Veränderung: -82.8% · Max. Drawdown: -87.1% · Signal: NEUTRAL · 115 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__ERIC.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Ericsson (ERIC.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"ERIC.US","co":"Ericsson","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -88.9% · Max. Drawdown: -99.6% · Signal: NEUTRAL · 72 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__ERIC.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Ericsson (ERIC.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"ERIC.US","co":"Ericsson","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-03-03","dsrc":"chart","conf":null,"note":"Veränderung: -88.1% · Max. Drawdown: -89.7% · Signal: BEARISCH · 78 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__GLW.US__overview","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Corning (GLW.US) / Übersicht","f":"2000–2002 — Dotcom-Crash","t":"GLW.US","co":"Corning","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 157 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -97.2% · Max. Drawdown: -99.6% · Signal: BEARISCH · 68 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2000-dotcom__GLW.US__crash","p":"Krisenarchiv / 2000–2002 — Dotcom-Crash / Corning (GLW.US) / Crash-Detail","f":"2000–2002 — Dotcom-Crash","t":"GLW.US","co":"Corning","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2000–2002 — Dotcom-Crash","d":"2000-09-01","dsrc":"chart","conf":null,"note":"Veränderung: -96.1% · Max. Drawdown: -96.1% · Signal: BEARISCH · 125 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__GSPC.INDX__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / S&P 500 (GSPC.INDX) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"GSPC.INDX","co":"S&P 500","ac":"Aktienindex","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -34.9% · Max. Drawdown: -52.1% · Signal: BULLISCH · 59 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__GSPC.INDX__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / S&P 500 (GSPC.INDX) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"GSPC.INDX","co":"S&P 500","ac":"Aktienindex","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-02","dsrc":"chart","conf":null,"note":"Veränderung: -37.3% · Max. Drawdown: -37.9% · Signal: BULLISCH · 143 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__DJI.INDX__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Dow Jones Industrial (DJI.INDX) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"DJI.INDX","co":"Dow Jones Industrial","ac":"Aktienindex","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -34.0% · Max. Drawdown: -49.3% · Signal: BULLISCH · 56 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__DJI.INDX__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Dow Jones Industrial (DJI.INDX) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"DJI.INDX","co":"Dow Jones Industrial","ac":"Aktienindex","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-05-02","dsrc":"chart","conf":null,"note":"Veränderung: -42.2% · Max. Drawdown: -42.2% · Signal: NEUTRAL · 135 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__GDAXI.INDX__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / DAX (GDAXI.INDX) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"GDAXI.INDX","co":"DAX","ac":"Aktienindex","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -38.4% · Max. Drawdown: -53.0% · Signal: BEARISCH · 40 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__GDAXI.INDX__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / DAX (GDAXI.INDX) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"GDAXI.INDX","co":"DAX","ac":"Aktienindex","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-02","dsrc":"chart","conf":null,"note":"Veränderung: -42.8% · Max. Drawdown: -42.8% · Signal: NEUTRAL · 121 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__C.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Citigroup (C.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"C.US","co":"Citigroup","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -89.5% · Max. Drawdown: -96.5% · Signal: BULLISCH · 39 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__C.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Citigroup (C.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"C.US","co":"Citigroup","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-02-01","dsrc":"chart","conf":null,"note":"Veränderung: -68.2% · Max. Drawdown: -68.2% · Signal: NEUTRAL · 106 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__BAC.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Bank of America (BAC.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"BAC.US","co":"Bank of America","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -66.9% · Max. Drawdown: -93.0% · Signal: BULLISCH · 44 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__BAC.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Bank of America (BAC.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"BAC.US","co":"Bank of America","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-02-01","dsrc":"chart","conf":null,"note":"Veränderung: -62.0% · Max. Drawdown: -62.2% · Signal: NEUTRAL · 102 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__GS.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Goldman Sachs (GS.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"GS.US","co":"Goldman Sachs","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -26.3% · Max. Drawdown: -74.3% · Signal: NEUTRAL · 47 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__GS.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Goldman Sachs (GS.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"GS.US","co":"Goldman Sachs","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-02-01","dsrc":"chart","conf":null,"note":"Veränderung: -66.3% · Max. Drawdown: -67.9% · Signal: BEARISCH · 119 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__MS.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Morgan Stanley (MS.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"MS.US","co":"Morgan Stanley","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -42.2% · Max. Drawdown: -80.9% · Signal: BULLISCH · 34 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__MS.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Morgan Stanley (MS.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"MS.US","co":"Morgan Stanley","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-23","dsrc":"chart","conf":null,"note":"Veränderung: -63.4% · Max. Drawdown: -81.3% · Signal: NEUTRAL · 117 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__WFC.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Wells Fargo (WFC.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"WFC.US","co":"Wells Fargo","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -11.7% · Max. Drawdown: -78.4% · Signal: BULLISCH · 50 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__WFC.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Wells Fargo (WFC.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"WFC.US","co":"Wells Fargo","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 199 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-07-22","dsrc":"chart","conf":null,"note":"Veränderung: -23.5% · Max. Drawdown: -79.6% · Signal: NEUTRAL · 98 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__AIG.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / American International Group (AIG.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"AIG.US","co":"American International Group","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -97.9% · Max. Drawdown: -99.4% · Signal: BEARISCH · 47 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__AIG.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / American International Group (AIG.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"AIG.US","co":"American International Group","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-14","dsrc":"chart","conf":null,"note":"Veränderung: -97.7% · Max. Drawdown: -97.7% · Signal: NEUTRAL · 105 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__LEH.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Lehman Brothers (insolvent 09/2008) (LEH.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"LEH.US","co":"Lehman Brothers (insolvent 09/2008)","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 180 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -99.8% · Max. Drawdown: -99.8% · Signal: NEUTRAL · 91 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__LEH.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Lehman Brothers (insolvent 09/2008) (LEH.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"LEH.US","co":"Lehman Brothers (insolvent 09/2008)","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 179 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-03","dsrc":"chart","conf":null,"note":"Veränderung: -99.8% · Max. Drawdown: -99.8% · Signal: NEUTRAL · 90 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__FNM.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Fannie Mae (FNM.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"FNM.US","co":"Fannie Mae","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -98.3% · Max. Drawdown: -99.2% · Signal: BEARISCH · 37 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__FNM.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Fannie Mae (FNM.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"FNM.US","co":"Fannie Mae","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-02","dsrc":"chart","conf":null,"note":"Veränderung: -97.3% · Max. Drawdown: -98.9% · Signal: BEARISCH · 114 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__FMCC.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Freddie Mac (FMCC.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"FMCC.US","co":"Freddie Mac","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -97.9% · Max. Drawdown: -98.9% · Signal: BEARISCH · 40 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__FMCC.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Freddie Mac (FMCC.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"FMCC.US","co":"Freddie Mac","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 189 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-02","dsrc":"chart","conf":null,"note":"Veränderung: -94.8% · Max. Drawdown: -99.2% · Signal: NEUTRAL · 87 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__GE.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / General Electric (GE.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"GE.US","co":"General Electric","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -67.5% · Max. Drawdown: -81.2% · Signal: NEUTRAL · 37 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__GE.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / General Electric (GE.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"GE.US","co":"General Electric","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-04-01","dsrc":"chart","conf":null,"note":"Veränderung: -61.1% · Max. Drawdown: -66.6% · Signal: NEUTRAL · 107 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__F.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Ford (F.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"F.US","co":"Ford","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -1.0% · Max. Drawdown: -82.7% · Signal: BEARISCH · 40 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__F.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Ford (F.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"F.US","co":"Ford","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-03-20","dsrc":"chart","conf":null,"note":"Veränderung: -56.2% · Max. Drawdown: -85.1% · Signal: BEARISCH · 112 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__JPM.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / JPMorgan Chase (JPM.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"JPM.US","co":"JPMorgan Chase","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -16.7% · Max. Drawdown: -67.3% · Signal: BULLISCH · 41 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__JPM.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / JPMorgan Chase (JPM.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"JPM.US","co":"JPMorgan Chase","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-07-29","dsrc":"chart","conf":null,"note":"Veränderung: -16.4% · Max. Drawdown: -68.1% · Signal: NEUTRAL · 113 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__AAPL.US__overview","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Apple (AAPL.US) / Übersicht","f":"2008–2009 — Globale Finanzkrise","t":"AAPL.US","co":"Apple","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 79 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -20.9% · Max. Drawdown: -56.4% · Signal: NEUTRAL · 35 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2008-gfc__AAPL.US__crash","p":"Krisenarchiv / 2008–2009 — Globale Finanzkrise / Apple (AAPL.US) / Crash-Detail","f":"2008–2009 — Globale Finanzkrise","t":"AAPL.US","co":"Apple","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2008–2009 — Globale Finanzkrise","d":"2008-01-03","dsrc":"chart","conf":null,"note":"Veränderung: -47.7% · Max. Drawdown: -54.5% · Signal: NEUTRAL · 101 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2011-euro-debt__GDAXI.INDX__overview","p":"Krisenarchiv / 2011 — Europäische Schuldenkrise / DAX (GDAXI.INDX) / Übersicht","f":"2011 — Europäische Schuldenkrise","t":"GDAXI.INDX","co":"DAX","ac":"Aktienindex","c":"Übersicht","ctf":"Tageskerzen, 130 Kerzen","g":"2011 — Europäische Schuldenkrise","d":"2011-07-01","dsrc":"chart","conf":null,"note":"Veränderung: -20.5% · Max. Drawdown: -32.1% · Signal: BULLISCH · 67 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2011-euro-debt__GDAXI.INDX__crash","p":"Krisenarchiv / 2011 — Europäische Schuldenkrise / DAX (GDAXI.INDX) / Crash-Detail","f":"2011 — Europäische Schuldenkrise","t":"GDAXI.INDX","co":"DAX","ac":"Aktienindex","c":"Crash-Detail","ctf":"Tageskerzen, 128 Kerzen","g":"2011 — Europäische Schuldenkrise","d":"2011-07-01","dsrc":"chart","conf":null,"note":"Veränderung: -22.2% · Max. Drawdown: -32.1% · Signal: NEUTRAL · 64 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2011-euro-debt__FCHI.INDX__overview","p":"Krisenarchiv / 2011 — Europäische Schuldenkrise / CAC 40 (FCHI.INDX) / Übersicht","f":"2011 — Europäische Schuldenkrise","t":"FCHI.INDX","co":"CAC 40","ac":"Aktienindex","c":"Übersicht","ctf":"Tageskerzen, 130 Kerzen","g":"2011 — Europäische Schuldenkrise","d":"2011-07-01","dsrc":"chart","conf":null,"note":"Veränderung: -21.1% · Max. Drawdown: -30.6% · Signal: NEUTRAL · 69 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2015-chf-shock__EURCHF.FOREX__overview","p":"Krisenarchiv / 2015 — Franken-Schock (SNB) / EUR/CHF (EURCHF.FOREX) / Übersicht","f":"2015 — Franken-Schock (SNB)","t":"EURCHF.FOREX","co":"EUR/CHF","ac":"Devisen (Forex)","c":"Übersicht","ctf":"Tageskerzen, 32 Kerzen","g":"2015 — Franken-Schock (SNB)","d":"2015-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -11.8% · Max. Drawdown: -18.5% · Signal: BEARISCH · 43 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2018-q4-selloff__GSPC.INDX__overview","p":"Krisenarchiv / 2018 — Q4-Sell-off / S&P 500 (GSPC.INDX) / Übersicht","f":"2018 — Q4-Sell-off","t":"GSPC.INDX","co":"S&P 500","ac":"Aktienindex","c":"Übersicht","ctf":"Tageskerzen, 82 Kerzen","g":"2018 — Q4-Sell-off","d":"2018-09-01","dsrc":"chart","conf":null,"note":"Veränderung: -13.5% · Max. Drawdown: -19.8% · Signal: BEARISCH · 43 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2018-q4-selloff__IXIC.INDX__overview","p":"Krisenarchiv / 2018 — Q4-Sell-off / Nasdaq Composite (IXIC.INDX) / Übersicht","f":"2018 — Q4-Sell-off","t":"IXIC.INDX","co":"Nasdaq Composite","ac":"Aktienindex","c":"Übersicht","ctf":"Tageskerzen, 82 Kerzen","g":"2018 — Q4-Sell-off","d":"2018-09-01","dsrc":"chart","conf":null,"note":"Veränderung: -18.0% · Max. Drawdown: -23.5% · Signal: BEARISCH · 43 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2020-corona__GSPC.INDX__overview","p":"Krisenarchiv / 2020 — Corona-Crash / S&P 500 (GSPC.INDX) / Übersicht","f":"2020 — Corona-Crash","t":"GSPC.INDX","co":"S&P 500","ac":"Aktienindex","c":"Übersicht","ctf":"Tageskerzen, 125 Kerzen","g":"2020 — Corona-Crash","d":"2020-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -4.8% · Max. Drawdown: -33.9% · Signal: NEUTRAL · 75 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2020-corona__GDAXI.INDX__overview","p":"Krisenarchiv / 2020 — Corona-Crash / DAX (GDAXI.INDX) / Übersicht","f":"2020 — Corona-Crash","t":"GDAXI.INDX","co":"DAX","ac":"Aktienindex","c":"Übersicht","ctf":"Tageskerzen, 125 Kerzen","g":"2020 — Corona-Crash","d":"2020-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -8.0% · Max. Drawdown: -38.8% · Signal: BULLISCH · 70 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2020-corona__BTC-USD.CC__overview","p":"Krisenarchiv / 2020 — Corona-Crash / Bitcoin (BTC-USD.CC) / Übersicht","f":"2020 — Corona-Crash","t":"BTC-USD.CC","co":"Bitcoin","ac":"Krypto","c":"Übersicht","ctf":"Tageskerzen, 182 Kerzen","g":"2020 — Corona-Crash","d":"2020-01-01","dsrc":"chart","conf":null,"note":"Veränderung: +26.9% · Max. Drawdown: -51.9% · Signal: NEUTRAL · 126 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2020-corona__BTC-USD.CC__crash","p":"Krisenarchiv / 2020 — Corona-Crash / Bitcoin (BTC-USD.CC) / Crash-Detail","f":"2020 — Corona-Crash","t":"BTC-USD.CC","co":"Bitcoin","ac":"Krypto","c":"Crash-Detail","ctf":"Tageskerzen, 157 Kerzen","g":"2020 — Corona-Crash","d":"2020-01-01","dsrc":"chart","conf":null,"note":"Veränderung: +34.2% · Max. Drawdown: -51.9% · Signal: NEUTRAL · 106 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-rate-bear__GSPC.INDX__overview","p":"Krisenarchiv / 2022 — Zinserhöhungs-Bärenmarkt / S&P 500 (GSPC.INDX) / Übersicht","f":"2022 — Zinserhöhungs-Bärenmarkt","t":"GSPC.INDX","co":"S&P 500","ac":"Aktienindex","c":"Übersicht","ctf":"Wochenkerzen, 52 Kerzen","g":"2022 — Zinserhöhungs-Bärenmarkt","d":"2022-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -17.9% · Max. Drawdown: -23.4% · Signal: BEARISCH · 31 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-rate-bear__GSPC.INDX__crash","p":"Krisenarchiv / 2022 — Zinserhöhungs-Bärenmarkt / S&P 500 (GSPC.INDX) / Crash-Detail","f":"2022 — Zinserhöhungs-Bärenmarkt","t":"GSPC.INDX","co":"S&P 500","ac":"Aktienindex","c":"Crash-Detail","ctf":"Tageskerzen, 198 Kerzen","g":"2022 — Zinserhöhungs-Bärenmarkt","d":"2022-01-03","dsrc":"chart","conf":null,"note":"Veränderung: -25.3% · Max. Drawdown: -25.4% · Signal: NEUTRAL · 115 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-rate-bear__IXIC.INDX__overview","p":"Krisenarchiv / 2022 — Zinserhöhungs-Bärenmarkt / Nasdaq Composite (IXIC.INDX) / Übersicht","f":"2022 — Zinserhöhungs-Bärenmarkt","t":"IXIC.INDX","co":"Nasdaq Composite","ac":"Aktienindex","c":"Übersicht","ctf":"Wochenkerzen, 52 Kerzen","g":"2022 — Zinserhöhungs-Bärenmarkt","d":"2022-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -29.9% · Max. Drawdown: -30.9% · Signal: BEARISCH · 22 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-rate-bear__IXIC.INDX__crash","p":"Krisenarchiv / 2022 — Zinserhöhungs-Bärenmarkt / Nasdaq Composite (IXIC.INDX) / Crash-Detail","f":"2022 — Zinserhöhungs-Bärenmarkt","t":"IXIC.INDX","co":"Nasdaq Composite","ac":"Aktienindex","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2022 — Zinserhöhungs-Bärenmarkt","d":"2022-01-03","dsrc":"chart","conf":null,"note":"Veränderung: -32.0% · Max. Drawdown: -34.8% · Signal: NEUTRAL · 106 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-rate-bear__META.US__overview","p":"Krisenarchiv / 2022 — Zinserhöhungs-Bärenmarkt / Meta Platforms (META.US) / Übersicht","f":"2022 — Zinserhöhungs-Bärenmarkt","t":"META.US","co":"Meta Platforms","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 52 Kerzen","g":"2022 — Zinserhöhungs-Bärenmarkt","d":"2022-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -63.7% · Max. Drawdown: -72.6% · Signal: BULLISCH · 27 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-rate-bear__META.US__crash","p":"Krisenarchiv / 2022 — Zinserhöhungs-Bärenmarkt / Meta Platforms (META.US) / Crash-Detail","f":"2022 — Zinserhöhungs-Bärenmarkt","t":"META.US","co":"Meta Platforms","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2022 — Zinserhöhungs-Bärenmarkt","d":"2022-01-03","dsrc":"chart","conf":null,"note":"Veränderung: -60.8% · Max. Drawdown: -62.6% · Signal: BULLISCH · 122 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-crypto-crash__BTC-USD.CC__overview","p":"Krisenarchiv / 2022 — Krypto-Crash (Terra/Luna, FTX) / Bitcoin (BTC-USD.CC) / Übersicht","f":"2022 — Krypto-Crash (Terra/Luna, FTX)","t":"BTC-USD.CC","co":"Bitcoin","ac":"Krypto","c":"Übersicht","ctf":"Wochenkerzen, 40 Kerzen","g":"2022 — Krypto-Crash (Terra/Luna, FTX)","d":"2022-04-01","dsrc":"chart","conf":null,"note":"Veränderung: -64.4% · Max. Drawdown: -64.9% · Signal: BEARISCH · 28 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-crypto-crash__BTC-USD.CC__crash","p":"Krisenarchiv / 2022 — Krypto-Crash (Terra/Luna, FTX) / Bitcoin (BTC-USD.CC) / Crash-Detail","f":"2022 — Krypto-Crash (Terra/Luna, FTX)","t":"BTC-USD.CC","co":"Bitcoin","ac":"Krypto","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2022 — Krypto-Crash (Terra/Luna, FTX)","d":"2022-04-04","dsrc":"chart","conf":null,"note":"Veränderung: -59.1% · Max. Drawdown: -60.2% · Signal: NEUTRAL · 132 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-crypto-crash__ETH-USD.CC__overview","p":"Krisenarchiv / 2022 — Krypto-Crash (Terra/Luna, FTX) / Ethereum (ETH-USD.CC) / Übersicht","f":"2022 — Krypto-Crash (Terra/Luna, FTX)","t":"ETH-USD.CC","co":"Ethereum","ac":"Krypto","c":"Übersicht","ctf":"Wochenkerzen, 40 Kerzen","g":"2022 — Krypto-Crash (Terra/Luna, FTX)","d":"2022-04-01","dsrc":"chart","conf":null,"note":"Veränderung: -66.0% · Max. Drawdown: -69.5% · Signal: NEUTRAL · 17 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-crypto-crash__ETH-USD.CC__crash","p":"Krisenarchiv / 2022 — Krypto-Crash (Terra/Luna, FTX) / Ethereum (ETH-USD.CC) / Crash-Detail","f":"2022 — Krypto-Crash (Terra/Luna, FTX)","t":"ETH-USD.CC","co":"Ethereum","ac":"Krypto","c":"Crash-Detail","ctf":"Tageskerzen, 140 Kerzen","g":"2022 — Krypto-Crash (Terra/Luna, FTX)","d":"2022-04-01","dsrc":"chart","conf":null,"note":"Veränderung: -46.5% · Max. Drawdown: -71.8% · Signal: BULLISCH · 86 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__BTC-USD.CC__overview","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / Bitcoin (BTC-USD.CC) / Übersicht","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"BTC-USD.CC","co":"Bitcoin","ac":"Krypto","c":"Übersicht","ctf":"Wochenkerzen, 58 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-07-01","dsrc":"chart","conf":null,"note":"Veränderung: -40.6% · Max. Drawdown: -51.8% · Signal: BEARISCH · 32 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__BTC-USD.CC__crash","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / Bitcoin (BTC-USD.CC) / Crash-Detail","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"BTC-USD.CC","co":"Bitcoin","ac":"Krypto","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-10-06","dsrc":"chart","conf":null,"note":"Veränderung: -37.3% · Max. Drawdown: -49.7% · Signal: NEUTRAL · 120 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__ETH-USD.CC__overview","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / Ethereum (ETH-USD.CC) / Übersicht","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"ETH-USD.CC","co":"Ethereum","ac":"Krypto","c":"Übersicht","ctf":"Wochenkerzen, 58 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-07-01","dsrc":"chart","conf":null,"note":"Veränderung: -25.8% · Max. Drawdown: -67.1% · Signal: NEUTRAL · 30 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__ETH-USD.CC__crash","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / Ethereum (ETH-USD.CC) / Crash-Detail","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"ETH-USD.CC","co":"Ethereum","ac":"Krypto","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-08-22","dsrc":"chart","conf":null,"note":"Veränderung: -58.7% · Max. Drawdown: -62.3% · Signal: NEUTRAL · 117 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__SOL-USD.CC__overview","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / Solana (SOL-USD.CC) / Übersicht","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"SOL-USD.CC","co":"Solana","ac":"Krypto","c":"Übersicht","ctf":"Wochenkerzen, 58 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-07-01","dsrc":"chart","conf":null,"note":"Veränderung: -49.8% · Max. Drawdown: -72.4% · Signal: BULLISCH · 29 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__SOL-USD.CC__crash","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / Solana (SOL-USD.CC) / Crash-Detail","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"SOL-USD.CC","co":"Solana","ac":"Krypto","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-09-18","dsrc":"chart","conf":null,"note":"Veränderung: -66.9% · Max. Drawdown: -68.6% · Signal: BEARISCH · 102 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__DOGE-USD.CC__overview","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / Dogecoin (DOGE-USD.CC) / Übersicht","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"DOGE-USD.CC","co":"Dogecoin","ac":"Krypto","c":"Übersicht","ctf":"Wochenkerzen, 58 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-07-01","dsrc":"chart","conf":null,"note":"Veränderung: -59.7% · Max. Drawdown: -75.1% · Signal: BEARISCH · 23 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__DOGE-USD.CC__crash","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / Dogecoin (DOGE-USD.CC) / Crash-Detail","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"DOGE-USD.CC","co":"Dogecoin","ac":"Krypto","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-09-13","dsrc":"chart","conf":null,"note":"Veränderung: -68.1% · Max. Drawdown: -69.5% · Signal: BEARISCH · 88 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__BONK-USD.CC__overview","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / Bonk (BONK-USD.CC) / Übersicht","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"BONK-USD.CC","co":"Bonk","ac":"Krypto","c":"Übersicht","ctf":"Wochenkerzen, 58 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-07-01","dsrc":"chart","conf":null,"note":"Veränderung: -88.9% · Max. Drawdown: -92.8% · Signal: BEARISCH · 28 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__BONK-USD.CC__crash","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / Bonk (BONK-USD.CC) / Crash-Detail","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"BONK-USD.CC","co":"Bonk","ac":"Krypto","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-07-16","dsrc":"chart","conf":null,"note":"Veränderung: -81.4% · Max. Drawdown: -81.4% · Signal: BEARISCH · 85 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__WIF-USD.CC__overview","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / dogwifhat (WIF-USD.CC) / Übersicht","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"WIF-USD.CC","co":"dogwifhat","ac":"Krypto","c":"Übersicht","ctf":"Wochenkerzen, 58 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-07-01","dsrc":"chart","conf":null,"note":"Veränderung: -83.9% · Max. Drawdown: -88.5% · Signal: BEARISCH · 25 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2025-meme-altcoin-crash__WIF-USD.CC__crash","p":"Krisenarchiv / 2025/26 — Meme-Coin- & Altcoin-Crash / dogwifhat (WIF-USD.CC) / Crash-Detail","f":"2025/26 — Meme-Coin- & Altcoin-Crash","t":"WIF-USD.CC","co":"dogwifhat","ac":"Krypto","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2025/26 — Meme-Coin- & Altcoin-Crash","d":"2025-07-22","dsrc":"chart","conf":null,"note":"Veränderung: -81.6% · Max. Drawdown: -83.7% · Signal: BEARISCH · 75 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-german-real-estate__VNA.XETRA__overview","p":"Krisenarchiv / 2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise / Vonovia (Wohnen) (VNA.XETRA) / Übersicht","f":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","t":"VNA.XETRA","co":"Vonovia (Wohnen)","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 63 Kerzen","g":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","d":"2021-06-01","dsrc":"chart","conf":null,"note":"Veränderung: -58.8% · Max. Drawdown: -68.0% · Signal: BEARISCH · 38 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-german-real-estate__VNA.XETRA__crash","p":"Krisenarchiv / 2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise / Vonovia (Wohnen) (VNA.XETRA) / Crash-Detail","f":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","t":"VNA.XETRA","co":"Vonovia (Wohnen)","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","d":"2021-08-20","dsrc":"chart","conf":null,"note":"Veränderung: -38.2% · Max. Drawdown: -42.2% · Signal: NEUTRAL · 137 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-german-real-estate__LEG.XETRA__overview","p":"Krisenarchiv / 2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise / LEG Immobilien (Wohnen) (LEG.XETRA) / Übersicht","f":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","t":"LEG.XETRA","co":"LEG Immobilien (Wohnen)","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 63 Kerzen","g":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","d":"2021-06-01","dsrc":"chart","conf":null,"note":"Veränderung: -56.5% · Max. Drawdown: -64.1% · Signal: NEUTRAL · 30 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-german-real-estate__LEG.XETRA__crash","p":"Krisenarchiv / 2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise / LEG Immobilien (Wohnen) (LEG.XETRA) / Crash-Detail","f":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","t":"LEG.XETRA","co":"LEG Immobilien (Wohnen)","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","d":"2021-08-16","dsrc":"chart","conf":null,"note":"Veränderung: -33.4% · Max. Drawdown: -33.7% · Signal: NEUTRAL · 112 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-german-real-estate__TEG.XETRA__overview","p":"Krisenarchiv / 2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise / TAG Immobilien (Wohnen) (TEG.XETRA) / Übersicht","f":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","t":"TEG.XETRA","co":"TAG Immobilien (Wohnen)","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 63 Kerzen","g":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","d":"2021-06-01","dsrc":"chart","conf":null,"note":"Veränderung: -48.2% · Max. Drawdown: -80.1% · Signal: BEARISCH · 37 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-german-real-estate__TEG.XETRA__crash","p":"Krisenarchiv / 2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise / TAG Immobilien (Wohnen) (TEG.XETRA) / Crash-Detail","f":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","t":"TEG.XETRA","co":"TAG Immobilien (Wohnen)","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","d":"2021-08-12","dsrc":"chart","conf":null,"note":"Veränderung: -44.7% · Max. Drawdown: -44.7% · Signal: NEUTRAL · 137 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-german-real-estate__AT1.XETRA__overview","p":"Krisenarchiv / 2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise / Aroundtown (Gewerbe) (AT1.XETRA) / Übersicht","f":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","t":"AT1.XETRA","co":"Aroundtown (Gewerbe)","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 63 Kerzen","g":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","d":"2021-06-01","dsrc":"chart","conf":null,"note":"Veränderung: -66.6% · Max. Drawdown: -85.2% · Signal: NEUTRAL · 35 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-german-real-estate__AT1.XETRA__crash","p":"Krisenarchiv / 2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise / Aroundtown (Gewerbe) (AT1.XETRA) / Crash-Detail","f":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","t":"AT1.XETRA","co":"Aroundtown (Gewerbe)","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","d":"2021-06-09","dsrc":"chart","conf":null,"note":"Veränderung: -21.8% · Max. Drawdown: -32.8% · Signal: NEUTRAL · 118 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-german-real-estate__PBB.XETRA__overview","p":"Krisenarchiv / 2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise / Deutsche Pfandbriefbank (Gewerbe-Finanzierer) (PBB.XETRA) / Übersicht","f":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","t":"PBB.XETRA","co":"Deutsche Pfandbriefbank (Gewerbe-Finanzierer)","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 63 Kerzen","g":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","d":"2021-06-01","dsrc":"chart","conf":null,"note":"Veränderung: -58.7% · Max. Drawdown: -75.5% · Signal: NEUTRAL · 30 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2022-german-real-estate__PBB.XETRA__crash","p":"Krisenarchiv / 2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise / Deutsche Pfandbriefbank (Gewerbe-Finanzierer) (PBB.XETRA) / Crash-Detail","f":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","t":"PBB.XETRA","co":"Deutsche Pfandbriefbank (Gewerbe-Finanzierer)","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","d":"2022-04-21","dsrc":"chart","conf":null,"note":"Veränderung: -29.9% · Max. Drawdown: -43.5% · Signal: NEUTRAL · 125 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2011-solarworld__SWVK.HM__overview","p":"Krisenarchiv / 2011–13 — SolarWorld & die deutsche Solarbranche / SolarWorld AG (SWVK.HM) / Übersicht","f":"2011–13 — SolarWorld & die deutsche Solarbranche","t":"SWVK.HM","co":"SolarWorld AG","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 188 Kerzen","g":"2011–13 — SolarWorld & die deutsche Solarbranche","d":"2010-06-01","dsrc":"chart","conf":null,"note":"Veränderung: -94.9% · Max. Drawdown: -96.5% · Signal: NEUTRAL · 142 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2011-solarworld__SWVK.HM__crash","p":"Krisenarchiv / 2011–13 — SolarWorld & die deutsche Solarbranche / SolarWorld AG (SWVK.HM) / Crash-Detail","f":"2011–13 — SolarWorld & die deutsche Solarbranche","t":"SWVK.HM","co":"SolarWorld AG","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2011–13 — SolarWorld & die deutsche Solarbranche","d":"2011-04-07","dsrc":"chart","conf":null,"note":"Veränderung: -65.7% · Max. Drawdown: -78.2% · Signal: NEUTRAL · 213 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2011-solarworld__S92.XETRA__overview","p":"Krisenarchiv / 2011–13 — SolarWorld & die deutsche Solarbranche / SMA Solar (Überlebender) (S92.XETRA) / Übersicht","f":"2011–13 — SolarWorld & die deutsche Solarbranche","t":"S92.XETRA","co":"SMA Solar (Überlebender)","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 188 Kerzen","g":"2011–13 — SolarWorld & die deutsche Solarbranche","d":"2010-06-01","dsrc":"chart","conf":null,"note":"Veränderung: -72.2% · Max. Drawdown: -84.2% · Signal: NEUTRAL · 118 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2011-solarworld__S92.XETRA__crash","p":"Krisenarchiv / 2011–13 — SolarWorld & die deutsche Solarbranche / SMA Solar (Überlebender) (S92.XETRA) / Crash-Detail","f":"2011–13 — SolarWorld & die deutsche Solarbranche","t":"S92.XETRA","co":"SMA Solar (Überlebender)","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2011–13 — SolarWorld & die deutsche Solarbranche","d":"2010-07-15","dsrc":"chart","conf":null,"note":"Veränderung: -21.6% · Max. Drawdown: -36.5% · Signal: NEUTRAL · 130 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2011-solarworld__FSLR.US__overview","p":"Krisenarchiv / 2011–13 — SolarWorld & die deutsche Solarbranche / First Solar (US-Vergleich) (FSLR.US) / Übersicht","f":"2011–13 — SolarWorld & die deutsche Solarbranche","t":"FSLR.US","co":"First Solar (US-Vergleich)","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 188 Kerzen","g":"2011–13 — SolarWorld & die deutsche Solarbranche","d":"2010-06-01","dsrc":"chart","conf":null,"note":"Veränderung: -50.3% · Max. Drawdown: -93.0% · Signal: BEARISCH · 100 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2011-solarworld__FSLR.US__crash","p":"Krisenarchiv / 2011–13 — SolarWorld & die deutsche Solarbranche / First Solar (US-Vergleich) (FSLR.US) / Crash-Detail","f":"2011–13 — SolarWorld & die deutsche Solarbranche","t":"FSLR.US","co":"First Solar (US-Vergleich)","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2011–13 — SolarWorld & die deutsche Solarbranche","d":"2011-02-17","dsrc":"chart","conf":null,"note":"Veränderung: -72.2% · Max. Drawdown: -76.4% · Signal: BEARISCH · 107 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ev-collapse__RIVN.US__overview","p":"Krisenarchiv / 2021–26 — Kollaps der EV-Startups / Rivian (RIVN.US) / Übersicht","f":"2021–26 — Kollaps der EV-Startups","t":"RIVN.US","co":"Rivian","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 58 Kerzen","g":"2021–26 — Kollaps der EV-Startups","d":"2021-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -86.6% · Max. Drawdown: -92.6% · Signal: BULLISCH · 30 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ev-collapse__RIVN.US__crash","p":"Krisenarchiv / 2021–26 — Kollaps der EV-Startups / Rivian (RIVN.US) / Crash-Detail","f":"2021–26 — Kollaps der EV-Startups","t":"RIVN.US","co":"Rivian","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–26 — Kollaps der EV-Startups","d":"2021-11-16","dsrc":"chart","conf":null,"note":"Veränderung: -81.4% · Max. Drawdown: -88.0% · Signal: BEARISCH · 98 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ev-collapse__LCID.US__overview","p":"Krisenarchiv / 2021–26 — Kollaps der EV-Startups / Lucid Group (LCID.US) / Übersicht","f":"2021–26 — Kollaps der EV-Startups","t":"LCID.US","co":"Lucid Group","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 68 Kerzen","g":"2021–26 — Kollaps der EV-Startups","d":"2021-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -69.2% · Max. Drawdown: -96.3% · Signal: NEUTRAL · 41 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ev-collapse__LCID.US__crash","p":"Krisenarchiv / 2021–26 — Kollaps der EV-Startups / Lucid Group (LCID.US) / Crash-Detail","f":"2021–26 — Kollaps der EV-Startups","t":"LCID.US","co":"Lucid Group","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–26 — Kollaps der EV-Startups","d":"2021-02-18","dsrc":"chart","conf":null,"note":"Veränderung: -11.9% · Max. Drawdown: -70.3% · Signal: BEARISCH · 109 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ev-collapse__NKLA.US__overview","p":"Krisenarchiv / 2021–26 — Kollaps der EV-Startups / Nikola (Insolvenz 2025) (NKLA.US) / Übersicht","f":"2021–26 — Kollaps der EV-Startups","t":"NKLA.US","co":"Nikola (Insolvenz 2025)","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 50 Kerzen","g":"2021–26 — Kollaps der EV-Startups","d":"2021-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -99.2% · Max. Drawdown: -99.2% · Signal: BEARISCH · 25 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ev-collapse__NKLA.US__crash","p":"Krisenarchiv / 2021–26 — Kollaps der EV-Startups / Nikola (Insolvenz 2025) (NKLA.US) / Crash-Detail","f":"2021–26 — Kollaps der EV-Startups","t":"NKLA.US","co":"Nikola (Insolvenz 2025)","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–26 — Kollaps der EV-Startups","d":"2021-01-27","dsrc":"chart","conf":null,"note":"Veränderung: -49.9% · Max. Drawdown: -68.2% · Signal: NEUTRAL · 109 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ev-collapse__TSLA.US__overview","p":"Krisenarchiv / 2021–26 — Kollaps der EV-Startups / Tesla (Vergleich) (TSLA.US) / Übersicht","f":"2021–26 — Kollaps der EV-Startups","t":"TSLA.US","co":"Tesla (Vergleich)","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 68 Kerzen","g":"2021–26 — Kollaps der EV-Startups","d":"2021-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -58.6% · Max. Drawdown: -89.2% · Signal: NEUTRAL · 37 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ev-collapse__TSLA.US__crash","p":"Krisenarchiv / 2021–26 — Kollaps der EV-Startups / Tesla (Vergleich) (TSLA.US) / Crash-Detail","f":"2021–26 — Kollaps der EV-Startups","t":"TSLA.US","co":"Tesla (Vergleich)","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–26 — Kollaps der EV-Startups","d":"2021-11-04","dsrc":"chart","conf":null,"note":"Veränderung: -29.3% · Max. Drawdown: -48.9% · Signal: NEUTRAL · 112 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2023-regional-banks__SIVB.US__overview","p":"Krisenarchiv / 2023 — US-Regionalbankenkrise / Silicon Valley Bank (kollabiert 03/2023) (SIVB.US) / Übersicht","f":"2023 — US-Regionalbankenkrise","t":"SIVB.US","co":"Silicon Valley Bank (kollabiert 03/2023)","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 46 Kerzen","g":"2023 — US-Regionalbankenkrise","d":"2023-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -52.9% · Max. Drawdown: -68.2% · Signal: NEUTRAL · 26 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2023-regional-banks__SBNY.US__overview","p":"Krisenarchiv / 2023 — US-Regionalbankenkrise / Signature Bank (kollabiert 03/2023) (SBNY.US) / Übersicht","f":"2023 — US-Regionalbankenkrise","t":"SBNY.US","co":"Signature Bank (kollabiert 03/2023)","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 114 Kerzen","g":"2023 — US-Regionalbankenkrise","d":"2023-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -99.8% · Max. Drawdown: -100.0% · Signal: NEUTRAL · 68 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2023-regional-banks__FRC.US__overview","p":"Krisenarchiv / 2023 — US-Regionalbankenkrise / First Republic Bank (übernommen 05/2023) (FRC.US) / Übersicht","f":"2023 — US-Regionalbankenkrise","t":"FRC.US","co":"First Republic Bank (übernommen 05/2023)","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 83 Kerzen","g":"2023 — US-Regionalbankenkrise","d":"2023-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -97.1% · Max. Drawdown: -97.6% · Signal: NEUTRAL · 47 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"2023-regional-banks__KRE.US__overview","p":"Krisenarchiv / 2023 — US-Regionalbankenkrise / Regionalbanken-ETF (Vergleich) (KRE.US) / Übersicht","f":"2023 — US-Regionalbankenkrise","t":"KRE.US","co":"Regionalbanken-ETF (Vergleich)","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 124 Kerzen","g":"2023 — US-Regionalbankenkrise","d":"2023-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -30.0% · Max. Drawdown: -44.3% · Signal: BEARISCH · 73 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"china-tech-crackdown__BABA.US__overview","p":"Krisenarchiv / 2021–22 — Chinas Tech-Regulierungscrackdown / Alibaba (BABA.US) / Übersicht","f":"2021–22 — Chinas Tech-Regulierungscrackdown","t":"BABA.US","co":"Alibaba","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 104 Kerzen","g":"2021–22 — Chinas Tech-Regulierungscrackdown","d":"2021-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -62.7% · Max. Drawdown: -76.2% · Signal: NEUTRAL · 64 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"china-tech-crackdown__BABA.US__crash","p":"Krisenarchiv / 2021–22 — Chinas Tech-Regulierungscrackdown / Alibaba (BABA.US) / Crash-Detail","f":"2021–22 — Chinas Tech-Regulierungscrackdown","t":"BABA.US","co":"Alibaba","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–22 — Chinas Tech-Regulierungscrackdown","d":"2021-02-17","dsrc":"chart","conf":null,"note":"Veränderung: -52.9% · Max. Drawdown: -52.9% · Signal: NEUTRAL · 90 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"china-tech-crackdown__TCEHY.US__overview","p":"Krisenarchiv / 2021–22 — Chinas Tech-Regulierungscrackdown / Tencent (TCEHY.US) / Übersicht","f":"2021–22 — Chinas Tech-Regulierungscrackdown","t":"TCEHY.US","co":"Tencent","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 104 Kerzen","g":"2021–22 — Chinas Tech-Regulierungscrackdown","d":"2021-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -42.1% · Max. Drawdown: -73.8% · Signal: NEUTRAL · 110 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"china-tech-crackdown__TCEHY.US__crash","p":"Krisenarchiv / 2021–22 — Chinas Tech-Regulierungscrackdown / Tencent (TCEHY.US) / Crash-Detail","f":"2021–22 — Chinas Tech-Regulierungscrackdown","t":"TCEHY.US","co":"Tencent","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–22 — Chinas Tech-Regulierungscrackdown","d":"2021-01-25","dsrc":"chart","conf":null,"note":"Veränderung: -39.3% · Max. Drawdown: -45.3% · Signal: NEUTRAL · 0 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"china-tech-crackdown__JD.US__overview","p":"Krisenarchiv / 2021–22 — Chinas Tech-Regulierungscrackdown / JD.com (JD.US) / Übersicht","f":"2021–22 — Chinas Tech-Regulierungscrackdown","t":"JD.US","co":"JD.com","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 104 Kerzen","g":"2021–22 — Chinas Tech-Regulierungscrackdown","d":"2021-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -38.7% · Max. Drawdown: -64.3% · Signal: NEUTRAL · 61 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"china-tech-crackdown__JD.US__crash","p":"Krisenarchiv / 2021–22 — Chinas Tech-Regulierungscrackdown / JD.com (JD.US) / Crash-Detail","f":"2021–22 — Chinas Tech-Regulierungscrackdown","t":"JD.US","co":"JD.com","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–22 — Chinas Tech-Regulierungscrackdown","d":"2021-02-17","dsrc":"chart","conf":null,"note":"Veränderung: -21.3% · Max. Drawdown: -41.8% · Signal: BEARISCH · 101 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"china-tech-crackdown__BIDU.US__overview","p":"Krisenarchiv / 2021–22 — Chinas Tech-Regulierungscrackdown / Baidu (BIDU.US) / Übersicht","f":"2021–22 — Chinas Tech-Regulierungscrackdown","t":"BIDU.US","co":"Baidu","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 104 Kerzen","g":"2021–22 — Chinas Tech-Regulierungscrackdown","d":"2021-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -52.4% · Max. Drawdown: -76.9% · Signal: BULLISCH · 56 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"china-tech-crackdown__BIDU.US__crash","p":"Krisenarchiv / 2021–22 — Chinas Tech-Regulierungscrackdown / Baidu (BIDU.US) / Crash-Detail","f":"2021–22 — Chinas Tech-Regulierungscrackdown","t":"BIDU.US","co":"Baidu","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–22 — Chinas Tech-Regulierungscrackdown","d":"2021-02-19","dsrc":"chart","conf":null,"note":"Veränderung: -56.2% · Max. Drawdown: -59.6% · Signal: NEUTRAL · 98 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"china-tech-crackdown__PDD.US__overview","p":"Krisenarchiv / 2021–22 — Chinas Tech-Regulierungscrackdown / Pinduoduo (PDD.US) / Übersicht","f":"2021–22 — Chinas Tech-Regulierungscrackdown","t":"PDD.US","co":"Pinduoduo","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 104 Kerzen","g":"2021–22 — Chinas Tech-Regulierungscrackdown","d":"2021-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -54.9% · Max. Drawdown: -83.7% · Signal: NEUTRAL · 49 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"china-tech-crackdown__PDD.US__crash","p":"Krisenarchiv / 2021–22 — Chinas Tech-Regulierungscrackdown / Pinduoduo (PDD.US) / Crash-Detail","f":"2021–22 — Chinas Tech-Regulierungscrackdown","t":"PDD.US","co":"Pinduoduo","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–22 — Chinas Tech-Regulierungscrackdown","d":"2021-02-17","dsrc":"chart","conf":null,"note":"Veränderung: -67.2% · Max. Drawdown: -67.2% · Signal: NEUTRAL · 100 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"biotech-crash-2021__XBI.US__overview","p":"Krisenarchiv / 2021–22 — Biotech-Crash (XBI) / SPDR S&P Biotech ETF (XBI.US) / Übersicht","f":"2021–22 — Biotech-Crash (XBI)","t":"XBI.US","co":"SPDR S&P Biotech ETF","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 74 Kerzen","g":"2021–22 — Biotech-Crash (XBI)","d":"2021-02-01","dsrc":"chart","conf":null,"note":"Veränderung: -55.5% · Max. Drawdown: -59.8% · Signal: BEARISCH · 41 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"biotech-crash-2021__XBI.US__crash","p":"Krisenarchiv / 2021–22 — Biotech-Crash (XBI) / SPDR S&P Biotech ETF (XBI.US) / Crash-Detail","f":"2021–22 — Biotech-Crash (XBI)","t":"XBI.US","co":"SPDR S&P Biotech ETF","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–22 — Biotech-Crash (XBI)","d":"2021-02-08","dsrc":"chart","conf":null,"note":"Veränderung: -29.9% · Max. Drawdown: -31.8% · Signal: BEARISCH · 119 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"biotech-crash-2021__MRNA.US__overview","p":"Krisenarchiv / 2021–22 — Biotech-Crash (XBI) / Moderna (MRNA.US) / Übersicht","f":"2021–22 — Biotech-Crash (XBI)","t":"MRNA.US","co":"Moderna","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 74 Kerzen","g":"2021–22 — Biotech-Crash (XBI)","d":"2021-02-01","dsrc":"chart","conf":null,"note":"Veränderung: -18.9% · Max. Drawdown: -71.7% · Signal: BEARISCH · 40 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"biotech-crash-2021__MRNA.US__crash","p":"Krisenarchiv / 2021–22 — Biotech-Crash (XBI) / Moderna (MRNA.US) / Crash-Detail","f":"2021–22 — Biotech-Crash (XBI)","t":"MRNA.US","co":"Moderna","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–22 — Biotech-Crash (XBI)","d":"2021-08-09","dsrc":"chart","conf":null,"note":"Veränderung: -71.6% · Max. Drawdown: -74.5% · Signal: BEARISCH · 112 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"biotech-crash-2021__BIIB.US__overview","p":"Krisenarchiv / 2021–22 — Biotech-Crash (XBI) / Biogen (BIIB.US) / Übersicht","f":"2021–22 — Biotech-Crash (XBI)","t":"BIIB.US","co":"Biogen","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 74 Kerzen","g":"2021–22 — Biotech-Crash (XBI)","d":"2021-02-01","dsrc":"chart","conf":null,"note":"Veränderung: -23.1% · Max. Drawdown: -51.2% · Signal: BEARISCH · 39 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"biotech-crash-2021__BIIB.US__crash","p":"Krisenarchiv / 2021–22 — Biotech-Crash (XBI) / Biogen (BIIB.US) / Crash-Detail","f":"2021–22 — Biotech-Crash (XBI)","t":"BIIB.US","co":"Biogen","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2021–22 — Biotech-Crash (XBI)","d":"2021-06-10","dsrc":"chart","conf":null,"note":"Veränderung: -48.6% · Max. Drawdown: -53.3% · Signal: NEUTRAL · 117 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"shipping-freight-2022__ZIM.US__overview","p":"Krisenarchiv / 2022–23 — Fracht- & Schifffahrtscrash / ZIM Integrated Shipping (ZIM.US) / Übersicht","f":"2022–23 — Fracht- & Schifffahrtscrash","t":"ZIM.US","co":"ZIM Integrated Shipping","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 104 Kerzen","g":"2022–23 — Fracht- & Schifffahrtscrash","d":"2022-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -82.6% · Max. Drawdown: -91.8% · Signal: NEUTRAL · 60 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"shipping-freight-2022__ZIM.US__crash","p":"Krisenarchiv / 2022–23 — Fracht- & Schifffahrtscrash / ZIM Integrated Shipping (ZIM.US) / Crash-Detail","f":"2022–23 — Fracht- & Schifffahrtscrash","t":"ZIM.US","co":"ZIM Integrated Shipping","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2022–23 — Fracht- & Schifffahrtscrash","d":"2022-03-16","dsrc":"chart","conf":null,"note":"Veränderung: -79.6% · Max. Drawdown: -81.6% · Signal: NEUTRAL · 98 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"shipping-freight-2022__MATX.US__overview","p":"Krisenarchiv / 2022–23 — Fracht- & Schifffahrtscrash / Matson (MATX.US) / Übersicht","f":"2022–23 — Fracht- & Schifffahrtscrash","t":"MATX.US","co":"Matson","ac":"Aktie","c":"Übersicht","ctf":"Wochenkerzen, 104 Kerzen","g":"2022–23 — Fracht- & Schifffahrtscrash","d":"2022-01-01","dsrc":"chart","conf":null,"note":"Veränderung: +24.8% · Max. Drawdown: -53.2% · Signal: BULLISCH · 60 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"shipping-freight-2022__MATX.US__crash","p":"Krisenarchiv / 2022–23 — Fracht- & Schifffahrtscrash / Matson (MATX.US) / Crash-Detail","f":"2022–23 — Fracht- & Schifffahrtscrash","t":"MATX.US","co":"Matson","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2022–23 — Fracht- & Schifffahrtscrash","d":"2022-03-29","dsrc":"chart","conf":null,"note":"Veränderung: -48.6% · Max. Drawdown: -51.9% · Signal: NEUTRAL · 132 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ai-chip-correction-2026__AVGO.US__overview","p":"Krisenarchiv / 2026 — KI-/Halbleiter-Korrektur / Broadcom (AVGO.US) / Übersicht","f":"2026 — KI-/Halbleiter-Korrektur","t":"AVGO.US","co":"Broadcom","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 150 Kerzen","g":"2026 — KI-/Halbleiter-Korrektur","d":"2026-01-01","dsrc":"chart","conf":null,"note":"Veränderung: +23.1% · Max. Drawdown: -25.2% · Signal: NEUTRAL · 73 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ai-chip-correction-2026__AVGO.US__crash","p":"Krisenarchiv / 2026 — KI-/Halbleiter-Korrektur / Broadcom (AVGO.US) / Crash-Detail","f":"2026 — KI-/Halbleiter-Korrektur","t":"AVGO.US","co":"Broadcom","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 136 Kerzen","g":"2026 — KI-/Halbleiter-Korrektur","d":"2026-01-23","dsrc":"chart","conf":null,"note":"Veränderung: +33.7% · Max. Drawdown: -25.2% · Signal: NEUTRAL · 68 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ai-chip-correction-2026__NVDA.US__overview","p":"Krisenarchiv / 2026 — KI-/Halbleiter-Korrektur / Nvidia (NVDA.US) / Übersicht","f":"2026 — KI-/Halbleiter-Korrektur","t":"NVDA.US","co":"Nvidia","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 150 Kerzen","g":"2026 — KI-/Halbleiter-Korrektur","d":"2026-01-01","dsrc":"chart","conf":null,"note":"Veränderung: +18.6% · Max. Drawdown: -19.4% · Signal: BULLISCH · 74 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ai-chip-correction-2026__NVDA.US__crash","p":"Krisenarchiv / 2026 — KI-/Halbleiter-Korrektur / Nvidia (NVDA.US) / Crash-Detail","f":"2026 — KI-/Halbleiter-Korrektur","t":"NVDA.US","co":"Nvidia","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 133 Kerzen","g":"2026 — KI-/Halbleiter-Korrektur","d":"2026-01-28","dsrc":"chart","conf":null,"note":"Veränderung: +16.9% · Max. Drawdown: -19.4% · Signal: BULLISCH · 63 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ai-chip-correction-2026__AMD.US__overview","p":"Krisenarchiv / 2026 — KI-/Halbleiter-Korrektur / AMD (AMD.US) / Übersicht","f":"2026 — KI-/Halbleiter-Korrektur","t":"AMD.US","co":"AMD","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 150 Kerzen","g":"2026 — KI-/Halbleiter-Korrektur","d":"2026-01-01","dsrc":"chart","conf":null,"note":"Veränderung: +116.3% · Max. Drawdown: -26.5% · Signal: NEUTRAL · 63 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ai-chip-correction-2026__AMD.US__crash","p":"Krisenarchiv / 2026 — KI-/Halbleiter-Korrektur / AMD (AMD.US) / Crash-Detail","f":"2026 — KI-/Halbleiter-Korrektur","t":"AMD.US","co":"AMD","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 127 Kerzen","g":"2026 — KI-/Halbleiter-Korrektur","d":"2026-01-02","dsrc":"chart","conf":null,"note":"Veränderung: +131.0% · Max. Drawdown: -26.5% · Signal: NEUTRAL · 55 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ai-chip-correction-2026__SMH.US__overview","p":"Krisenarchiv / 2026 — KI-/Halbleiter-Korrektur / Halbleiter-ETF (Vergleich) (SMH.US) / Übersicht","f":"2026 — KI-/Halbleiter-Korrektur","t":"SMH.US","co":"Halbleiter-ETF (Vergleich)","ac":"Aktie","c":"Übersicht","ctf":"Tageskerzen, 150 Kerzen","g":"2026 — KI-/Halbleiter-Korrektur","d":"2026-01-01","dsrc":"chart","conf":null,"note":"Veränderung: +56.1% · Max. Drawdown: -24.6% · Signal: BEARISCH · 68 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"ai-chip-correction-2026__SMH.US__crash","p":"Krisenarchiv / 2026 — KI-/Halbleiter-Korrektur / Halbleiter-ETF (Vergleich) (SMH.US) / Crash-Detail","f":"2026 — KI-/Halbleiter-Korrektur","t":"SMH.US","co":"Halbleiter-ETF (Vergleich)","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 120 Kerzen","g":"2026 — KI-/Halbleiter-Korrektur","d":"2026-02-17","dsrc":"chart","conf":null,"note":"Veränderung: +43.0% · Max. Drawdown: -24.6% · Signal: BEARISCH · 51 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"cannabis-crash__MSOS.US__overview","p":"Krisenarchiv / 2019–26 — Cannabis-Sektor-Crash / AdvisorShares Pure US Cannabis ETF (MSOS.US) / Übersicht","f":"2019–26 — Cannabis-Sektor-Crash","t":"MSOS.US","co":"AdvisorShares Pure US Cannabis ETF","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 72 Kerzen","g":"2019–26 — Cannabis-Sektor-Crash","d":"2019-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -80.0% · Max. Drawdown: -95.0% · Signal: NEUTRAL · 27 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"cannabis-crash__MSOS.US__crash","p":"Krisenarchiv / 2019–26 — Cannabis-Sektor-Crash / AdvisorShares Pure US Cannabis ETF (MSOS.US) / Crash-Detail","f":"2019–26 — Cannabis-Sektor-Crash","t":"MSOS.US","co":"AdvisorShares Pure US Cannabis ETF","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2019–26 — Cannabis-Sektor-Crash","d":"2021-02-10","dsrc":"chart","conf":null,"note":"Veränderung: -49.0% · Max. Drawdown: -53.3% · Signal: BEARISCH · 91 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"cannabis-crash__CGC.US__overview","p":"Krisenarchiv / 2019–26 — Cannabis-Sektor-Crash / Canopy Growth (CGC.US) / Übersicht","f":"2019–26 — Cannabis-Sektor-Crash","t":"CGC.US","co":"Canopy Growth","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 92 Kerzen","g":"2019–26 — Cannabis-Sektor-Crash","d":"2019-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -98.0% · Max. Drawdown: -99.2% · Signal: BEARISCH · 48 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"cannabis-crash__CGC.US__crash","p":"Krisenarchiv / 2019–26 — Cannabis-Sektor-Crash / Canopy Growth (CGC.US) / Crash-Detail","f":"2019–26 — Cannabis-Sektor-Crash","t":"CGC.US","co":"Canopy Growth","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2019–26 — Cannabis-Sektor-Crash","d":"2021-02-10","dsrc":"chart","conf":null,"note":"Veränderung: -77.7% · Max. Drawdown: -77.7% · Signal: BEARISCH · 110 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"cannabis-crash__TLRY.US__overview","p":"Krisenarchiv / 2019–26 — Cannabis-Sektor-Crash / Tilray (TLRY.US) / Übersicht","f":"2019–26 — Cannabis-Sektor-Crash","t":"TLRY.US","co":"Tilray","ac":"Aktie","c":"Übersicht","ctf":"Monatskerzen, 92 Kerzen","g":"2019–26 — Cannabis-Sektor-Crash","d":"2019-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -94.3% · Max. Drawdown: -99.5% · Signal: BEARISCH · 42 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"cannabis-crash__TLRY.US__crash","p":"Krisenarchiv / 2019–26 — Cannabis-Sektor-Crash / Tilray (TLRY.US) / Crash-Detail","f":"2019–26 — Cannabis-Sektor-Crash","t":"TLRY.US","co":"Tilray","ac":"Aktie","c":"Crash-Detail","ctf":"Tageskerzen, 200 Kerzen","g":"2019–26 — Cannabis-Sektor-Crash","d":"2019-01-14","dsrc":"chart","conf":null,"note":"Veränderung: -76.9% · Max. Drawdown: -79.4% · Signal: BEARISCH · 112 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"negative-rates-bund__DE2Y.GBOND__overview","p":"Krisenarchiv / 2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen) / Deutschland 2J (Schatz) (DE2Y.GBOND) / Übersicht","f":"2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)","t":"DE2Y.GBOND","co":"Deutschland 2J (Schatz)","ac":"Staatsanleihe (Rendite)","c":"Übersicht","ctf":"Monatskerzen, 152 Kerzen","g":"2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)","d":"2014-01-01","dsrc":"chart","conf":null,"note":"Veränderung: +2.68 Prozentpunkte · Höchste Rendite: 3.38% · Tiefste Rendite: -1.04% · Tage mit Negativrendite: 1960 · 119 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"negative-rates-bund__DE10Y.GBOND__overview","p":"Krisenarchiv / 2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen) / Deutschland 10J (Bund) (DE10Y.GBOND) / Übersicht","f":"2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)","t":"DE10Y.GBOND","co":"Deutschland 10J (Bund)","ac":"Staatsanleihe (Rendite)","c":"Übersicht","ctf":"Monatskerzen, 152 Kerzen","g":"2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)","d":"2014-01-01","dsrc":"chart","conf":null,"note":"Veränderung: +1.49 Prozentpunkte · Höchste Rendite: 3.24% · Tiefste Rendite: -0.91% · Tage mit Negativrendite: 788 · 75 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"negative-rates-bund__DE30Y.GBOND__overview","p":"Krisenarchiv / 2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen) / Deutschland 30J (DE30Y.GBOND) / Übersicht","f":"2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)","t":"DE30Y.GBOND","co":"Deutschland 30J","ac":"Staatsanleihe (Rendite)","c":"Übersicht","ctf":"Monatskerzen, 152 Kerzen","g":"2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)","d":"2014-01-01","dsrc":"chart","conf":null,"note":"Veränderung: +1.15 Prozentpunkte · Höchste Rendite: 3.72% · Tiefste Rendite: -0.60% · Tage mit Negativrendite: 280 · 72 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"negative-rates-bund__SW10Y.GBOND__overview","p":"Krisenarchiv / 2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen) / Schweiz 10J (SNB, Vergleich) (SW10Y.GBOND) / Übersicht","f":"2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)","t":"SW10Y.GBOND","co":"Schweiz 10J (SNB, Vergleich)","ac":"Staatsanleihe (Rendite)","c":"Übersicht","ctf":"Monatskerzen, 152 Kerzen","g":"2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)","d":"2014-01-01","dsrc":"chart","conf":null,"note":"Veränderung: -0.63 Prozentpunkte · Höchste Rendite: 1.62% · Tiefste Rendite: -1.13% · Tage mit Negativrendite: 1620 · 130 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true},{"h":"negative-rates-bund__US10Y.GBOND__overview","p":"Krisenarchiv / 2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen) / USA 10J (Vergleich, nie negativ) (US10Y.GBOND) / Übersicht","f":"2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)","t":"US10Y.GBOND","co":"USA 10J (Vergleich, nie negativ)","ac":"Staatsanleihe (Rendite)","c":"Übersicht","ctf":"Monatskerzen, 152 Kerzen","g":"2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)","d":"2014-01-01","dsrc":"chart","conf":null,"note":"Veränderung: +2.00 Prozentpunkte · Höchste Rendite: 5.02% · Tiefste Rendite: 0.38% · Tage mit Negativrendite: 0 · 68 Kerzenmuster erkannt","sz":0,"dupes":0,"analyzed":true}],"notes":[{"p":"1987-black-monday","title":"1987 — Black Monday","text":"1987-08-01 bis 1987-12-31\n\nAm 19. Oktober 1987 verlor der Dow Jones an einem einzigen Tag 22,6 % — bis heute der größte prozentuale Tageseinbruch der Geschichte. Programmhandel (Portfolio Insurance) verstärkte die Verkaufswelle.","chars":201},{"p":"2000-dotcom","title":"2000–2002 — Dotcom-Crash","text":"2000-01-01 bis 2002-12-31\n\nDie Internet-Blase platzte im März 2000. Der Nasdaq verlor bis Oktober 2002 rund 78 % seines Wertes. Zahlreiche Start-ups ohne Geschäftsmodell verschwanden vollständig vom Markt.","chars":178},{"p":"2008-gfc","title":"2008–2009 — Globale Finanzkrise","text":"2008-01-01 bis 2009-06-30\n\nAusgelöst durch den US-Subprime-Hypothekenmarkt und den Kollaps von Lehman Brothers (September 2008) — die schwerste Finanzkrise seit der Großen Depression. Globale Aktienmärkte halbierten sich.","chars":194},{"p":"2011-euro-debt","title":"2011 — Europäische Schuldenkrise","text":"2011-07-01 bis 2011-12-31\n\nGriechenland, Irland und Portugal gerieten in eine schwere Staatsschuldenkrise, die auf Italien und Spanien überzugreifen drohte. Der DAX verlor im Sommer 2011 innerhalb weniger Wochen rund ein Drittel seines Wertes — dieselbe Periode, aus der auch die historischen comdirect-Charts in diesem Archiv stammen.","chars":308},{"p":"2015-chf-shock","title":"2015 — Franken-Schock (SNB)","text":"2015-01-01 bis 2015-02-15\n\nAm 15. Januar 2015 hob die Schweizerische Nationalbank überraschend die Euro-Franken-Untergrenze auf. Der Franken schoss innerhalb von Minuten um bis zu 30 % nach oben — einer der heftigsten Forex-Flashcrashes der Geschichte.","chars":225},{"p":"2018-q4-selloff","title":"2018 — Q4-Sell-off","text":"2018-09-01 bis 2018-12-31\n\nZinsangst und Handelskonflikt zwischen den USA und China lösten im vierten Quartal 2018 den schärfsten Ausverkauf seit der Finanzkrise aus — der S&P 500 verlor am Heiligabend 2018 fast 20 % vom Hoch.","chars":199},{"p":"2020-corona","title":"2020 — Corona-Crash","text":"2020-01-01 bis 2020-06-30\n\nDie COVID-19-Pandemie löste im Februar/März 2020 den schnellsten Bärenmarkt der Geschichte aus — der S&P 500 verlor in nur 33 Tagen rund 34 %. Beispiellose Notenbank- und Fiskalinterventionen folgten.","chars":200},{"p":"2022-rate-bear","title":"2022 — Zinserhöhungs-Bärenmarkt","text":"2022-01-01 bis 2022-12-31\n\nDie aggressivsten Fed-Zinserhöhungen seit den 1980ern trafen auf hohe Inflation. Wachstums- und Tech-Aktien litten besonders — Meta verlor 2022 rund 64 % seines Wertes.","chars":168},{"p":"2022-crypto-crash","title":"2022 — Krypto-Crash (Terra/Luna, FTX)","text":"2022-04-01 bis 2022-12-31\n\nDer Kollaps des Stablecoins TerraUSD/Luna im Mai 2022 und die Insolvenz der Börse FTX im November 2022 lösten eine Vertrauenskrise aus, die den gesamten Kryptomarkt um über 70 % einbrechen ließ.","chars":194},{"p":"2025-meme-altcoin-crash","title":"2025/26 — Meme-Coin- & Altcoin-Crash","text":"2025-07-01 bis 2026-08-09\n\nAktueller Bärenmarkt: Während Bitcoin \"nur\" rund 53 % vom Hoch verlor, brachen Altcoins und Meme-Coins weit stärker ein — Ethereum -68 %, Solana -75 %, Dogecoin -76 %, WIF -89 %, BONK -94 % (Stand: dieser Analyse). Klassisches Muster einer Risiko-Kapitulation in der spekulativsten Marktecke.","chars":292},{"p":"2022-german-real-estate","title":"2022–26 — Deutsche Immobilien- & Gewerbeimmobilienkrise","text":"2021-06-01 bis 2026-08-09\n\nDie Zinswende 2022 traf den deutschen Immobiliensektor hart: Finanzierungskosten explodierten, Projektentwickler gingen reihenweise insolvent, Transaktionsvolumina brachen ein. Wohnimmobilienkonzerne wie Vonovia, LEG und TAG verloren 65-80 % vom Hoch. Am schwersten traf es Gewerbeimmobilien: Aroundtown -87 %, und die auf Gewerbeimmobilienfinanzierung spezialisierte Deutsche Pfandbriefbank (PBB) fiel bis März 2026 weiter — eine bis heute ungelöste, laufende Krise.","chars":467},{"p":"2011-solarworld","title":"2011–13 — SolarWorld & die deutsche Solarbranche","text":"2010-06-01 bis 2013-12-31\n\nÜberkapazitäten durch massiven chinesischen Wettbewerb und sinkende Einspeisevergütungen lösten den \"Solar-Massacre\" aus. Die deutsche Solarbranche (Q-Cells, Conergy, Solon, Solar Millennium) ging reihenweise insolvent. SolarWorld — einst DAX-nahes Vorzeigeunternehmen aus Bonn — verlor bis Ende 2013 rund 96 % und meldete im April 2013 erstmals Insolvenz an; nach einer Restrukturierung folgte 2017/18 die endgültige Pleite. Selbst der Überlebende SMA Solar verlor im selben Zeitraum drei Viertel seines Wertes.","chars":512},{"p":"ev-collapse","title":"2021–26 — Kollaps der EV-Startups","text":"2021-01-01 bis 2026-08-09\n\nNach dem SPAC-getriebenen Elektroauto-Boom 2020/21 brach die Bewertungsblase der EV-Startups ein: hohe Cash-Verbrennung, Produktionsprobleme und nachlassende Nachfrage trafen auf steigende Zinsen. Lucid fiel von 91 Mrd. auf rund 2,3 Mrd. Dollar Marktkapitalisierung (-94 %), Rivian von einer Spitzenbewertung nahe 150 Mrd. auf rund 25 Mrd. Dollar. Nikola meldete 2025 Insolvenz an. Tesla als etablierter Platzhirsch blieb der Ausnahmefall.","chars":439},{"p":"2023-regional-banks","title":"2023 — US-Regionalbankenkrise","text":"2023-01-01 bis 2023-06-30\n\nDer Zusammenbruch der Silicon Valley Bank am 10. März 2023 löste die zweit- und drittgrößte Bankenpleite der US-Geschichte binnen weniger Tage aus: Signature Bank folgte sofort, First Republic Bank wurde im Mai 2023 von der FDIC übernommen und an JPMorgan verkauft. Ursache: unrealisierte Anleiheverluste durch die Zinswende plus ungewöhnlich schnelle, App-getriebene Bank-Runs.","chars":378},{"p":"china-tech-crackdown","title":"2021–22 — Chinas Tech-Regulierungscrackdown","text":"2021-01-01 bis 2022-12-31\n\nAb Ende 2020 (gestoppter Ant-Group-Börsengang) startete Peking eine 18 Monate währende Regulierungsoffensive gegen die eigenen Tech-Konzerne: Kartell-Bußgelder in Milliardenhöhe, Datenschutzauflagen, Verbot des privaten Nachhilfesektors. Alibaba und Tencent verloren zusammen bis zu 75 % ihres Marktwerts vom Hoch.","chars":314},{"p":"biotech-crash-2021","title":"2021–22 — Biotech-Crash (XBI)","text":"2021-02-01 bis 2022-06-30\n\nNach dem Höhepunkt im Februar 2021 verlor der SPDR S&P Biotech ETF (XBI) rund 62 % bis Mitte 2022 — der tiefste und am längsten anhaltende Drawdown seit Auflage des Index 2006, stärker noch als während der Finanzkrise 2008. Auslöser: Ende der Nullzins-Spekulation in unrentablen Klinik-Werten und eine Welle enttäuschender Studienergebnisse.","chars":341},{"p":"shipping-freight-2022","title":"2022–23 — Fracht- & Schifffahrtscrash","text":"2022-01-01 bis 2023-12-31\n\nDie Rekord-Frachtraten der Pandemie-Ära kollabierten 2022/23 um bis zu 90 %: Container-Überkapazität, nachlassende Konsumnachfrage und die Auslieferung während der Boomjahre bestellter neuer Schiffe drückten die Raten von Asien nach Europa unter die 1.500-Dollar-Marke je 40-Fuß-Container.","chars":289},{"p":"ai-chip-correction-2026","title":"2026 — KI-/Halbleiter-Korrektur","text":"2026-01-01 bis 2026-08-09\n\nAm 5. Juni 2026 löste eine enttäuschende KI-Umsatzprognose von Broadcom einen der dramatischsten Halbleiter-Ausverkäufe der Geschichte aus — über 1,3 Billionen Dollar Marktkapitalisierung verschwanden branchenweit an einem Handelstag. Nvidia verlor kurzzeitig die 5-Billionen-Dollar-Marke, AMD und Intel brachen zweistellig ein. Anleger hinterfragen, ob die beispiellosen KI-Investitionen kurzfristig durch Umsätze gedeckt sind.","chars":428},{"p":"cannabis-crash","title":"2019–26 — Cannabis-Sektor-Crash","text":"2019-01-01 bis 2026-08-09\n\nNach der Legalisierungs-Euphorie kollabierte der US-Cannabis-Sektor: ausbleibende Bundeslegalisierung, gescheiterte Bankenreform (SAFE Banking Act) und die drückende 280E-Steuerregel führten zu einem der nachhaltigsten Sektor-Bärenmärkte überhaupt — der AdvisorShares Pure US Cannabis ETF (MSOS) notiert rund 96 % unter seinem historischen Hoch.","chars":345},{"p":"negative-rates-bund","title":"2016–2026 — Negativzins-Ära & Zinsschock (Staatsanleihen)","text":"2014-01-01 bis 2026-08-09\n\nDie EZB-Nullzinspolitik trieb die Rendite der deutschen 10-jährigen Bundesanleihe im Juni 2016 erstmals unter null — ein historisches Novum. Der Tiefpunkt lag bei -0,86 % (2020/21), 788 Handelstage notierte die Rendite negativ. Der anschließende Inflationsschock 2022/23 löste den schnellsten Renditeanstieg der Nachkriegszeit aus: von -0,86 % auf zeitweise über 3 % — der schwerste Bären­markt für Staatsanleihen seit Jahrzehnten, festgehalten hier für die Nachwelt. Die Schweiz (SNB) erreichte mit -1,11 % noch tiefere Renditen.","chars":530}]};
+</script>
+<script>
+(function () {
+  const entries = DATA.entries;
+  const notes = DATA.notes;
+  const stats = DATA.stats;
+
+  // ---------- header stats ----------
+  const statRow = document.getElementById('statRow');
+  const fmtDate = (iso) => iso ? new Date(iso + 'T00:00:00').toLocaleDateString('de-DE', {year:'numeric', month:'short', day:'2-digit'}) : '–';
+  statRow.innerHTML = [
+    ['Unique Charts', '<b>' + DATA.entries.length + '</b>'],
+    ['Duplikate entfernt', '<b>' + stats.dupesRemoved + '</b>'],
+    ['KI-analysiert', '<b>' + stats.analyzed + '</b> / ' + entries.length],
+    ['Zeitraum', '<b>' + fmtDate(stats.dateMin) + ' – ' + fmtDate(stats.dateMax) + '</b>'],
+    ['Datum aus Chart gelesen', '<b>' + stats.fromChart + '</b>'],
+    ['Notizen', '<b>' + notes.length + '</b> Dokumente'],
+  ].map(([k,v]) => '<span>' + k + ': ' + v + '</span>').join('');
+
+  // ---------- color coding for index groups ----------
+  function hashHue(s) {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+    return h % 360;
+  }
+  const groupColor = {};
+  DATA.indexGroups.forEach(g => { groupColor[g] = hashHue(g); });
+  function badgeStyle(group) {
+    const hue = groupColor[group] ?? 0;
+    return 'background: hsl(' + hue + ' 55% 92% / 1); color: hsl(' + hue + ' 45% 30% / 1);';
+  }
+
+  // ---------- filter state ----------
+  const state = { q: '', groups: new Set(), types: new Set(), sort: 'chrono' };
+
+  function count(field, value) {
+    return entries.filter(e => e[field] === value).length;
+  }
+
+  // ---------- filter badge ----------
+  const filterBadge = document.getElementById('filterBadge');
+  function updateFilterBadge() {
+    const n = state.groups.size + state.types.size;
+    filterBadge.textContent = String(n);
+    filterBadge.hidden = n === 0;
+  }
+
+  const indexChips = document.getElementById('indexChips');
+  DATA.indexGroups.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.dataset.active = '0';
+    btn.innerHTML = g + ' <span class="n">' + count('g', g) + '</span>';
+    btn.addEventListener('click', () => {
+      if (state.groups.has(g)) state.groups.delete(g); else state.groups.add(g);
+      btn.dataset.active = state.groups.has(g) ? '1' : '0';
+      updateFilterBadge();
+      render();
+    });
+    indexChips.appendChild(btn);
+  });
+
+  const typeChips = document.getElementById('typeChips');
+  DATA.chartTypes.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.dataset.active = '0';
+    btn.innerHTML = t + ' <span class="n">' + count('c', t) + '</span>';
+    btn.addEventListener('click', () => {
+      if (state.types.has(t)) state.types.delete(t); else state.types.add(t);
+      btn.dataset.active = state.types.has(t) ? '1' : '0';
+      updateFilterBadge();
+      render();
+    });
+    typeChips.appendChild(btn);
+  });
+
+  // ---------- filter drawer (the "burger menu" holding all chips) ----------
+  const filterBtn = document.getElementById('filterBtn');
+  const filterDrawer = document.getElementById('filterDrawer');
+  const filterBackdrop = document.getElementById('filterBackdrop');
+  const filterCloseBtn = document.getElementById('filterCloseBtn');
+  const filterResetBtn = document.getElementById('filterResetBtn');
+
+  function openFilterDrawer() {
+    filterDrawer.classList.add('open');
+    filterBackdrop.classList.add('open');
+    filterDrawer.setAttribute('aria-hidden', 'false');
+    filterBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeFilterDrawer() {
+    filterDrawer.classList.remove('open');
+    filterBackdrop.classList.remove('open');
+    filterDrawer.setAttribute('aria-hidden', 'true');
+    filterBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+  filterBtn.addEventListener('click', () => {
+    filterDrawer.classList.contains('open') ? closeFilterDrawer() : openFilterDrawer();
+  });
+  filterCloseBtn.addEventListener('click', closeFilterDrawer);
+  filterBackdrop.addEventListener('click', closeFilterDrawer);
+  filterResetBtn.addEventListener('click', () => {
+    state.groups.clear();
+    state.types.clear();
+    indexChips.querySelectorAll('.chip').forEach(c => c.dataset.active = '0');
+    typeChips.querySelectorAll('.chip').forEach(c => c.dataset.active = '0');
+    updateFilterBadge();
+    render();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && filterDrawer.classList.contains('open')) closeFilterDrawer();
+  });
+
+  document.getElementById('searchBox').addEventListener('input', (e) => {
+    state.q = e.target.value.trim().toLowerCase();
+    render();
+  });
+  document.getElementById('sortSelect').addEventListener('change', (e) => {
+    state.sort = e.target.value;
+    render();
+  });
+
+  function filtered() {
+    let list = entries;
+    if (state.groups.size) list = list.filter(e => state.groups.has(e.g));
+    if (state.types.size) list = list.filter(e => state.types.has(e.c));
+    if (state.q) {
+      const q = state.q;
+      list = list.filter(e =>
+        (e.t && e.t.toLowerCase().includes(q)) ||
+        (e.co && e.co.toLowerCase().includes(q)) ||
+        (e.f && e.f.toLowerCase().includes(q)) ||
+        (e.g && e.g.toLowerCase().includes(q))
+      );
+    }
+    list = list.slice();
+    if (state.sort === 'chrono') list.sort((a,b) => (a.d||'9999').localeCompare(b.d||'9999') || a.t.localeCompare(b.t));
+    else if (state.sort === 'chrono-desc') list.sort((a,b) => (b.d||'0000').localeCompare(a.d||'0000') || a.t.localeCompare(b.t));
+    else if (state.sort === 'ticker') list.sort((a,b) => a.t.localeCompare(b.t));
+    else if (state.sort === 'confidence') list.sort((a,b) => (b.conf ?? -1) - (a.conf ?? -1));
+    return list;
+  }
+
+  let currentList = [];
+
+  function monthName(m) {
+    return ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'][m];
+  }
+
+  function cardHtml(e, idx) {
+    const srcClass = e.dsrc === 'chart' ? 'src-chart' : e.dsrc === 'folder' ? 'src-folder' : 'src-approx';
+    const dateLabel = e.d ? (e.d.slice(8,10) + '.' + e.d.slice(5,7) + '.' + e.d.slice(0,4)) : 'ohne Datum';
+    return '<div class="card" data-idx="' + idx + '">' +
+      '<div class="thumb-wrap"><img loading="lazy" src="https://babybounce500.github.io/orbitron-charts-images/crises/img/' + e.h + '.jpg" alt="' + escapeHtml(e.t) + '"></div>' +
+      '<div class="meta">' +
+        '<div class="ticker">' + escapeHtml(e.t) + '</div>' +
+        (e.co ? '<div class="company">' + escapeHtml(e.co) + '</div>' : '') +
+        '<div class="row2">' +
+          '<span class="badge" style="' + badgeStyle(e.g) + '">' + escapeHtml(e.g) + '</span>' +
+          '<span class="date-tag ' + (e.dsrc==='approx'?'approx':'') + '"><span class="src-dot ' + srcClass + '"></span>' + dateLabel + '</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function render() {
+    currentList = filtered();
+    const el = document.getElementById('view-charts');
+    if (!currentList.length) {
+      el.innerHTML = '<div class="empty-state">Keine Charts für diese Filter gefunden.</div>';
+      return;
+    }
+    if (state.sort === 'chrono' || state.sort === 'chrono-desc') {
+      let html = '';
+      let curKey = null;
+      let groupBuf = [];
+      const flush = () => {
+        if (!groupBuf.length) return;
+        const [yr, mo, label] = curKey;
+        html += '<div class="group-header"><span class="yr">' + yr + '</span><span class="mo">' + label + '</span><span class="cnt">' + groupBuf.length + ' Charts</span></div>';
+        html += '<div class="grid">' + groupBuf.join('') + '</div>';
+        groupBuf = [];
+      };
+      currentList.forEach((e, i) => {
+        let key;
+        if (e.d) {
+          const yr = e.d.slice(0,4);
+          const mo = Number(e.d.slice(5,7)) - 1;
+          key = [yr, mo, monthName(mo) + ' ' + yr];
+        } else {
+          key = ['—', -1, 'Ohne Datum'];
+        }
+        const keyStr = key[0] + '-' + key[1];
+        if (!curKey || (curKey[0]+'-'+curKey[1]) !== keyStr) { flush(); curKey = key; }
+        groupBuf.push(cardHtml(e, entries.indexOf(e)));
+      });
+      flush();
+      el.innerHTML = html;
+    } else {
+      el.innerHTML = '<div class="grid">' + currentList.map((e) => cardHtml(e, entries.indexOf(e))).join('') + '</div>';
+    }
+    el.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => openLightbox(Number(card.dataset.idx)));
+    });
+  }
+
+  // ---------- lightbox ----------
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbSide = document.getElementById('lbSide');
+  let lbEntryIdx = -1;
+
+  function currentFilteredIdxList() {
+    return currentList.map(e => entries.indexOf(e));
+  }
+
+  function openLightbox(entryIdx) {
+    lbEntryIdx = entryIdx;
+    const e = entries[entryIdx];
+    lbImg.src = 'https://babybounce500.github.io/orbitron-charts-images/crises/img/' + e.h + '.jpg';
+    lbImg.alt = e.t;
+    const srcLabel = { chart: 'aus Chart gelesen', folder: 'aus Ordnername', approx: 'ungefähr, aus Kontext' }[e.dsrc] || 'unbekannt';
+    const confPct = e.conf != null ? Math.round(e.conf * 100) : null;
+    lbSide.innerHTML =
+      '<h2>' + escapeHtml(e.t) + '</h2>' +
+      (e.co ? '<div class="sub">' + escapeHtml(e.co) + '</div>' : '<div class="sub">&nbsp;</div>') +
+      field('Datum', (e.d ? fmtDate(e.d) : '–') + ' <span style="color:var(--text-faint)">(' + srcLabel + ')</span>') +
+      field('Index / Gruppe', '<span class="badge" style="' + badgeStyle(e.g) + '">' + escapeHtml(e.g) + '</span>') +
+      field('Chart-Typ', escapeHtml(e.c) + (e.ctf ? ' <span style="color:var(--text-faint)">(' + escapeHtml(e.ctf) + ')</span>' : '')) +
+      (e.ac ? field('Asset-Klasse', escapeHtml(e.ac)) : '') +
+      (confPct != null ? field('KI-Konfidenz', confPct + '%<div class="lb-conf-bar"><div class="lb-conf-fill" style="width:' + confPct + '%"></div></div>') : '') +
+      (e.note ? field('Notiz (KI)', escapeHtml(e.note)) : '') +
+      (e.dupes ? field('Duplikate im Archiv', e.dupes + 'x an anderer Stelle gefunden') : '') +
+      field('Originalpfad', '<div class="mono">' + escapeHtml(e.p) + '</div>');
+  }
+  function field(k, v) {
+    return '<div class="lb-field"><div class="k">' + k + '</div><div class="v">' + v + '</div></div>';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    setTimeout(() => { lightbox.hidden = true; }, 220); // match .lightbox opacity transition
+  }
+  function step(dir) {
+    const idxList = currentFilteredIdxList();
+    const pos = idxList.indexOf(lbEntryIdx);
+    if (pos === -1) return;
+    const next = (pos + dir + idxList.length) % idxList.length;
+    openLightbox(idxList[next]);
+  }
+
+  document.getElementById('lbClose').addEventListener('click', closeLightbox);
+  document.getElementById('lbPrev').addEventListener('click', () => step(-1));
+  document.getElementById('lbNext').addEventListener('click', () => step(1));
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => {
+    if (lightbox.hidden) return;
+    if (e.key === 'Escape' && !document.fullscreenElement) closeLightbox();
+    if (e.key === 'ArrowLeft') step(-1);
+    if (e.key === 'ArrowRight') step(1);
+    if (e.key.toLowerCase() === 'f') toggleFullscreen();
+  });
+
+  // ---------- lightbox fullscreen ----------
+  function toggleFullscreen() {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (lightbox.requestFullscreen) lightbox.requestFullscreen().catch(() => {});
+  }
+  document.getElementById('lbFullscreen').addEventListener('click', toggleFullscreen);
+  lbImg.addEventListener('dblclick', toggleFullscreen);
+
+  const _origOpen = openLightbox;
+  openLightbox = function(idx) {
+    lightbox.hidden = false;
+    _origOpen(idx);
+    requestAnimationFrame(() => requestAnimationFrame(() => lightbox.classList.add('open')));
+  };
+
+  // ---------- notes tab ----------
+  const notesView = document.getElementById('view-notes');
+  notesView.innerHTML = notes.map((n, i) => {
+    const kb = (n.chars / 1024).toFixed(0);
+    return '<div class="note-card">' +
+      '<div class="note-head" data-i="' + i + '">' +
+        '<div><div class="note-title">' + escapeHtml(n.title) + '</div><div class="note-path">' + escapeHtml(n.p) + '</div></div>' +
+        '<div class="note-chars">' + kb + ' KB</div>' +
+      '</div>' +
+      '<div class="note-body" id="note-body-' + i + '" hidden>' + escapeHtml(n.text.slice(0, 20000)) + (n.text.length > 20000 ? '\\n\\n[… gekürzt, ' + kb + ' KB gesamt …]' : '') + '</div>' +
+    '</div>';
+  }).join('');
+  notesView.querySelectorAll('.note-head').forEach(h => {
+    h.addEventListener('click', () => {
+      const body = document.getElementById('note-body-' + h.dataset.i);
+      body.hidden = !body.hidden;
+    });
+  });
+
+  // ---------- stats tab ----------
+  const statsView = document.getElementById('view-stats');
+  function bars(title, field) {
+    const counts = {};
+    entries.forEach(e => { const v = e[field] || '–'; counts[v] = (counts[v]||0)+1; });
+    const max = Math.max(...Object.values(counts));
+    const rows = Object.entries(counts).sort((a,b) => b[1]-a[1]).map(([k,v]) =>
+      '<div class="bar-row"><div class="bar-label">' + escapeHtml(k) + '</div><div class="bar-track"><div class="bar-fill" style="width:' + (v/max*100) + '%"></div></div><div class="bar-val">' + v + '</div></div>'
+    ).join('');
+    return '<div class="stat-block"><h3>' + title + '</h3>' + rows + '</div>';
+  }
+  function yearBars() {
+    const counts = {};
+    entries.forEach(e => { const y = e.d ? e.d.slice(0,4) : 'ohne Datum'; counts[y] = (counts[y]||0)+1; });
+    const max = Math.max(...Object.values(counts));
+    const years = Object.keys(counts).sort();
+    const rows = years.map(y =>
+      '<div class="bar-row"><div class="bar-label">' + y + '</div><div class="bar-track"><div class="bar-fill" style="width:' + (counts[y]/max*100) + '%"></div></div><div class="bar-val">' + counts[y] + '</div></div>'
+    ).join('');
+    return '<div class="stat-block"><h3>Charts pro Jahr</h3>' + rows + '</div>';
+  }
+  statsView.innerHTML =
+    yearBars() +
+    bars('Index / Gruppe', 'g') +
+    bars('Chart-Typ', 'c') +
+    bars('Datenquelle des Datums', 'dsrc');
+
+  // ---------- tabs ----------
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.dataset.tab;
+      document.getElementById('view-charts').hidden = tab !== 'charts';
+      document.getElementById('view-notes').hidden = tab !== 'notes';
+      document.getElementById('view-stats').hidden = tab !== 'stats';
+      document.getElementById('chartsControls').style.display = tab === 'charts' ? '' : 'none';
+      if (tab !== 'charts') closeFilterDrawer();
+    });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

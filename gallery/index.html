@@ -1,0 +1,33 @@
+<title>Galerie-Hub</title>
+<style>
+:root{--bg:#080c10;--surface:#0d1117;--border:#1e2d3d;--accent:#00d4ff;--gold:#f0c040;--green:#00ff88;--red:#ff3b5c;--muted:#7d92a8;--text:#c8d8e8;--bright:#ffffff;--mono:'Space Mono',monospace;--sans:'Rajdhani',sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;padding:0 16px}
+.wrap{max-width:900px;margin:0 auto;padding:30px 0 60px}
+h1{font-family:var(--mono);font-size:20px;color:var(--bright);letter-spacing:1px;margin:0 0 6px}
+.sub{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:26px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+a.card{display:block;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-decoration:none;color:var(--text);transition:border-color .15s}
+a.card:hover{border-color:var(--accent)}
+.card .icon{font-size:22px;margin-bottom:8px}
+.card .name{font-family:var(--mono);font-size:13px;color:var(--bright);margin-bottom:4px}
+.card .n{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.back{display:inline-block;margin-top:24px;font-family:var(--mono);font-size:11px;color:var(--accent)}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<div class="wrap">
+  <h1>CHART-GALERIEN</h1>
+  <div class="sub">9 kuratierte Chart-Galerien, alle Bilder live über das orbitron-charts-images-Repo (GitHub Pages), keine lokalen Bilddateien.</div>
+  <div class="grid">
+    <a class="card" href="legends.html"><div class="icon">🚀</div><div class="name">Market Legends</div><div class="n">159 Charts · Bullruns, Blasen, Raketen, Jahrzehnte</div></a>
+    <a class="card" href="fibonacci-signals.html"><div class="icon">🌀</div><div class="name">Fibonacci-Signale</div><div class="n">80 Charts · Tranchen-Level + Dach/Boden kombiniert</div></a>
+    <a class="card" href="best-of.html"><div class="icon">⭐</div><div class="name">Best-Of-Galerie</div><div class="n">Monats-Batches, kuratierte Top-Setups</div></a>
+    <a class="card" href="crises.html"><div class="icon">📉</div><div class="name">Krisenarchiv</div><div class="n">Bärenmärkte &amp; Crashs</div></a>
+    <a class="card" href="watchlist.html"><div class="icon">📚</div><div class="name">Watchlist-Galerie</div><div class="n">Persönliche Watchlist als Chart-Bibliothek</div></a>
+    <a class="card" href="crypto.html"><div class="icon">₿</div><div class="name">Crypto-Galerie</div><div class="n">Top Coins, historische Charts</div></a>
+    <a class="card" href="forex.html"><div class="icon">💱</div><div class="name">Forex-Galerie</div><div class="n">Währungspaare, Majors &amp; Crosses</div></a>
+    <a class="card" href="funds.html"><div class="icon">🌍</div><div class="name">Funds-Galerie</div><div class="n">Globale Investmentfonds (ISIN-basiert)</div></a>
+    <a class="card" href="gbond.html"><div class="icon">🏛</div><div class="name">GBond-Galerie</div><div class="n">Staatsanleihen-Renditen weltweit</div></a>
+  </div>
+  <a class="back" href="../index.html">← Zur Terminal-Workshell</a>
+</div>
