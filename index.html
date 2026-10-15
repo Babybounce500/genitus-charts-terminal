@@ -130,14 +130,6 @@ const GROUPS=[
     ['meganasdaq','Mega-Nasdaq-Terminal','mega-nasdaq-terminal.html','Fibonacci über die volle offizielle NASDAQ-Liste, 1.185 health-gecheckt von 3.267'],
     ['megaus','Mega-US-Terminal','mega-us-terminal.html','Fibonacci über NYSE+NASDAQ komplett, 2.403 health-gecheckte Symbole — neu aus der kompletten Ticker-Liste kuratiert'],
   ]},
-  {title:'NEUE KATEGORIEN',icon:'fa-globe',apps:[
-    ['forexterminal','Forex-Terminal','forex-terminal.html','50 Währungspaare, gruppiert USD-Majors/EUR-Crosses/GBP-Crosses/Exoten — 7 Chartarten, RSI/Bollinger/VWAP, Light Mode'],
-    ['sektorterminal','Sektor-Terminal','sektor-terminal.html','100 Dow-Jones-US-Branchenindizes, health-gecheckt — volle Indikator-Suite'],
-    ['fundsterminal','Funds-Terminal','funds-terminal.html','104 ISIN-basierte Investmentfonds, gruppiert nach Anbieter (DWS, Allianz, Fidelity, Templeton …) — volle Indikator-Suite'],
-    ['immoterminal','Immobilien-Terminal','immobilien-terminal.html','14 deutsche Immobilien-AGs & REITs (Vonovia, LEG, TAG, Aroundtown …) — volle Indikator-Suite'],
-    ['crashedterminal','Crashed-High-Yield-Terminal','crashed-highyield-terminal.html','76 abgestürzte Dividendenwerte mit hoher Rendite, health-gecheckt — volle Indikator-Suite'],
-    ['bondsterminal','G-Bonds-Terminal','bonds-terminal.html','Staatsanleihen-Proxy: 12 Treasury-/Corporate-/EM-Bond-ETFs (.GBOND-Symbole lösen nicht auf, daher echte liquide ETF-Substitute) — volle Indikator-Suite'],
-  ]},
   {title:'RESEARCH',icon:'fa-flask',apps:[
     ['fibresearch','Fibonacci-Report','research/fibonacci-report.html','Methodik & Fazit: 57-60% Trefferquote, robuste positive Erwartung'],
     ['dachresearch','Dachboden-Report','research/dachboden-relstrength-report.html','Methodik & Fazit: Dach/Boden-Regime + Relative-Stärke-Rotation'],
@@ -174,7 +166,7 @@ const GROUPS=[
   {title:'CHARTS & WATCHLIST',icon:'fa-chart-area',apps:[
     ['stocks','Watchlist-Terminal (Aktien)','stocks-terminal.html','Persönliche Aktien-Watchlist, live'],
     ['watchlistcharts','Watchlist-Charts','watchlist-charts.html','Chart-Ansicht der Watchlist, live'],
-    ['chartsbot','Charts-Bot','charts-bot.html','KI-gestützte Chart-Analyse, live — 7 Chartarten (inkl. Hohle Kerzen), RSI/Bollinger/VWAP/EMA-Overlays, Light/Dark Mode'],
+    ['chartsbot','Charts-Bot','charts-bot.html','KI-gestützte Chart-Analyse, live — 55 Markt-Gruppen im Dropdown (inkl. Forex/Sektor/Funds/Immobilien/Crashed-HY/G-Bonds, jetzt konsolidiert aus 7 Files in 1), 7 Chartarten, RSI/Bollinger/VWAP/EMA-Overlays, Light/Dark Mode'],
   ]},
 ];
 const catalog=new Map(GROUPS.flatMap(g=>g.apps.map(([id,title,url,sub])=>[id,{id,title,url,sub}])));

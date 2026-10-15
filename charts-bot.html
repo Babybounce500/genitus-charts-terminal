@@ -329,7 +329,7 @@
   </div>
   <div class="ctrl ctrl-market-browser">
     <label class="ctrl-field">
-      <span class="ctrl-lbl">MARKT (25 KATEGORIEN)</span>
+      <span class="ctrl-lbl">MARKT (55 KATEGORIEN)</span>
       <select class="ctrl-select" id="market-select">
         <option value="">— Markt wählen —</option>
       </select>
@@ -555,6 +555,96 @@
     {id:'cyber', label:'Cybersecurity', sectors:[{name:'IT-Sicherheit', stocks:[
       ['PANW.US','Palo Alto Networks'],['CRWD.US','CrowdStrike Holdings'],['FTNT.US','Fortinet Inc.'],['ZS.US','Zscaler Inc.'],
       ['S.US','SentinelOne Inc.'],['OKTA.US','Okta Inc.'],['CYBR.US','CyberArk Software'],
+    ]}]},
+    {id:'fx_forexusdmajors', label:'Forex: USD-Majors', sectors:[{name:'Forex: USD-Majors', stocks:[
+      ['EURUSD.FOREX','Euro / US-Dollar'],['GBPUSD.FOREX','Britisches Pfund / US-Dollar'],['USDJPY.FOREX','US-Dollar / Japanischer Yen'],['USDCHF.FOREX','US-Dollar / Schweizer Franken'],['USDCAD.FOREX','US-Dollar / Kanadischer Dollar'],['AUDUSD.FOREX','Australischer Dollar / US-Dollar'],['NZDUSD.FOREX','Neuseeland-Dollar / US-Dollar'],
+    ]}]},
+    {id:'fx_forexeurcrosses', label:'Forex: EUR-Crosses', sectors:[{name:'Forex: EUR-Crosses', stocks:[
+      ['EURGBP.FOREX','Euro / Britisches Pfund'],['EURJPY.FOREX','Euro / Japanischer Yen'],['EURCHF.FOREX','Euro / Schweizer Franken'],['EURAUD.FOREX','Euro / Australischer Dollar'],['EURCAD.FOREX','Euro / Kanadischer Dollar'],['EURNZD.FOREX','Euro / Neuseeland-Dollar'],['EURSEK.FOREX','Euro / Schwedische Krone'],['EURNOK.FOREX','Euro / Norwegische Krone'],
+    ]}]},
+    {id:'fx_forexgbpcrosses', label:'Forex: GBP-Crosses', sectors:[{name:'Forex: GBP-Crosses', stocks:[
+      ['GBPJPY.FOREX','Britisches Pfund / Japanischer Yen'],['GBPCHF.FOREX','Britisches Pfund / Schweizer Franken'],['GBPAUD.FOREX','Britisches Pfund / Australischer Dollar'],['GBPCAD.FOREX','Britisches Pfund / Kanadischer Dollar'],['GBPNZD.FOREX','Britisches Pfund / Neuseeland-Dollar'],
+    ]}]},
+    {id:'fx_forexsonstigecrosses', label:'Forex: Sonstige Crosses', sectors:[{name:'Forex: Sonstige Crosses', stocks:[
+      ['AUDJPY.FOREX','Australischer Dollar / Japanischer Yen'],['AUDNZD.FOREX','Australischer Dollar / Neuseeland-Dollar'],['AUDCAD.FOREX','Australischer Dollar / Kanadischer Dollar'],['AUDCHF.FOREX','Australischer Dollar / Schweizer Franken'],['CADJPY.FOREX','Kanadischer Dollar / Japanischer Yen'],['CADCHF.FOREX','Kanadischer Dollar / Schweizer Franken'],['CHFJPY.FOREX','Schweizer Franken / Japanischer Yen'],['NZDJPY.FOREX','Neuseeland-Dollar / Japanischer Yen'],['USDSEK.FOREX','US-Dollar / Schwedische Krone'],['USDNOK.FOREX','US-Dollar / Norwegische Krone'],['USDDKK.FOREX','US-Dollar / Dänische Krone'],['USDILS.FOREX','US-Dollar / Israelischer Schekel'],
+    ]}]},
+    {id:'fx_forexemergingexotics', label:'Forex: Emerging/Exotics', sectors:[{name:'Forex: Emerging/Exotics', stocks:[
+      ['EURPLN.FOREX','Euro / Polnischer Zloty'],['EURTRY.FOREX','Euro / Türkische Lira'],['USDCNY.FOREX','US-Dollar / Chinesischer Renminbi'],['USDHKD.FOREX','US-Dollar / Hongkong-Dollar'],['USDSGD.FOREX','US-Dollar / Singapur-Dollar'],['USDINR.FOREX','US-Dollar / Indische Rupie'],['USDKRW.FOREX','US-Dollar / Südkoreanischer Won'],['USDTHB.FOREX','US-Dollar / Thailändischer Baht'],['USDIDR.FOREX','US-Dollar / Indonesische Rupiah'],['USDTWD.FOREX','US-Dollar / Taiwan-Dollar'],['USDZAR.FOREX','US-Dollar / Südafrikanischer Rand'],['USDTRY.FOREX','US-Dollar / Türkische Lira'],['USDMXN.FOREX','US-Dollar / Mexikanischer Peso'],['USDBRL.FOREX','US-Dollar / Brasilianischer Real'],['USDCLP.FOREX','US-Dollar / Chilenischer Peso'],['USDAED.FOREX','US-Dollar / VAE-Dirham'],['USDSAR.FOREX','US-Dollar / Saudi-Riyal'],['USDEGP.FOREX','US-Dollar / Ägyptisches Pfund'],
+    ]}]},
+    {id:'sek0', label:'Sektor-Indizes 1/5', sectors:[{name:'Sektor-Indizes 1/5', stocks:[
+      ['DJUSAS.INDX','Dow Jones Aerospace'],['DJUSAR.INDX','Dow Jones Airlines'],['DJUSAT.INDX','Dow Jones Auto Parts Makers'],['DJUSAU.INDX','Dow Jones Automobiles'],['DJUSBK.INDX','Dow Jones Banks'],['DJUSBT.INDX','Dow Jones Biotechnology'],['DJUSDB.INDX','Dow Jones Brewers'],['DJUSBD.INDX','Dow Jones Building Materials & Fixtures'],['DJUSCA.INDX','Dow Jones Gambling'],['DJUSCC.INDX','Dow Jones Commodity Chemicals'],['DJUSCF.INDX','Dow Jones Clothing & Accessories'],['DJUSCR.INDX','Dow Jones Computer Hardware'],['DJUSDV.INDX','Dow Jones Computer Services'],['DJUSDN.INDX','Dow Jones Defense'],['DJUSVN.INDX','Dow Jones Distillers & Vintners'],['DJUSID.INDX','Dow Jones Diversified Industrials'],['DJUSEC.INDX','Dow Jones Electrical Components & Equipment'],['DJUSFD.INDX','Dow Jones Food Retail & Wholesale'],['DJUSFT.INDX','Dow Jones Footwear'],['DJUSGU.INDX','Dow Jones Gas Distribution'],
+    ]}]},
+    {id:'sek1', label:'Sektor-Indizes 2/5', sectors:[{name:'Sektor-Indizes 2/5', stocks:[
+      ['DJUSPM.INDX','Dow Jones Gold Mining'],['DJUSHP.INDX','Dow Jones Health Care Providers'],['DJUSHV.INDX','Dow Jones Heavy Construction'],['DJUSHB.INDX','Dow Jones Home Construction'],['DJUSLG.INDX','Dow Jones Hotels'],['DJUSFE.INDX','Dow Jones Industrial Machinery'],['DJUSIL.INDX','Dow Jones Life Insurance'],['DJUSIP.INDX','Dow Jones Property & Casualty Insurance'],['DJUSNS.INDX','Dow Jones Internet'],['DJUSSB.INDX','Dow Jones Investment Services'],['DJUSST.INDX','Dow Jones Iron & Steel'],['DJUSAM.INDX','Dow Jones Medical Equipment'],['DJUSMG.INDX','Dow Jones Mining'],['DJUSWC.INDX','Dow Jones Mobile Telecommunications'],['DJUSMU.INDX','Dow Jones Multiutilities'],['SP500-101010.INDX','S&P 500 Energy Equipment & Services'],['SP500-151010.INDX','S&P 500 Chemicals'],['SP500-201010.INDX','S&P 500 Aerospace & Defense'],['SP500-2510.INDX','S&P 500 Automobiles & Components'],['SP500-2520.INDX','S&P 500 Consumer Durables & Apparel'],
+    ]}]},
+    {id:'sek2', label:'Sektor-Indizes 3/5', sectors:[{name:'Sektor-Indizes 3/5', stocks:[
+      ['SP500-3010.INDX','S&P 500 Consumer Staples Distribution & Retail'],['SP500-3510.INDX','S&P 500 Health Care Equipment & Services'],['SP500-352010.INDX','S&P 500 Biotechnology'],['SP500-352020.INDX','S&P 500 Pharmaceuticals'],['SP500-4010.INDX','S&P 500 Banks'],['SP500-4020.INDX','S&P 500 Financial Services'],['SP500-4030.INDX','S&P 500 Insurance'],['SP500-451030.INDX','S&P 500 Software'],['SP500-4530.INDX','S&P 500 Semiconductors & Semiconductor Equipment'],['SP500-6010.INDX','S&P 500 Equity REITs'],['SOX.INDX','Philadelphia Semiconductor Index'],['BKX.INDX','KBW Bank'],['BTK.INDX','ARCA Biotechnology'],['HGX.INDX','PHLX Housing'],['XAU.INDX','Philadelphia Gold/Silver'],['HUI.INDX','ARCA Gold BUGS'],['NDXT.INDX','NASDAQ 100 Technology Sector'],['BANK.INDX','Nasdaq Bank'],['INSR.INDX','Nasdaq Insurance'],['IXCO.INDX','Nasdaq Computer'],
+    ]}]},
+    {id:'sek3', label:'Sektor-Indizes 4/5', sectors:[{name:'Sektor-Indizes 4/5', stocks:[
+      ['IXHC.INDX','NASDAQ Health Care'],['TRAN.INDX','Nasdaq Transportation'],['OSX.INDX','PHLX Oil Service'],['XAL.INDX','ARCA Airline'],['DRG.INDX','ARCA Pharmaceutical'],['DJUSDT.INDX','Dow Jones Diversified REITs'],['DJUSRL.INDX','Dow Jones Retail REITs'],['DJUSRN.INDX','Dow Jones Residential REITs'],['DJUSIO.INDX','Dow Jones Industrial & Office REITs'],['DJUSHL.INDX','Dow Jones Hotel & Lodging REITs'],['DJUSMR.INDX','Dow Jones Mortgage REITs'],['DJUSSR.INDX','Dow Jones Specialty REITs'],['DWRTF.INDX','Dow Jones Select REIT'],['SX3P.INDX','STOXX Europe 600 Food & Beverage'],['SX4P.INDX','STOXX Europe 600 Chemicals'],['SX6P.INDX','STOXX Europe 600 Utilities'],['SX7P.INDX','STOXX Europe 600 Banks'],['SX8P.INDX','STOXX Europe 600 Technology'],['SXAP.INDX','STOXX Europe 600 Automobiles & Parts'],['SXDP.INDX','STOXX Europe 600 Health Care'],
+    ]}]},
+    {id:'sek4', label:'Sektor-Indizes 5/5', sectors:[{name:'Sektor-Indizes 5/5', stocks:[
+      ['SXEP.INDX','STOXX Europe 600 Oil & Gas'],['SXFP.INDX','STOXX Europe 600 Financial Services'],['SXIP.INDX','STOXX Europe 600 Insurance'],['SXKP.INDX','STOXX Europe 600 Telecommunications'],['SXMP.INDX','STOXX Europe 600 Media'],['SXNP.INDX','STOXX Europe 600 Industrial Goods & Services'],['SXOP.INDX','STOXX Europe 600 Construction & Materials'],['SXPP.INDX','STOXX Europe 600 Basic Resources'],['SX86GT.INDX','STOXX Europe Real Estate'],['SXQR.INDX','STOXX Europe 600 Personal & Household Goods'],['SXRR.INDX','STOXX Europe 600 Retail'],['SXTR.INDX','STOXX Europe 600 Travel & Leisure'],['FRFIN.INDX','CAC Financials'],['FRTEC.INDX','CAC Technology'],['FRHC.INDX','CAC Health Care'],['FROG.INDX','CAC Energy / Oil & Gas'],['BUKFIN.INDX','Cboe UK Finance Sector'],['BUKHLTH.INDX','Cboe UK Healthcare Sector'],['BUKTEC.INDX','Cboe UK Technology Sector'],['OFING.INDX','OBX Financials GR'],
+    ]}]},
+    {id:'fnd0', label:'Funds: DWS', sectors:[{name:'Funds: DWS', stocks:[
+      ['DE0008474024.EUFUND','DWS Akkumula'],['DE0008474289.EUFUND','DWS German Equities Typ O'],['DE0005152441.EUFUND','DWS Global Growth'],['DE0009769760.EUFUND','DWS Top Asien'],['DE0009769851.EUFUND','DWS Health Care Typ O'],['DE0009769919.EUFUND','DWS Financials Typ O'],['DE0009769976.EUFUND','DWS Biotech'],['DE0009773010.EUFUND','DWS Emerging Markets Typ O'],['DE0008474149.EUFUND','DWS Artificial Intelligence'],['DE0008476516.EUFUND','DWS Euro Bond Fund'],['DE0008490962.EUFUND','DWS Deutschland'],['DE0008474123.EUFUND','DWS Global Natural Resources Equity'],
+    ]}]},
+    {id:'fnd1', label:'Funds: Allianz', sectors:[{name:'Funds: Allianz', stocks:[
+      ['DE0008471038.EUFUND','Allianz Adifonds'],['DE0008471467.EUFUND','Allianz Global Equity Dividend'],['DE0008475039.EUFUND','Allianz US Large Cap Growth'],['DE0008475070.EUFUND','Allianz Interglobal'],['DE0008475096.EUFUND','Allianz Rohstofffonds'],['DE0008475112.EUFUND','Allianz Fonds Japan'],['DE0008475120.EUFUND','Allianz Informationstechnologie'],['DE0008481862.EUFUND','Allianz Biotechnologie'],['DE0008475047.EUFUND','Allianz Euro Rentenfonds'],['DE0006372501.EUFUND','Allianz Multi Manager Global Balanced'],
+    ]}]},
+    {id:'fnd2', label:'Funds: BlackRock', sectors:[{name:'Funds: BlackRock', stocks:[
+      ['GB0005803316.EUFUND','BlackRock UK Equity'],['GB0005804165.EUFUND','BlackRock US Dynamic'],['GB0005804504.EUFUND','BlackRock Continental European'],['GB0005860837.EUFUND','BlackRock Emerging Markets'],['GB0005852396.EUFUND','BlackRock Gold and General'],['GB0003749982.EUFUND','BlackRock Corporate Bond'],['GB0005811749.EUFUND','BlackRock US Opportunities'],['GB0005811301.EUFUND','BlackRock UK Smaller Companies'],['GB0005810667.EUFUND','BlackRock Balanced Growth Portfolio'],['GB0005201990.EUFUND','BlackRock UK Property'],
+    ]}]},
+    {id:'fnd3', label:'Funds: Amundi', sectors:[{name:'Funds: Amundi', stocks:[
+      ['AT0000856026.EUFUND','Amundi Euro Govern Bond'],['AT0000754270.EUFUND','Amundi Healthcare Stock'],['AT0000857040.EUFUND','Amundi Gold Stock'],['DE0009779736.EUFUND','Amundi Top World'],['DE0009779884.EUFUND','Amundi Aktien Rohstoffe'],['DE0009785303.EUFUND','Amundi Internetaktien'],['AT0000675186.EUFUND','Amundi Eastern Europe Stock'],['AT0000613146.EUFUND','Amundi Ethik Fonds'],['DE0009752303.EUFUND','Amundi German Equity'],['AT0000729389.EUFUND','Amundi Global High Yield Bond'],
+    ]}]},
+    {id:'fnd4', label:'Funds: Fidelity', sectors:[{name:'Funds: Fidelity', stocks:[
+      ['FR0000008674.EUFUND','Fidelity Europe'],['GB0003367504.EUFUND','Fidelity Institutional America'],['GB0003368577.EUFUND','Fidelity Institutional Emerging Markets'],['GB0003371399.EUFUND','Fidelity Institutional Japan'],['GB0003860789.EUFUND','Fidelity Sustainable Global Equity'],['GB0003875100.EUFUND','Fidelity Special Situations'],['GB0003879185.EUFUND','Fidelity Asia Fund'],['GB0002051620.EUFUND','Fidelity Institutional Sterling Corporate Bond'],['GB0003865176.EUFUND','Fidelity American'],['GB0003874798.EUFUND','Fidelity European'],
+    ]}]},
+    {id:'fnd5', label:'Funds: BNP', sectors:[{name:'Funds: BNP', stocks:[
+      ['FR0007074232.EUFUND','BNP Paribas Actions Euro'],['FR0010028902.EUFUND','BNP Paribas Valeurs Françaises'],['FR0007074208.EUFUND','BNP Paribas Actions Rendement'],['FR0010076893.EUFUND','BNP Paribas Obli ISR'],['BE0146937793.EUFUND','BNP Pari Global Balanced World'],['BE0935066838.EUFUND','BNP Global Aggressive'],['FR0010077859.EUFUND','BNP Paribas Midcap France'],['FR0000287716.EUFUND','BNP Paribas Money 3M'],
+    ]}]},
+    {id:'fnd6', label:'Funds: JPMorgan', sectors:[{name:'Funds: JPMorgan', stocks:[
+      ['LU0053666078.EUFUND','JPMorgan Funds - America Equity'],['LU0053685029.EUFUND','JPMorgan Funds - Europe Equity'],['LU0053685615.EUFUND','JPMorgan Funds - Emerging Markets Equity'],['LU0053696224.EUFUND','JPMorgan Funds - Japan Equity'],['LU0072845869.EUFUND','JPMorgan Funds - Emerging Markets Debt'],['LU0058908533.EUFUND','JPMorgan Funds - India Fund'],['LU0051755006.EUFUND','JPMorgan Funds - China A'],['LU0053687074.EUFUND','JPMorgan Funds - Europe Small Cap'],['LU0053696067.EUFUND','JPMorgan Funds - Global Aggregate Bond'],
+    ]}]},
+    {id:'fnd7', label:'Funds: UBS', sectors:[{name:'Funds: UBS', stocks:[
+      ['DE0008488214.EUFUND','UBS Equity Fund Global Opportunity'],['CH0127276381.EUFUND','UBS Swiss High Dividend Equity'],['GB0031098741.EUFUND','UBS Global Emerging Markets Equity'],['CH0002788807.EUFUND','UBS 100 Index-Fund Switzerland'],['DE0008488206.EUFUND','UBS Aktienfonds-Special Deutschland'],['GB00B4MGDQ07.EUFUND','UBS Global Allocation Fund'],['ES0158316036.EUFUND','UBS Mixto Gestion Activa'],
+    ]}]},
+    {id:'fnd8', label:'Funds: Goldman', sectors:[{name:'Funds: Goldman', stocks:[
+      ['LU0040769829.EUFUND','Goldman Sachs Global Equity Income'],['LU0083344555.EUFUND','Goldman Sachs Emerging Markets Equity'],['LU0050126431.EUFUND','Goldman Sachs Asia Equity'],['LU0065003666.EUFUND','Goldman Sachs Japan Equity'],['LU0083912112.EUFUND','Goldman Sachs Global High Yield'],['LU0089313992.EUFUND','Goldman Sachs US Fixed Income'],['IE0009EDBBS3.EUFUND','Goldman Sachs EUR Investment Grade Corporate Bond'],['IE000GNOSM10.EUFUND','Goldman Sachs MSCI World Private Equity Return Tracker'],
+    ]}]},
+    {id:'fnd9', label:'Funds: Vanguard', sectors:[{name:'Funds: Vanguard', stocks:[
+      ['GB00B41XG308.EUFUND','Vanguard LifeStrategy 100% Equity'],['GB00B3TYHH97.EUFUND','Vanguard LifeStrategy 60% Equity'],['GB00B3ZHN960.EUFUND','Vanguard LifeStrategy 40% Equity'],['GB0005885628.EUFUND','Vanguard US 500 Stock Index'],['GB00B5B71Q71.EUFUND','Vanguard US Equity Index'],['GB00B59G4Q73.EUFUND','Vanguard FTSE Dev World ex UK Equity Index'],['GB00B5KWKH75.EUFUND','Vanguard Emerging Markets Stock Index'],['AU60VAN00055.EUFUND','Vanguard Emerging Markets Shares Index'],
+    ]}]},
+    {id:'fnd10', label:'Funds: Generali', sectors:[{name:'Funds: Generali', stocks:[
+      ['DE0004156302.EUFUND','Generali AktivMix Ertrag'],['FR0007064357.EUFUND','Generali Europe Mid-Caps'],['FR0007064431.EUFUND','Generali Pacifique'],['FR0007064449.EUFUND','Generali Japon'],['FR0007064472.EUFUND','Generali Obligations Internationales'],['FR0007475959.EUFUND','Generali Audace Europe'],['FR0010075341.EUFUND','Generali Euro-Actions'],['LU0100847929.EUFUND','Generali Komfort Dynamik Global'],['LU0145455142.EUFUND','Generali European S.R.I.'],['LU0145475843.EUFUND','Generali Inv-Euro Bond'],
+    ]}]},
+    {id:'fnd11', label:'Funds: Weitere Anbieter', sectors:[{name:'Funds: Weitere Anbieter', stocks:[
+      ['GB0003210027.EUFUND','FPIL JPMorgan Pacific Technology'],['DE000A2P1RD1.EUFUND','Substanz & Nachhaltigkeit Global'],
+    ]}]},
+    {id:'immo1', label:'Immobilien: Deutsche AGs & REITs', sectors:[{name:'Immobilien: Deutsche AGs & REITs', stocks:[
+      ['VNA.XETRA','Vonovia SE'],['LEG.XETRA','LEG Immobilien SE'],['TEG.XETRA','TAG Immobilien AG'],['GYC.XETRA','Grand City Properties'],['ADJ.XETRA','Adler Group SA'],['AT1.XETRA','Aroundtown SA'],['BRNK.XETRA','Branicks Group (DIC)'],['DMRE.F','DEMIRE AG'],['DEQ.XETRA','Deutsche EuroShop AG'],['HABA.XETRA','Hamborner REIT AG'],['INS.XETRA','Instone Real Estate'],['PAT.XETRA','Patrizia SE'],['PBB.XETRA','Deutsche Pfandbriefbank'],['HYQ.XETRA','Hypoport SE'],
+    ]}]},
+    {id:'crh0', label:'Crashed High-Yield 1/4', sectors:[{name:'Crashed High-Yield 1/4', stocks:[
+      ['AAD.XETRA','Amadeus FiRe AG'],['ABR.US','Arbor Realty Trust'],['ALV.XETRA','Allianz SE'],['BAS.XETRA','BASF SE'],['BAYN.XETRA','Bayer AG'],['BEN.US','Franklin Resources Inc.'],['BHP.US','BHP Group Ltd. (ADR)'],['BMW.XETRA','BMW AG'],['BMY.US','Bristol-Myers Squibb'],['BXP.US','BXP Inc. (Boston Properties)'],['CAG.US','Conagra Brands Inc.'],['CLX.US','Clorox Co.'],['CMCSA.US','Comcast Corp.'],['COK.XETRA','Cancom SE'],['CVS.US','CVS Health Corp.'],['CVX.US','Chevron Corp.'],['DBAN.XETRA','Deutsche Beteiligungs AG'],['DBK.XETRA','Deutsche Bank AG'],['DHL.XETRA','DHL Group (Deutsche Post)'],['DOX.US','Amdocs Ltd.'],
+    ]}]},
+    {id:'crh1', label:'Crashed High-Yield 2/4', sectors:[{name:'Crashed High-Yield 2/4', stocks:[
+      ['DTG.XETRA','Daimler Truck Holding'],['DWS.XETRA','DWS Group GmbH & Co. KGaA'],['EL.US','Estée Lauder Cos.'],['EVK.XETRA','Evonik Industries AG'],['F.US','Ford Motor Co.'],['FDX.US','FedEx Corp.'],['FIE.XETRA','Fielmann AG'],['FNTN.XETRA','Freenet AG'],['FRO.US','Frontline plc'],['FRT.US','Federal Realty Investment Trust'],['GBF.XETRA','Bilfinger SE'],['GIS.US','General Mills Inc.'],['GM.US','General Motors Co.'],['GOLD.US','Barrick Mining Corp.'],['GSK.US','GSK plc (ADR)'],['HBH.XETRA','Hornbach Holding AG'],['HEI.XETRA','Heidelberg Materials AG'],['HOT.XETRA','HOCHTIEF AG'],['HRL.US','Hormel Foods Corp.'],['IIPR.US','Innovative Industrial Properties'],
+    ]}]},
+    {id:'crh2', label:'Crashed High-Yield 3/4', sectors:[{name:'Crashed High-Yield 3/4', stocks:[
+      ['INH.XETRA','Indus Holding AG'],['KHC.US','Kraft Heinz Co.'],['KMB.US','Kimberly-Clark Corp.'],['KMI.US','Kinder Morgan Inc.'],['KR.US','Kroger Co.'],['KRN.XETRA','Krones AG'],['LYB.US','LyondellBasell Industries'],['MBG.XETRA','Mercedes-Benz Group AG'],['MDT.US','Medtronic plc'],['MMM.US','3M Co.'],['MORN.US','Morningstar Inc.'],['MUM.XETRA','Mensch und Maschine SE'],['MUX.XETRA','Mutares SE & Co. KGaA'],['NAT.US','Nordic American Tankers Ltd.'],['NEM.US','Newmont Corp.'],['NWL.US','Newell Brands Inc.'],['OXY.US','Occidental Petroleum'],['PAT.XETRA','Patrizia SE'],['PFE.US','Pfizer Inc.'],['SFQ.XETRA','SAF-Holland SE'],
+    ]}]},
+    {id:'crh3', label:'Crashed High-Yield 4/4', sectors:[{name:'Crashed High-Yield 4/4', stocks:[
+      ['SIX2.XETRA','Sixt SE'],['SNY.US','Sanofi SA (ADR)'],['STO3.XETRA','Sto SE & Co. KGaA (Vz.)'],['STR.XETRA','Ströer SE & Co. KGaA'],['SWK.US','Stanley Black & Decker'],['TAP.US','Molson Coors Beverage Co.'],['TIGO.US','Millicom Intl. Cellular (Tigo)'],['TLX.XETRA','Talanx AG'],['TU.US','Telus Corp.'],['UPS.US','United Parcel Service'],['VICI.US','Vici Properties Inc.'],['VOW3.XETRA','Volkswagen AG (Vz.)'],['VZ.US','Verizon Communications'],['WAC.XETRA','Wacker Neuson SE'],['WHR.US','Whirlpool Corp.'],['WSU.XETRA','WashTec AG'],
+    ]}]},
+    {id:'bond_treasury', label:'G-Bonds: US-Treasuries (Laufzeiten)', sectors:[{name:'G-Bonds: US-Treasuries (Laufzeiten)', stocks:[
+      ['TLT.US','iShares 20+ Year Treasury Bond ETF'],['IEF.US','iShares 7-10 Year Treasury Bond ETF'],['SHY.US','iShares 1-3 Year Treasury Bond ETF'],['SHV.US','iShares Short Treasury Bond ETF'],['GOVT.US','iShares US Treasury Bond ETF'],
+    ]}]},
+    {id:'bond_broad', label:'G-Bonds: Breite Anleihen-Indizes', sectors:[{name:'G-Bonds: Breite Anleihen-Indizes', stocks:[
+      ['AGG.US','iShares Core US Aggregate Bond ETF'],['BND.US','Vanguard Total Bond Market ETF'],['TIP.US','iShares TIPS Bond ETF (inflationsgeschützt)'],['MUB.US','iShares National Muni Bond ETF'],
+    ]}]},
+    {id:'bond_credit', label:'G-Bonds: Corporate & EM Credit', sectors:[{name:'G-Bonds: Corporate & EM Credit', stocks:[
+      ['LQD.US','iShares iBoxx Investment Grade Corp Bond ETF'],['HYG.US','iShares iBoxx High Yield Corp Bond ETF'],['EMB.US','iShares JP Morgan EM Bond ETF'],
     ]}]},
   ];
 
