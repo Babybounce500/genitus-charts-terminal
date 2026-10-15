@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENITUS SIGNAL-SCORE // Walk-Forward-validierter Composite-Score</title>
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;--surface:#0d1117;--panel:#111820;--card:#121a22;
+  --border:#1e2d3d;--accent:#00d4ff;--green:#00ff88;--red:#ff3b5c;
+  --gold:#f0c040;--muted:#7d92a8;--text:#c8d8e8;--bright:#fff;
+  --mono:'JetBrains Mono',monospace;--head:'Orbitron',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--text);font-family:var(--mono);}
+header{position:sticky;top:0;z-index:200;background:rgba(8,12,16,.97);border-bottom:1px solid var(--border);padding:14px 24px;}
+.logo-name{font-family:var(--head);font-size:15px;letter-spacing:3px;color:var(--bright);}
+.logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+.wrap{max-width:1100px;margin:0 auto;padding:26px 24px 80px;}
+h2{font-family:var(--head);font-size:13px;letter-spacing:2.5px;color:var(--gold);margin:42px 0 14px;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:8px;}
+h2:first-of-type{margin-top:10px;}
+p{font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.85;margin-bottom:12px;}
+p.muted{color:var(--muted);font-size:11px;}
+b{color:var(--bright);}
+.stat-row{display:flex;gap:26px;flex-wrap:wrap;margin:10px 0 8px;}
+.stat b{font-family:var(--head);font-size:18px;color:var(--bright);display:block;}
+.stat span{font-size:8.5px;color:var(--muted);letter-spacing:1px;}
+.callout{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px;padding:14px 16px;margin:14px 0;}
+.callout.good{border-left-color:var(--green);}
+.callout.warn{border-left-color:var(--gold);}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:10.5px;}
+th{font-family:var(--head);font-size:8px;letter-spacing:.4px;color:var(--muted);text-align:right;padding:7px 5px;border-bottom:1px solid var(--border);white-space:nowrap;}
+th.sig-col{text-align:left;}
+td{padding:6px 5px;border-bottom:1px solid rgba(30,45,61,.5);white-space:nowrap;}
+td.num{text-align:right;font-variant-numeric:tabular-nums;}
+td.sig-name{text-align:left;color:var(--text);white-space:normal;max-width:260px;}
+td.pos{color:var(--green);}
+td.neg{color:var(--red);}
+.sigstar{color:var(--green);font-weight:700;}
+.sigstar.no{color:var(--muted);}
+.table-wrap{overflow-x:auto;}
+.formula{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px;font-family:var(--mono);font-size:11px;color:var(--accent);margin:14px 0;line-height:1.8;}
+.formula .w{color:var(--gold);}
+.back{display:inline-block;margin-top:40px;font-family:var(--mono);font-size:11px;color:var(--accent);text-decoration:none;}
+.related{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:6px;}
+.related a{color:var(--accent);}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-name">SIGNAL-SCORE: WALK-FORWARD VALIDIERT</div>
+  <div class="logo-sub">DER COMPOSITE-SCORE, DER JETZT LIVE IM CHARTS-BOT LÄUFT</div>
+</header>
+<div class="wrap">
+  <p>Letzter Schritt der Backtest-Serie: aus allem bisher Getesteten einen einzigen, belastbaren "GESAMTSIGNAL"-Score
+  bauen -- und zwar nur aus Komponenten, die eine echte Out-of-Sample-Prüfung überstanden haben, nicht aus Intuition.
+  Dieser Score ersetzt jetzt das alte, Candlestick-Muster-basierte GESAMTSIGNAL im Charts-Bot.
+  <span class="related">Siehe auch: <a href="indicator-signal-backtest-report.html">Indikator-Signal-Backtest</a> ·
+  <a href="candle-ha-sma-backtest-report.html">Candlestick-1-Tag/Heikin-Ashi/SMA-Backtest</a></span></p>
+
+  <div class="stat-row">
+    <div class="stat"><b>2009-19</b><span>TRAIN-ZEITRAUM</span></div>
+    <div class="stat"><b>2020-26</b><span>TEST-ZEITRAUM (HELD-OUT)</span></div>
+    <div class="stat"><b>4/8</b><span>KOMPONENTEN ÜBERLEBEN</span></div>
+    <div class="stat"><b>13.429</b><span>SCORE-TAGE IM TEST</span></div>
+  </div>
+
+  <h2>1. Walk-Forward-Überlebensprüfung</h2>
+  <p>Acht Kandidaten, die in den vorigen Reports Hinweise auf echten Edge zeigten, mussten eine strenge Hürde nehmen:
+  im Train-Zeitraum (2009-2019) signifikant (p&lt;0,10) UND im richtigen Vorzeichen; im Test-Zeitraum (2020-2026,
+  bis zu diesem Schritt komplett unberührt) durfte sich das Vorzeichen nicht umdrehen.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th class="sig-col" rowspan="2">Komponente</th><th colspan="2">Train (2009-19)</th><th colspan="2">Test (2020-26)</th><th rowspan="2">Ergebnis</th></tr>
+    <tr><th>Edge</th><th>p-Wert</th><th>Edge</th><th>p-Wert</th></tr></thead>
+    <tbody><tr>
+    <td class="sig-name">RSI 14 überverkauft</td>
+    <td class="num">+0.597%</td><td class="num"><0.001</td>
+    <td class="num">+0.120%</td><td class="num">0.5295</td>
+    <td class="num pos">✓ ÜBERLEBT</td>
+  </tr>
+<tr>
+    <td class="sig-name">RSI 14 überkauft</td>
+    <td class="num">-0.279%</td><td class="num"><0.001</td>
+    <td class="num">+0.009%</td><td class="num">0.93916</td>
+    <td class="num neg">✗ VERWORFEN</td>
+  </tr>
+<tr>
+    <td class="sig-name">Bollinger-Ausbruch unten</td>
+    <td class="num">+0.432%</td><td class="num"><0.001</td>
+    <td class="num">+0.172%</td><td class="num">0.13891</td>
+    <td class="num pos">✓ ÜBERLEBT</td>
+  </tr>
+<tr>
+    <td class="sig-name">Bollinger-Ausbruch oben</td>
+    <td class="num">-0.236%</td><td class="num"><0.001</td>
+    <td class="num">+0.116%</td><td class="num">0.2299</td>
+    <td class="num neg">✗ VERWORFEN</td>
+  </tr>
+<tr>
+    <td class="sig-name">Golden Cross SMA10/30 (+Preis&gt;SMA20 +Volumen&gt;Ø)</td>
+    <td class="num">+0.399%</td><td class="num">0.00399</td>
+    <td class="num">+0.168%</td><td class="num">0.46784</td>
+    <td class="num pos">✓ ÜBERLEBT</td>
+  </tr>
+<tr>
+    <td class="sig-name">Golden Cross SMA20/50 (+Preis&gt;SMA20 +Volumen&gt;Ø)</td>
+    <td class="num">+0.022%</td><td class="num">0.91012</td>
+    <td class="num">+0.732%</td><td class="num">0.01257</td>
+    <td class="num neg">✗ VERWORFEN</td>
+  </tr>
+<tr>
+    <td class="sig-name">MACD Bullish Cross</td>
+    <td class="num">-0.143%</td><td class="num">0.00797</td>
+    <td class="num">-0.025%</td><td class="num">0.76877</td>
+    <td class="num neg">✗ VERWORFEN</td>
+  </tr>
+<tr>
+    <td class="sig-name">MACD Bearish Cross</td>
+    <td class="num">-0.126%</td><td class="num">0.02664</td>
+    <td class="num">-0.203%</td><td class="num">0.01826</td>
+    <td class="num pos">✓ ÜBERLEBT</td>
+  </tr></tbody>
+  </table>
+  </div>
+  <div class="callout warn">
+    <b>RSI-Überkauft und oberer Bollinger-Ausbruch fielen durch</b> -- im Train zwar signifikant, aber im Test dreht
+    das Vorzeichen komplett um (Test-Edge wird positiv statt negativ). <b>Golden Cross 20/50</b> fiel ebenfalls durch:
+    im Train praktisch kein Effekt (p=0,91 -- reines Rauschen), nur im Test zufällig signifikant. Genau diese Art
+    Scheinbefund soll die Walk-Forward-Prüfung verhindern. <b>MACD-Bullish-Cross</b> hatte im Train sogar das falsche
+    Vorzeichen (negativ statt positiv) und ist raus.</p>
+  </div>
+
+  <h2>2. Score-Formel</h2>
+  <p>Gewicht = normalisierte Trefferstärke (Edge/Standardabweichung) aus dem Train-Zeitraum -- kein Punktesystem nach
+  Gefühl.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th class="sig-col">Komponente</th><th>Gewicht</th></tr></thead>
+    <tbody><tr><td class="sig-name">RSI 14 überverkauft</td><td class="num">35.3</td></tr>
+<tr><td class="sig-name">Bollinger-Ausbruch unten</td><td class="num">28.1</td></tr>
+<tr><td class="sig-name">Golden Cross SMA10/30 (+Preis&gt;SMA20 +Volumen&gt;Ø)</td><td class="num">27.8</td></tr>
+<tr><td class="sig-name">MACD Bearish Cross</td><td class="num">8.7</td></tr></tbody>
+  </table>
+  </div>
+  <div class="formula">
+    SCORE = <span class="w">+35.3</span> × RSI-Überverkauft-Cross
+    + <span class="w">+28.1</span> × Bollinger-Ausbruch-unten-Cross
+    + <span class="w">+27.8</span> × Golden-Cross(10,30)-Cross [Preis&gt;SMA20 UND Volumen&gt;20T-Ø]
+    + <span class="w">-8.7</span> × MACD-Bear-Cross<br><br>
+    Jede Komponente zählt nur am exakten Kreuzungstag (nicht "ist gerade überverkauft", sondern "ist gerade JETZT
+    unter 30 gekreuzt") -- dieselbe Definition wie im Backtest, 1:1 in JavaScript im Charts-Bot nachgebaut und per
+    jsdom gegen künstliche OHLCV-Daten verifiziert, die exakt am letzten Balken auslösen.
+  </div>
+
+  <h2>3. Backtest des Scores selbst (nicht nur der Zutaten)</h2>
+  <p>Der Score bucket-weise ausgewertet (0, 1 bullischer Survivor, 2+ gleichzeitig, bärisch) -- Edge gegen die
+  jeweilige Perioden-Baseline, damit der Vergleich zwischen Train und Test fair bleibt.</p>
+  <h3 style="font-family:var(--head);font-size:10.5px;color:var(--accent);margin:16px 0 8px;">Train (2009-2019, Baseline 0.722%)</h3>
+  <div class="table-wrap"><table><thead><tr><th class="sig-col">Bucket</th><th>N</th><th>Ø Rendite</th><th>Edge</th><th>Trefferquote</th></tr></thead><tbody><tr><td class="sig-name">1 bullischer Survivor</td><td class="num">8.164</td><td class="num">+1.218%</td><td class="num pos">+0.496%</td><td class="num">59.49%</td></tr>
+<tr><td class="sig-name">2+ bullische Survivors gleichzeitig</td><td class="num">791</td><td class="num">+1.028%</td><td class="num pos">+0.306%</td><td class="num">57.9%</td></tr>
+<tr><td class="sig-name">bärisch (einziger Survivor negativ)</td><td class="num">10.005</td><td class="num">+0.568%</td><td class="num neg">-0.155%</td><td class="num">56.73%</td></tr></tbody></table></div>
+  <h3 style="font-family:var(--head);font-size:10.5px;color:var(--accent);margin:16px 0 8px;">Test (2020-2026, Baseline 0.653%) — komplett unberührt bis zu diesem Schritt</h3>
+  <div class="table-wrap"><table><thead><tr><th class="sig-col">Bucket</th><th>N</th><th>Ø Rendite</th><th>Edge</th><th>Trefferquote</th></tr></thead><tbody><tr><td class="sig-name">1 bullischer Survivor</td><td class="num">6.351</td><td class="num">+0.806%</td><td class="num pos">+0.152%</td><td class="num">56.16%</td></tr>
+<tr><td class="sig-name">2+ bullische Survivors gleichzeitig</td><td class="num">616</td><td class="num">+0.839%</td><td class="num pos">+0.186%</td><td class="num">57.31%</td></tr>
+<tr><td class="sig-name">bärisch (einziger Survivor negativ)</td><td class="num">6.462</td><td class="num">+0.471%</td><td class="num neg">-0.183%</td><td class="num">52.38%</td></tr></tbody></table></div>
+
+  <div class="callout good">
+    <b>Alle drei Buckets behalten in beiden Perioden das richtige Vorzeichen.</b> Bullische Buckets (1 oder 2+
+    Survivors) zeigen in Train UND Test positiven Edge; der bärische Bucket zeigt in beiden Perioden negativen Edge.
+    Die Magnitude schrumpft vom Train- zum Test-Zeitraum (z.B. 1-Survivor-Edge von +0,50% auf +0,15%) -- das ist
+    genau das erwartete, gesunde Muster bei echter Out-of-Sample-Bestätigung, nicht ein Warnsignal. Ein Score, der im
+    Test stärker oder gleich stark wie im Train gewesen wäre, wäre eher verdächtig gewesen.</p>
+  </div>
+
+  <h2>4. Live im Charts-Bot</h2>
+  <p>Der alte GESAMTSIGNAL-Wert (Candlestick-Muster-Stärke × Aktualität + SMA/RSI-Bonus) ist komplett ersetzt. Die
+  Muster-Statistik bleibt im UI sichtbar, aber rein informativ, mit explizitem Hinweis, dass sie das Signal nicht
+  mehr treibt. Der neue Score zeigt zusätzlich an, welche der 4 Komponenten gerade aktiv sind -- Transparenz statt
+  Black-Box-Zahl.</p>
+  <p class="muted">Rohdaten: backtest4_results.json, auf Anfrage einsehbar. Wie immer gilt: 2009-2026 ist ein
+  ungewöhnlich starker Bullenmarkt, keine Kosten/Slippage modelliert, und ein validierter Edge ist kein Versprechen
+  für die Zukunft -- nur die beste verfügbare, ehrlich geprüfte Einschätzung.</p>
+
+  <a class="back" href="../index.html">← Zur Terminal-Workshell</a>
+</div>
+</body>
+</html>
