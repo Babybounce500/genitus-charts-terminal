@@ -1863,6 +1863,20 @@
     document.addEventListener('visibilitychange',()=>{
       if(document.visibilityState==='visible')renderWatchlist();
     });
+    // Deep-link support: ?sym=XXX (optionally &num=160&type=candle) lets the
+    // Chart-Galerien / Master-Archiv pages jump straight into a live symbol
+    // instead of landing on the hardcoded default.
+    try{
+      const params=new URLSearchParams(window.location.search);
+      const urlSym=params.get('sym');
+      if(urlSym)$('sym').value=urlSym.toUpperCase();
+      const urlNum=Number(params.get('num'));
+      if(Number.isFinite(urlNum)&&urlNum>0)$('num').value=String(urlNum);
+      const urlType=params.get('type');
+      if(urlType&&[...$('chart-type').options].some(o=>o.value===urlType))$('chart-type').value=urlType;
+      const urlOverlays=(params.get('overlays')||'').split(',').filter(Boolean);
+      urlOverlays.forEach(id=>{const el=$('show-'+id);if(el)el.checked=true;});
+    }catch(e){/* malformed query string -- fall back to defaults */}
     loadChart();
   }
 

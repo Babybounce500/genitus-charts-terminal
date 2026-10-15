@@ -1,0 +1,1414 @@
+[
+  {
+    "symbol": "AAPL.US",
+    "name": "Apple Inc.",
+    "file": "AAPL_US.png",
+    "price": 342.96,
+    "date": "2026-10-14",
+    "rsi": 62.1,
+    "tags": [
+      {
+        "code": "MACD_BULL_CROSS",
+        "label": "MACD Bullish Cross (letzte 5 Kerzen)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 6. Perzentil)"
+      }
+    ],
+    "primary_tag": "MACD_BULL_CROSS",
+    "primary_label": "MACD Bullish Cross (letzte 5 Kerzen)"
+  },
+  {
+    "symbol": "GOOGL.US",
+    "name": "Alphabet Inc.",
+    "file": "GOOGL_US.png",
+    "price": 347.64,
+    "date": "2026-10-14",
+    "rsi": 51.3,
+    "tags": [
+      {
+        "code": "GOLDEN_CROSS",
+        "label": "Golden Cross (SMA20 kreuzt SMA50 nach oben)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (0.78% Abstand)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 9. Perzentil)"
+      }
+    ],
+    "primary_tag": "GOLDEN_CROSS",
+    "primary_label": "Golden Cross (SMA20 kreuzt SMA50 nach oben)"
+  },
+  {
+    "symbol": "AMZN.US",
+    "name": "Amazon.com Inc.",
+    "file": "AMZN_US.png",
+    "price": 254.08,
+    "date": "2026-10-14",
+    "rsi": 49.3,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 50.0%-Fibonacci-Level (0.90% Abstand)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 50.0%-Fibonacci-Level (0.90% Abstand)"
+  },
+  {
+    "symbol": "NVDA.US",
+    "name": "NVIDIA Corp.",
+    "file": "NVDA_US.png",
+    "price": 221.3,
+    "date": "2026-10-14",
+    "rsi": 44.0,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 38.2%-Fibonacci-Level (0.68% Abstand)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 1. Perzentil)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 38.2%-Fibonacci-Level (0.68% Abstand)"
+  },
+  {
+    "symbol": "AVGO.US",
+    "name": "Broadcom Inc.",
+    "file": "AVGO_US.png",
+    "price": 346.25,
+    "date": "2026-10-14",
+    "rsi": 42.4,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 11. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 11. Perzentil)"
+  },
+  {
+    "symbol": "ORCL.US",
+    "name": "Oracle Corp.",
+    "file": "ORCL_US.png",
+    "price": 130.55,
+    "date": "2026-10-14",
+    "rsi": 40.6,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      },
+      {
+        "code": "MACD_BEAR_CROSS",
+        "label": "MACD Bearish Cross (letzte 5 Kerzen)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 13. Perzentil)"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "CRM.US",
+    "name": "Salesforce Inc.",
+    "file": "CRM_US.png",
+    "price": 235.95,
+    "date": "2026-10-14",
+    "rsi": 53.7,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 1. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 1. Perzentil)"
+  },
+  {
+    "symbol": "ADBE.US",
+    "name": "Adobe Inc.",
+    "file": "ADBE_US.png",
+    "price": 240.68,
+    "date": "2026-10-14",
+    "rsi": 46.6,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 50.0%-Fibonacci-Level (0.68% Abstand)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 1. Perzentil)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 50.0%-Fibonacci-Level (0.68% Abstand)"
+  },
+  {
+    "symbol": "PANW.US",
+    "name": "Palo Alto Networks",
+    "file": "PANW_US.png",
+    "price": 375.04,
+    "date": "2026-10-14",
+    "rsi": 46.1,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 3. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 3. Perzentil)"
+  },
+  {
+    "symbol": "CRWD.US",
+    "name": "CrowdStrike Holdings",
+    "file": "CRWD_US.png",
+    "price": 249.29,
+    "date": "2026-10-14",
+    "rsi": 49.0,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 1. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 1. Perzentil)"
+  },
+  {
+    "symbol": "UBER.US",
+    "name": "Uber Technologies",
+    "file": "UBER_US.png",
+    "price": 69.29,
+    "date": "2026-10-14",
+    "rsi": 44.0,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 1. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 1. Perzentil)"
+  },
+  {
+    "symbol": "NOW.US",
+    "name": "ServiceNow Inc.",
+    "file": "NOW_US.png",
+    "price": 139.98,
+    "date": "2026-10-14",
+    "rsi": 55.8,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 2. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 2. Perzentil)"
+  },
+  {
+    "symbol": "JPM.US",
+    "name": "JPMorgan Chase & Co.",
+    "file": "JPM_US.png",
+    "price": 335.28,
+    "date": "2026-10-14",
+    "rsi": 45.5,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 38.2%-Fibonacci-Level (0.36% Abstand)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 38.2%-Fibonacci-Level (0.36% Abstand)"
+  },
+  {
+    "symbol": "BAC.US",
+    "name": "Bank of America",
+    "file": "BAC_US.png",
+    "price": 51.39,
+    "date": "2026-10-14",
+    "rsi": 22.7,
+    "tags": [
+      {
+        "code": "MACD_BEAR_CROSS",
+        "label": "MACD Bearish Cross (letzte 5 Kerzen)"
+      },
+      {
+        "code": "RSI_OVERSOLD",
+        "label": "RSI überverkauft (22.7)"
+      },
+      {
+        "code": "BB_BREAKOUT_DOWN",
+        "label": "Ausbruch unter unteres Bollinger-Band"
+      }
+    ],
+    "primary_tag": "MACD_BEAR_CROSS",
+    "primary_label": "MACD Bearish Cross (letzte 5 Kerzen)"
+  },
+  {
+    "symbol": "WFC.US",
+    "name": "Wells Fargo & Co.",
+    "file": "WFC_US.png",
+    "price": 80.9,
+    "date": "2026-10-14",
+    "rsi": 41.2,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (1.30% Abstand)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 61.8%-Fibonacci-Level (1.30% Abstand)"
+  },
+  {
+    "symbol": "MS.US",
+    "name": "Morgan Stanley",
+    "file": "MS_US.png",
+    "price": 181.51,
+    "date": "2026-10-14",
+    "rsi": 25.3,
+    "tags": [
+      {
+        "code": "MACD_BEAR_CROSS",
+        "label": "MACD Bearish Cross (letzte 5 Kerzen)"
+      },
+      {
+        "code": "RSI_OVERSOLD",
+        "label": "RSI überverkauft (25.3)"
+      }
+    ],
+    "primary_tag": "MACD_BEAR_CROSS",
+    "primary_label": "MACD Bearish Cross (letzte 5 Kerzen)"
+  },
+  {
+    "symbol": "V.US",
+    "name": "Visa Inc.",
+    "file": "V_US.png",
+    "price": 391.43,
+    "date": "2026-10-14",
+    "rsi": 67.6,
+    "tags": [
+      {
+        "code": "GOLDEN_CROSS",
+        "label": "Golden Cross (SMA20 kreuzt SMA50 nach oben)"
+      }
+    ],
+    "primary_tag": "GOLDEN_CROSS",
+    "primary_label": "Golden Cross (SMA20 kreuzt SMA50 nach oben)"
+  },
+  {
+    "symbol": "MA.US",
+    "name": "Mastercard Inc.",
+    "file": "MA_US.png",
+    "price": 603.24,
+    "date": "2026-10-14",
+    "rsi": 70.4,
+    "tags": [
+      {
+        "code": "RSI_OVERBOUGHT",
+        "label": "RSI überkauft (70.4)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "RSI_OVERBOUGHT",
+    "primary_label": "RSI überkauft (70.4)"
+  },
+  {
+    "symbol": "AXP.US",
+    "name": "American Express",
+    "file": "AXP_US.png",
+    "price": 306.95,
+    "date": "2026-10-14",
+    "rsi": 43.2,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 7. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 7. Perzentil)"
+  },
+  {
+    "symbol": "SCHW.US",
+    "name": "Charles Schwab",
+    "file": "SCHW_US.png",
+    "price": 96.8,
+    "date": "2026-10-14",
+    "rsi": 37.9,
+    "tags": [
+      {
+        "code": "MACD_BULL_CROSS",
+        "label": "MACD Bullish Cross (letzte 5 Kerzen)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (1.38% Abstand)"
+      }
+    ],
+    "primary_tag": "MACD_BULL_CROSS",
+    "primary_label": "MACD Bullish Cross (letzte 5 Kerzen)"
+  },
+  {
+    "symbol": "BLK.US",
+    "name": "BlackRock Inc.",
+    "file": "BLK_US.png",
+    "price": 1073.79,
+    "date": "2026-10-14",
+    "rsi": 48.5,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 38.2%-Fibonacci-Level (1.48% Abstand)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 50.0%-Fibonacci-Level (1.13% Abstand)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 1. Perzentil)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 38.2%-Fibonacci-Level (1.48% Abstand)"
+  },
+  {
+    "symbol": "BRK-B.US",
+    "name": "Berkshire Hathaway B",
+    "file": "BRK_B_US.png",
+    "price": 526.35,
+    "date": "2026-10-14",
+    "rsi": 71.9,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      },
+      {
+        "code": "RSI_OVERBOUGHT",
+        "label": "RSI überkauft (71.9)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "LLY.US",
+    "name": "Eli Lilly and Co.",
+    "file": "LLY_US.png",
+    "price": 1208.74,
+    "date": "2026-10-14",
+    "rsi": 60.4,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 3. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 3. Perzentil)"
+  },
+  {
+    "symbol": "UNH.US",
+    "name": "UnitedHealth Group",
+    "file": "UNH_US.png",
+    "price": 395.62,
+    "date": "2026-10-14",
+    "rsi": 62.5,
+    "tags": [
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "BB_BREAKOUT_UP",
+    "primary_label": "Ausbruch über oberes Bollinger-Band"
+  },
+  {
+    "symbol": "JNJ.US",
+    "name": "Johnson & Johnson",
+    "file": "JNJ_US.png",
+    "price": 253.91,
+    "date": "2026-10-14",
+    "rsi": 41.5,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 38.2%-Fibonacci-Level (1.20% Abstand)"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "ABBV.US",
+    "name": "AbbVie Inc.",
+    "file": "ABBV_US.png",
+    "price": 281.75,
+    "date": "2026-10-14",
+    "rsi": 69.7,
+    "tags": [
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "BB_BREAKOUT_UP",
+    "primary_label": "Ausbruch über oberes Bollinger-Band"
+  },
+  {
+    "symbol": "PFE.US",
+    "name": "Pfizer Inc.",
+    "file": "PFE_US.png",
+    "price": 29.21,
+    "date": "2026-10-14",
+    "rsi": 66.5,
+    "tags": [
+      {
+        "code": "MACD_BULL_CROSS",
+        "label": "MACD Bullish Cross (letzte 5 Kerzen)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "MACD_BULL_CROSS",
+    "primary_label": "MACD Bullish Cross (letzte 5 Kerzen)"
+  },
+  {
+    "symbol": "TMO.US",
+    "name": "Thermo Fisher Scientific",
+    "file": "TMO_US.png",
+    "price": 673.2,
+    "date": "2026-10-14",
+    "rsi": 60.3,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 1. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 1. Perzentil)"
+  },
+  {
+    "symbol": "ABT.US",
+    "name": "Abbott Laboratories",
+    "file": "ABT_US.png",
+    "price": 102.34,
+    "date": "2026-10-14",
+    "rsi": 53.5,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 38.2%-Fibonacci-Level (0.61% Abstand)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 38.2%-Fibonacci-Level (0.61% Abstand)"
+  },
+  {
+    "symbol": "XOM.US",
+    "name": "Exxon Mobil Corp.",
+    "file": "XOM_US.png",
+    "price": 177.01,
+    "date": "2026-10-14",
+    "rsi": 74.9,
+    "tags": [
+      {
+        "code": "RSI_OVERBOUGHT",
+        "label": "RSI überkauft (74.9)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "RSI_OVERBOUGHT",
+    "primary_label": "RSI überkauft (74.9)"
+  },
+  {
+    "symbol": "CVX.US",
+    "name": "Chevron Corp.",
+    "file": "CVX_US.png",
+    "price": 222.04,
+    "date": "2026-10-14",
+    "rsi": 71.3,
+    "tags": [
+      {
+        "code": "RSI_OVERBOUGHT",
+        "label": "RSI überkauft (71.3)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "RSI_OVERBOUGHT",
+    "primary_label": "RSI überkauft (71.3)"
+  },
+  {
+    "symbol": "COP.US",
+    "name": "ConocoPhillips",
+    "file": "COP_US.png",
+    "price": 142.34,
+    "date": "2026-10-14",
+    "rsi": 71.3,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      },
+      {
+        "code": "RSI_OVERBOUGHT",
+        "label": "RSI überkauft (71.3)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "SLB.US",
+    "name": "Schlumberger Ltd.",
+    "file": "SLB_US.png",
+    "price": 48.51,
+    "date": "2026-10-14",
+    "rsi": 37.5,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "ENPH.US",
+    "name": "Enphase Energy",
+    "file": "ENPH_US.png",
+    "price": 29.35,
+    "date": "2026-10-14",
+    "rsi": 29.8,
+    "tags": [
+      {
+        "code": "MACD_BEAR_CROSS",
+        "label": "MACD Bearish Cross (letzte 5 Kerzen)"
+      },
+      {
+        "code": "RSI_OVERSOLD",
+        "label": "RSI überverkauft (29.8)"
+      },
+      {
+        "code": "BB_BREAKOUT_DOWN",
+        "label": "Ausbruch unter unteres Bollinger-Band"
+      }
+    ],
+    "primary_tag": "MACD_BEAR_CROSS",
+    "primary_label": "MACD Bearish Cross (letzte 5 Kerzen)"
+  },
+  {
+    "symbol": "WMT.US",
+    "name": "Walmart Inc.",
+    "file": "WMT_US.png",
+    "price": 116.16,
+    "date": "2026-10-14",
+    "rsi": 69.1,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (1.33% Abstand)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 61.8%-Fibonacci-Level (1.33% Abstand)"
+  },
+  {
+    "symbol": "COST.US",
+    "name": "Costco Wholesale",
+    "file": "COST_US.png",
+    "price": 982.0,
+    "date": "2026-10-14",
+    "rsi": 72.1,
+    "tags": [
+      {
+        "code": "RSI_OVERBOUGHT",
+        "label": "RSI überkauft (72.1)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 50.0%-Fibonacci-Level (0.70% Abstand)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "RSI_OVERBOUGHT",
+    "primary_label": "RSI überkauft (72.1)"
+  },
+  {
+    "symbol": "PG.US",
+    "name": "Procter & Gamble",
+    "file": "PG_US.png",
+    "price": 156.53,
+    "date": "2026-10-14",
+    "rsi": 71.3,
+    "tags": [
+      {
+        "code": "RSI_OVERBOUGHT",
+        "label": "RSI überkauft (71.3)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "RSI_OVERBOUGHT",
+    "primary_label": "RSI überkauft (71.3)"
+  },
+  {
+    "symbol": "KO.US",
+    "name": "Coca-Cola Co.",
+    "file": "KO_US.png",
+    "price": 91.78,
+    "date": "2026-10-14",
+    "rsi": 70.0,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "NKE.US",
+    "name": "Nike Inc.",
+    "file": "NKE_US.png",
+    "price": 35.3,
+    "date": "2026-10-14",
+    "rsi": 43.8,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 10. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 10. Perzentil)"
+  },
+  {
+    "symbol": "DIS.US",
+    "name": "Walt Disney Co.",
+    "file": "DIS_US.png",
+    "price": 108.99,
+    "date": "2026-10-14",
+    "rsi": 61.7,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "TGT.US",
+    "name": "Target Corp.",
+    "file": "TGT_US.png",
+    "price": 155.31,
+    "date": "2026-10-14",
+    "rsi": 49.8,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 7. Perzentil)"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "MMM.US",
+    "name": "3M Company",
+    "file": "MMM_US.png",
+    "price": 164.46,
+    "date": "2026-10-14",
+    "rsi": 47.7,
+    "tags": [
+      {
+        "code": "MACD_BULL_CROSS",
+        "label": "MACD Bullish Cross (letzte 5 Kerzen)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 50.0%-Fibonacci-Level (1.47% Abstand)"
+      }
+    ],
+    "primary_tag": "MACD_BULL_CROSS",
+    "primary_label": "MACD Bullish Cross (letzte 5 Kerzen)"
+  },
+  {
+    "symbol": "HON.US",
+    "name": "Honeywell International",
+    "file": "HON_US.png",
+    "price": 207.61,
+    "date": "2026-10-14",
+    "rsi": 42.6,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 2. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 2. Perzentil)"
+  },
+  {
+    "symbol": "GE.US",
+    "name": "General Electric",
+    "file": "GE_US.png",
+    "price": 307.02,
+    "date": "2026-10-14",
+    "rsi": 37.9,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 5. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 5. Perzentil)"
+  },
+  {
+    "symbol": "CAT.US",
+    "name": "Caterpillar Inc.",
+    "file": "CAT_US.png",
+    "price": 748.98,
+    "date": "2026-10-14",
+    "rsi": 33.7,
+    "tags": [
+      {
+        "code": "BB_BREAKOUT_DOWN",
+        "label": "Ausbruch unter unteres Bollinger-Band"
+      }
+    ],
+    "primary_tag": "BB_BREAKOUT_DOWN",
+    "primary_label": "Ausbruch unter unteres Bollinger-Band"
+  },
+  {
+    "symbol": "TSLA.US",
+    "name": "Tesla Inc.",
+    "file": "TSLA_US.png",
+    "price": 367.16,
+    "date": "2026-10-14",
+    "rsi": 49.3,
+    "tags": [
+      {
+        "code": "MACD_BEAR_CROSS",
+        "label": "MACD Bearish Cross (letzte 5 Kerzen)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 14. Perzentil)"
+      }
+    ],
+    "primary_tag": "MACD_BEAR_CROSS",
+    "primary_label": "MACD Bearish Cross (letzte 5 Kerzen)"
+  },
+  {
+    "symbol": "GM.US",
+    "name": "General Motors",
+    "file": "GM_US.png",
+    "price": 83.05,
+    "date": "2026-10-14",
+    "rsi": 51.1,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 38.2%-Fibonacci-Level (0.46% Abstand)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 38.2%-Fibonacci-Level (0.46% Abstand)"
+  },
+  {
+    "symbol": "RIVN.US",
+    "name": "Rivian Automotive",
+    "file": "RIVN_US.png",
+    "price": 12.95,
+    "date": "2026-10-14",
+    "rsi": 25.7,
+    "tags": [
+      {
+        "code": "RSI_OVERSOLD",
+        "label": "RSI überverkauft (25.7)"
+      },
+      {
+        "code": "BB_BREAKOUT_DOWN",
+        "label": "Ausbruch unter unteres Bollinger-Band"
+      }
+    ],
+    "primary_tag": "RSI_OVERSOLD",
+    "primary_label": "RSI überverkauft (25.7)"
+  },
+  {
+    "symbol": "VZ.US",
+    "name": "Verizon Communications",
+    "file": "VZ_US.png",
+    "price": 44.42,
+    "date": "2026-10-14",
+    "rsi": 43.0,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (1.36% Abstand)"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "T.US",
+    "name": "AT&T Inc.",
+    "file": "T_US.png",
+    "price": 23.05,
+    "date": "2026-10-14",
+    "rsi": 38.5,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 50.0%-Fibonacci-Level (0.14% Abstand)"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "KMB.US",
+    "name": "Kimberly-Clark Corp.",
+    "file": "KMB_US.png",
+    "price": 99.41,
+    "date": "2026-10-14",
+    "rsi": 51.5,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (0.90% Abstand)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 61.8%-Fibonacci-Level (0.90% Abstand)"
+  },
+  {
+    "symbol": "EL.US",
+    "name": "Estée Lauder Cos.",
+    "file": "EL_US.png",
+    "price": 101.59,
+    "date": "2026-10-14",
+    "rsi": 62.8,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "KR.US",
+    "name": "Kroger Co.",
+    "file": "KR_US.png",
+    "price": 63.09,
+    "date": "2026-10-14",
+    "rsi": 62.1,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 50.0%-Fibonacci-Level (0.94% Abstand)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 50.0%-Fibonacci-Level (0.94% Abstand)"
+  },
+  {
+    "symbol": "CL.US",
+    "name": "Colgate-Palmolive",
+    "file": "CL_US.png",
+    "price": 92.78,
+    "date": "2026-10-14",
+    "rsi": 70.3,
+    "tags": [
+      {
+        "code": "RSI_OVERBOUGHT",
+        "label": "RSI überkauft (70.3)"
+      },
+      {
+        "code": "BB_BREAKOUT_UP",
+        "label": "Ausbruch über oberes Bollinger-Band"
+      }
+    ],
+    "primary_tag": "RSI_OVERBOUGHT",
+    "primary_label": "RSI überkauft (70.3)"
+  },
+  {
+    "symbol": "DOX.US",
+    "name": "Amdocs Ltd.",
+    "file": "DOX_US.png",
+    "price": 59.25,
+    "date": "2026-10-14",
+    "rsi": 52.8,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 38.2%-Fibonacci-Level (0.92% Abstand)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 3. Perzentil)"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "GLD.US",
+    "name": "SPDR Gold Shares",
+    "file": "GLD_US.png",
+    "price": 375.99,
+    "date": "2026-10-14",
+    "rsi": 39.2,
+    "tags": [
+      {
+        "code": "MACD_BEAR_CROSS",
+        "label": "MACD Bearish Cross (letzte 5 Kerzen)"
+      }
+    ],
+    "primary_tag": "MACD_BEAR_CROSS",
+    "primary_label": "MACD Bearish Cross (letzte 5 Kerzen)"
+  },
+  {
+    "symbol": "SLV.US",
+    "name": "iShares Silver Trust",
+    "file": "SLV_US.png",
+    "price": 50.22,
+    "date": "2026-10-14",
+    "rsi": 31.1,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      },
+      {
+        "code": "BB_BREAKOUT_DOWN",
+        "label": "Ausbruch unter unteres Bollinger-Band"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "NEM.US",
+    "name": "Newmont Corp.",
+    "file": "NEM_US.png",
+    "price": 111.56,
+    "date": "2026-10-14",
+    "rsi": 37.8,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 50.0%-Fibonacci-Level (0.20% Abstand)"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "GOLD.US",
+    "name": "Barrick Gold Corp.",
+    "file": "GOLD_US.png",
+    "price": 38.72,
+    "date": "2026-10-14",
+    "rsi": 34.2,
+    "tags": [
+      {
+        "code": "DEATH_CROSS",
+        "label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+      }
+    ],
+    "primary_tag": "DEATH_CROSS",
+    "primary_label": "Death Cross (SMA20 kreuzt SMA50 nach unten)"
+  },
+  {
+    "symbol": "BKNG.US",
+    "name": "Booking Holdings",
+    "file": "BKNG_US.png",
+    "price": 160.68,
+    "date": "2026-10-14",
+    "rsi": 39.9,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 10. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 10. Perzentil)"
+  },
+  {
+    "symbol": "ABNB.US",
+    "name": "Airbnb Inc.",
+    "file": "ABNB_US.png",
+    "price": 167.06,
+    "date": "2026-10-14",
+    "rsi": 53.5,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 38.2%-Fibonacci-Level (0.65% Abstand)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 38.2%-Fibonacci-Level (0.65% Abstand)"
+  },
+  {
+    "symbol": "MAR.US",
+    "name": "Marriott International",
+    "file": "MAR_US.png",
+    "price": 371.82,
+    "date": "2026-10-14",
+    "rsi": 67.0,
+    "tags": [
+      {
+        "code": "GOLDEN_CROSS",
+        "label": "Golden Cross (SMA20 kreuzt SMA50 nach oben)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 38.2%-Fibonacci-Level (1.13% Abstand)"
+      }
+    ],
+    "primary_tag": "GOLDEN_CROSS",
+    "primary_label": "Golden Cross (SMA20 kreuzt SMA50 nach oben)"
+  },
+  {
+    "symbol": "DAL.US",
+    "name": "Delta Air Lines",
+    "file": "DAL_US.png",
+    "price": 76.435,
+    "date": "2026-10-14",
+    "rsi": 33.0,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (0.36% Abstand)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 14. Perzentil)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 61.8%-Fibonacci-Level (0.36% Abstand)"
+  },
+  {
+    "symbol": "IEF.US",
+    "name": "iShares 7-10 Year Treasury Bond ETF",
+    "file": "IEF_US.png",
+    "price": 89.71,
+    "date": "2026-10-14",
+    "rsi": 44.9,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (0.99% Abstand)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 61.8%-Fibonacci-Level (0.99% Abstand)"
+  },
+  {
+    "symbol": "HYG.US",
+    "name": "iShares iBoxx High Yield Corp Bond ETF",
+    "file": "HYG_US.png",
+    "price": 76.81,
+    "date": "2026-10-14",
+    "rsi": 30.0,
+    "tags": [
+      {
+        "code": "RSI_OVERSOLD",
+        "label": "RSI überverkauft (30.0)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 50.0%-Fibonacci-Level (1.25% Abstand)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (0.83% Abstand)"
+      }
+    ],
+    "primary_tag": "RSI_OVERSOLD",
+    "primary_label": "RSI überverkauft (30.0)"
+  },
+  {
+    "symbol": "LQD.US",
+    "name": "iShares Investment Grade Corp Bond ETF",
+    "file": "LQD_US.png",
+    "price": 102.66,
+    "date": "2026-10-14",
+    "rsi": 43.2,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (1.08% Abstand)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 61.8%-Fibonacci-Level (1.08% Abstand)"
+  },
+  {
+    "symbol": "LEG.XETRA",
+    "name": "LEG Immobilien SE",
+    "file": "LEG_XETRA.png",
+    "price": 45.36,
+    "date": "2026-10-14",
+    "rsi": 43.3,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 11. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 11. Perzentil)"
+  },
+  {
+    "symbol": "TEG.XETRA",
+    "name": "TAG Immobilien AG",
+    "file": "TEG_XETRA.png",
+    "price": 10.33,
+    "date": "2026-10-14",
+    "rsi": 29.1,
+    "tags": [
+      {
+        "code": "RSI_OVERSOLD",
+        "label": "RSI überverkauft (29.1)"
+      }
+    ],
+    "primary_tag": "RSI_OVERSOLD",
+    "primary_label": "RSI überverkauft (29.1)"
+  },
+  {
+    "symbol": "EURUSD.FOREX",
+    "name": "Euro / US-Dollar",
+    "file": "EURUSD_FOREX.png",
+    "price": 1.1195,
+    "date": "2026-10-14",
+    "rsi": 30.1,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (1.30% Abstand)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 61.8%-Fibonacci-Level (1.30% Abstand)"
+  },
+  {
+    "symbol": "GBPUSD.FOREX",
+    "name": "Britisches Pfund / US-Dollar",
+    "file": "GBPUSD_FOREX.png",
+    "price": 1.3253,
+    "date": "2026-10-15",
+    "rsi": 46.3,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 50.0%-Fibonacci-Level (1.14% Abstand)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (0.67% Abstand)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 3. Perzentil)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 50.0%-Fibonacci-Level (1.14% Abstand)"
+  },
+  {
+    "symbol": "USDJPY.FOREX",
+    "name": "US-Dollar / Japanischer Yen",
+    "file": "USDJPY_FOREX.png",
+    "price": 157.79,
+    "date": "2026-10-15",
+    "rsi": 49.9,
+    "tags": [
+      {
+        "code": "GOLDEN_CROSS",
+        "label": "Golden Cross (SMA20 kreuzt SMA50 nach oben)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 38.2%-Fibonacci-Level (1.22% Abstand)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 50.0%-Fibonacci-Level (0.40% Abstand)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (0.43% Abstand)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 6. Perzentil)"
+      }
+    ],
+    "primary_tag": "GOLDEN_CROSS",
+    "primary_label": "Golden Cross (SMA20 kreuzt SMA50 nach oben)"
+  },
+  {
+    "symbol": "USDCHF.FOREX",
+    "name": "US-Dollar / Schweizer Franken",
+    "file": "USDCHF_FOREX.png",
+    "price": 0.8297,
+    "date": "2026-10-15",
+    "rsi": 53.6,
+    "tags": [
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 13. Perzentil)"
+      }
+    ],
+    "primary_tag": "BB_SQUEEZE",
+    "primary_label": "Bollinger-Squeeze (Bandbreite im untersten 13. Perzentil)"
+  },
+  {
+    "symbol": "DJUSBK.INDX",
+    "name": "Dow Jones Banks",
+    "file": "DJUSBK_INDX.png",
+    "price": 828.7,
+    "date": "2026-10-14",
+    "rsi": 32.5,
+    "tags": [
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (1.21% Abstand)"
+      }
+    ],
+    "primary_tag": "FIB_BOUNCE",
+    "primary_label": "Preis nahe 61.8%-Fibonacci-Level (1.21% Abstand)"
+  },
+  {
+    "symbol": "DJUSBT.INDX",
+    "name": "Dow Jones Biotechnology",
+    "file": "DJUSBT_INDX.png",
+    "price": 3831.2,
+    "date": "2026-10-14",
+    "rsi": 62.5,
+    "tags": [
+      {
+        "code": "MACD_BULL_CROSS",
+        "label": "MACD Bullish Cross (letzte 5 Kerzen)"
+      },
+      {
+        "code": "BB_SQUEEZE",
+        "label": "Bollinger-Squeeze (Bandbreite im untersten 9. Perzentil)"
+      }
+    ],
+    "primary_tag": "MACD_BULL_CROSS",
+    "primary_label": "MACD Bullish Cross (letzte 5 Kerzen)"
+  },
+  {
+    "symbol": "DJUSAU.INDX",
+    "name": "Dow Jones Automobiles",
+    "file": "DJUSAU_INDX.png",
+    "price": 1280.01,
+    "date": "2026-10-14",
+    "rsi": 48.4,
+    "tags": [
+      {
+        "code": "MACD_BEAR_CROSS",
+        "label": "MACD Bearish Cross (letzte 5 Kerzen)"
+      },
+      {
+        "code": "FIB_BOUNCE",
+        "label": "Preis nahe 61.8%-Fibonacci-Level (1.09% Abstand)"
+      }
+    ],
+    "primary_tag": "MACD_BEAR_CROSS",
+    "primary_label": "MACD Bearish Cross (letzte 5 Kerzen)"
+  }
+]

@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENITUS SIGNAL-CHARTS-GALERIE // Echte generierte Charts</title>
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;--surface:#0d1117;--panel:#111820;--card:#121a22;
+  --border:#1e2d3d;--accent:#00d4ff;--green:#00ff88;--red:#ff3b5c;
+  --gold:#f0c040;--muted:#7d92a8;--text:#c8d8e8;--bright:#fff;
+  --mono:'JetBrains Mono',monospace;--head:'Orbitron',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--text);font-family:var(--mono);}
+header{position:sticky;top:0;z-index:200;background:rgba(8,12,16,.97);border-bottom:1px solid var(--border);padding:14px 24px;}
+.logo-name{font-family:var(--head);font-size:16px;letter-spacing:5px;color:var(--bright);}
+.logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+.wrap{max-width:1400px;margin:0 auto;padding:22px 24px 70px;}
+.intro{font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.8;max-width:900px;margin-bottom:20px;border-left:2px solid var(--accent);padding-left:14px;}
+.intro b{color:var(--text)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:22px;}
+.chip{font-family:var(--mono);font-size:9.5px;letter-spacing:.5px;padding:6px 11px;border:1px solid var(--border);color:var(--muted);background:transparent;cursor:pointer;border-radius:999px;transition:all .15s;white-space:nowrap;}
+.chip:hover{border-color:var(--accent);color:var(--accent);}
+.chip.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,64,.08);}
+.search{margin-left:auto;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:11px;padding:7px 12px;border-radius:4px;outline:none;min-width:180px;}
+.search:focus{border-color:var(--accent);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.card{display:block;background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;text-decoration:none;color:var(--text);transition:border-color .15s,transform .15s;}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.thumb{width:100%;aspect-ratio:11/9.3;background:#000;overflow:hidden;}
+.thumb img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;}
+.meta{padding:10px 12px;}
+.sym-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;}
+.sym{font-family:var(--head);font-size:12px;letter-spacing:1px;color:var(--bright);}
+.badge{font-family:var(--mono);font-size:8px;letter-spacing:.5px;padding:3px 7px;border-radius:999px;white-space:nowrap;}
+.badge.bull{background:rgba(0,255,136,.12);color:var(--green);border:1px solid rgba(0,255,136,.3);}
+.badge.bear{background:rgba(255,59,92,.12);color:var(--red);border:1px solid rgba(255,59,92,.3);}
+.badge.neutral{background:rgba(240,192,64,.12);color:var(--gold);border:1px solid rgba(240,192,64,.3);}
+.name{font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stats{display:flex;gap:10px;font-family:var(--mono);font-size:9.5px;color:var(--text);}
+.extra-tags{margin-top:6px;font-family:var(--mono);font-size:8.5px;color:var(--muted);line-height:1.5;}
+.count{font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:14px;}
+.back{display:inline-block;margin-top:32px;font-family:var(--mono);font-size:11px;color:var(--accent);text-decoration:none;}
+.empty{font-family:var(--mono);font-size:11px;color:var(--muted);padding:40px 0;text-align:center;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-name">SIGNAL-CHARTS-GALERIE</div>
+  <div class="logo-sub">ECHTE, SERVER-SEITIG GENERIERTE CHARTS · RSI/MACD/BOLLINGER/FIBONACCI</div>
+</header>
+<div class="wrap">
+  <div class="intro">
+    Anders als die übrigen Galerien sind das hier <b>keine kuratierten Bestandsbilder</b>, sondern frisch generierte
+    Charts: echte OHLCV-Daten vom Proxy, Indikatoren in Python (pandas/numpy) nachgerechnet -- RSI 14 (Wilder),
+    MACD (12,26,9), Bollinger-Bänder (20,2), SMA 20/50, Fibonacci-Retracements vom 120-Tage-Hoch/Tief -- und nur
+    die Symbole behalten, bei denen gerade real ein Signal ausgelöst hat (Golden/Death Cross, MACD-Crossover,
+    RSI-Extrem, Preis nahe einem Fib-Level, oder eine Bollinger-Squeeze/Breakout). 75 von 99 geprüften
+    Symbolen haben ein echtes Signal geliefert -- der Rest wurde verworfen. Klick auf eine Karte öffnet das Symbol
+    live im passenden Terminal (vorausgefüllt mit RSI/MACD/Bollinger an).
+  </div>
+  <div class="toolbar">
+        <button class="chip active" data-filter="ALL">Alle (75)</button>
+        <button class="chip" data-filter="GOLDEN_CROSS">Golden Cross (4)</button>
+        <button class="chip" data-filter="MACD_BULL_CROSS">MACD Bullish (5)</button>
+        <button class="chip" data-filter="RSI_OVERSOLD">RSI Überverkauft (3)</button>
+        <button class="chip" data-filter="FIB_BOUNCE">Fibonacci-Bounce (18)</button>
+        <button class="chip" data-filter="BB_SQUEEZE">Bollinger-Squeeze (15)</button>
+        <button class="chip" data-filter="BB_BREAKOUT_UP">Bollinger-Breakout ↑ (2)</button>
+        <button class="chip" data-filter="BB_BREAKOUT_DOWN">Bollinger-Breakout ↓ (1)</button>
+        <button class="chip" data-filter="DEATH_CROSS">Death Cross (15)</button>
+        <button class="chip" data-filter="MACD_BEAR_CROSS">MACD Bearish (6)</button>
+        <button class="chip" data-filter="RSI_OVERBOUGHT">RSI Überkauft (6)</button>
+    <input class="search" id="search" type="text" placeholder="Symbol oder Name filtern …">
+  </div>
+  <div class="count" id="count"></div>
+  <div class="grid" id="grid">
+      <a class="card" href="../charts-bot.html?sym=AAPL.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="MACD_BULL_CROSS" data-symbol="aapl.us" data-name="apple inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/AAPL_US.png" alt="AAPL.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">AAPL.US</span><span class="badge bull">MACD Bullish</span></div>
+          <div class="name">Apple Inc.</div>
+          <div class="stats"><span>342.96</span><span>RSI 62.1</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=GOOGL.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="GOLDEN_CROSS" data-symbol="googl.us" data-name="alphabet inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/GOOGL_US.png" alt="GOOGL.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">GOOGL.US</span><span class="badge bull">Golden Cross</span></div>
+          <div class="name">Alphabet Inc.</div>
+          <div class="stats"><span>347.64</span><span>RSI 51.3</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce · Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=AMZN.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="amzn.us" data-name="amazon.com inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/AMZN_US.png" alt="AMZN.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">AMZN.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Amazon.com Inc.</div>
+          <div class="stats"><span>254.08</span><span>RSI 49.3</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=NVDA.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="nvda.us" data-name="nvidia corp.">
+        <div class="thumb"><img loading="lazy" src="img/signals/NVDA_US.png" alt="NVDA.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">NVDA.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">NVIDIA Corp.</div>
+          <div class="stats"><span>221.3</span><span>RSI 44</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=AVGO.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="avgo.us" data-name="broadcom inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/AVGO_US.png" alt="AVGO.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">AVGO.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">Broadcom Inc.</div>
+          <div class="stats"><span>346.25</span><span>RSI 42.4</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=ORCL.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="orcl.us" data-name="oracle corp.">
+        <div class="thumb"><img loading="lazy" src="img/signals/ORCL_US.png" alt="ORCL.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">ORCL.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Oracle Corp.</div>
+          <div class="stats"><span>130.55</span><span>RSI 40.6</span><span>2026-10-14</span></div>
+          <div class="extra-tags">MACD Bearish · Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=CRM.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="crm.us" data-name="salesforce inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/CRM_US.png" alt="CRM.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">CRM.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">Salesforce Inc.</div>
+          <div class="stats"><span>235.95</span><span>RSI 53.7</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=ADBE.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="adbe.us" data-name="adobe inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/ADBE_US.png" alt="ADBE.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">ADBE.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Adobe Inc.</div>
+          <div class="stats"><span>240.68</span><span>RSI 46.6</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=PANW.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="panw.us" data-name="palo alto networks">
+        <div class="thumb"><img loading="lazy" src="img/signals/PANW_US.png" alt="PANW.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">PANW.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">Palo Alto Networks</div>
+          <div class="stats"><span>375.04</span><span>RSI 46.1</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=CRWD.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="crwd.us" data-name="crowdstrike holdings">
+        <div class="thumb"><img loading="lazy" src="img/signals/CRWD_US.png" alt="CRWD.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">CRWD.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">CrowdStrike Holdings</div>
+          <div class="stats"><span>249.29</span><span>RSI 49</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=UBER.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="uber.us" data-name="uber technologies">
+        <div class="thumb"><img loading="lazy" src="img/signals/UBER_US.png" alt="UBER.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">UBER.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">Uber Technologies</div>
+          <div class="stats"><span>69.29</span><span>RSI 44</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=NOW.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="now.us" data-name="servicenow inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/NOW_US.png" alt="NOW.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">NOW.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">ServiceNow Inc.</div>
+          <div class="stats"><span>139.98</span><span>RSI 55.8</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=JPM.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="jpm.us" data-name="jpmorgan chase &amp; co.">
+        <div class="thumb"><img loading="lazy" src="img/signals/JPM_US.png" alt="JPM.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">JPM.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">JPMorgan Chase &amp; Co.</div>
+          <div class="stats"><span>335.28</span><span>RSI 45.5</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=BAC.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="MACD_BEAR_CROSS" data-symbol="bac.us" data-name="bank of america">
+        <div class="thumb"><img loading="lazy" src="img/signals/BAC_US.png" alt="BAC.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">BAC.US</span><span class="badge bear">MACD Bearish</span></div>
+          <div class="name">Bank of America</div>
+          <div class="stats"><span>51.39</span><span>RSI 22.7</span><span>2026-10-14</span></div>
+          <div class="extra-tags">RSI Überverkauft · Bollinger-Breakout ↓</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=WFC.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="wfc.us" data-name="wells fargo &amp; co.">
+        <div class="thumb"><img loading="lazy" src="img/signals/WFC_US.png" alt="WFC.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">WFC.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Wells Fargo &amp; Co.</div>
+          <div class="stats"><span>80.9</span><span>RSI 41.2</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=MS.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="MACD_BEAR_CROSS" data-symbol="ms.us" data-name="morgan stanley">
+        <div class="thumb"><img loading="lazy" src="img/signals/MS_US.png" alt="MS.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">MS.US</span><span class="badge bear">MACD Bearish</span></div>
+          <div class="name">Morgan Stanley</div>
+          <div class="stats"><span>181.51</span><span>RSI 25.3</span><span>2026-10-14</span></div>
+          <div class="extra-tags">RSI Überverkauft</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=V.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="GOLDEN_CROSS" data-symbol="v.us" data-name="visa inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/V_US.png" alt="V.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">V.US</span><span class="badge bull">Golden Cross</span></div>
+          <div class="name">Visa Inc.</div>
+          <div class="stats"><span>391.43</span><span>RSI 67.6</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=MA.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="RSI_OVERBOUGHT" data-symbol="ma.us" data-name="mastercard inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/MA_US.png" alt="MA.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">MA.US</span><span class="badge bear">RSI Überkauft</span></div>
+          <div class="name">Mastercard Inc.</div>
+          <div class="stats"><span>603.24</span><span>RSI 70.4</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=AXP.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="axp.us" data-name="american express">
+        <div class="thumb"><img loading="lazy" src="img/signals/AXP_US.png" alt="AXP.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">AXP.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">American Express</div>
+          <div class="stats"><span>306.95</span><span>RSI 43.2</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=SCHW.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="MACD_BULL_CROSS" data-symbol="schw.us" data-name="charles schwab">
+        <div class="thumb"><img loading="lazy" src="img/signals/SCHW_US.png" alt="SCHW.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">SCHW.US</span><span class="badge bull">MACD Bullish</span></div>
+          <div class="name">Charles Schwab</div>
+          <div class="stats"><span>96.8</span><span>RSI 37.9</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=BLK.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="blk.us" data-name="blackrock inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/BLK_US.png" alt="BLK.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">BLK.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">BlackRock Inc.</div>
+          <div class="stats"><span>1073.79</span><span>RSI 48.5</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce · Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=BRK-B.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="brk-b.us" data-name="berkshire hathaway b">
+        <div class="thumb"><img loading="lazy" src="img/signals/BRK_B_US.png" alt="BRK-B.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">BRK-B.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Berkshire Hathaway B</div>
+          <div class="stats"><span>526.35</span><span>RSI 71.9</span><span>2026-10-14</span></div>
+          <div class="extra-tags">RSI Überkauft · Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=LLY.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="lly.us" data-name="eli lilly and co.">
+        <div class="thumb"><img loading="lazy" src="img/signals/LLY_US.png" alt="LLY.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">LLY.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">Eli Lilly and Co.</div>
+          <div class="stats"><span>1208.74</span><span>RSI 60.4</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=UNH.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_BREAKOUT_UP" data-symbol="unh.us" data-name="unitedhealth group">
+        <div class="thumb"><img loading="lazy" src="img/signals/UNH_US.png" alt="UNH.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">UNH.US</span><span class="badge bull">Bollinger-Breakout ↑</span></div>
+          <div class="name">UnitedHealth Group</div>
+          <div class="stats"><span>395.62</span><span>RSI 62.5</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=JNJ.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="jnj.us" data-name="johnson &amp; johnson">
+        <div class="thumb"><img loading="lazy" src="img/signals/JNJ_US.png" alt="JNJ.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">JNJ.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Johnson &amp; Johnson</div>
+          <div class="stats"><span>253.91</span><span>RSI 41.5</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=ABBV.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_BREAKOUT_UP" data-symbol="abbv.us" data-name="abbvie inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/ABBV_US.png" alt="ABBV.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">ABBV.US</span><span class="badge bull">Bollinger-Breakout ↑</span></div>
+          <div class="name">AbbVie Inc.</div>
+          <div class="stats"><span>281.75</span><span>RSI 69.7</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=PFE.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="MACD_BULL_CROSS" data-symbol="pfe.us" data-name="pfizer inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/PFE_US.png" alt="PFE.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">PFE.US</span><span class="badge bull">MACD Bullish</span></div>
+          <div class="name">Pfizer Inc.</div>
+          <div class="stats"><span>29.21</span><span>RSI 66.5</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=TMO.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="tmo.us" data-name="thermo fisher scientific">
+        <div class="thumb"><img loading="lazy" src="img/signals/TMO_US.png" alt="TMO.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">TMO.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">Thermo Fisher Scientific</div>
+          <div class="stats"><span>673.2</span><span>RSI 60.3</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=ABT.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="abt.us" data-name="abbott laboratories">
+        <div class="thumb"><img loading="lazy" src="img/signals/ABT_US.png" alt="ABT.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">ABT.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Abbott Laboratories</div>
+          <div class="stats"><span>102.34</span><span>RSI 53.5</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=XOM.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="RSI_OVERBOUGHT" data-symbol="xom.us" data-name="exxon mobil corp.">
+        <div class="thumb"><img loading="lazy" src="img/signals/XOM_US.png" alt="XOM.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">XOM.US</span><span class="badge bear">RSI Überkauft</span></div>
+          <div class="name">Exxon Mobil Corp.</div>
+          <div class="stats"><span>177.01</span><span>RSI 74.9</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=CVX.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="RSI_OVERBOUGHT" data-symbol="cvx.us" data-name="chevron corp.">
+        <div class="thumb"><img loading="lazy" src="img/signals/CVX_US.png" alt="CVX.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">CVX.US</span><span class="badge bear">RSI Überkauft</span></div>
+          <div class="name">Chevron Corp.</div>
+          <div class="stats"><span>222.04</span><span>RSI 71.3</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=COP.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="cop.us" data-name="conocophillips">
+        <div class="thumb"><img loading="lazy" src="img/signals/COP_US.png" alt="COP.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">COP.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">ConocoPhillips</div>
+          <div class="stats"><span>142.34</span><span>RSI 71.3</span><span>2026-10-14</span></div>
+          <div class="extra-tags">RSI Überkauft · Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=SLB.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="slb.us" data-name="schlumberger ltd.">
+        <div class="thumb"><img loading="lazy" src="img/signals/SLB_US.png" alt="SLB.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">SLB.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Schlumberger Ltd.</div>
+          <div class="stats"><span>48.51</span><span>RSI 37.5</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=ENPH.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="MACD_BEAR_CROSS" data-symbol="enph.us" data-name="enphase energy">
+        <div class="thumb"><img loading="lazy" src="img/signals/ENPH_US.png" alt="ENPH.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">ENPH.US</span><span class="badge bear">MACD Bearish</span></div>
+          <div class="name">Enphase Energy</div>
+          <div class="stats"><span>29.35</span><span>RSI 29.8</span><span>2026-10-14</span></div>
+          <div class="extra-tags">RSI Überverkauft · Bollinger-Breakout ↓</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=WMT.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="wmt.us" data-name="walmart inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/WMT_US.png" alt="WMT.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">WMT.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Walmart Inc.</div>
+          <div class="stats"><span>116.16</span><span>RSI 69.1</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=COST.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="RSI_OVERBOUGHT" data-symbol="cost.us" data-name="costco wholesale">
+        <div class="thumb"><img loading="lazy" src="img/signals/COST_US.png" alt="COST.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">COST.US</span><span class="badge bear">RSI Überkauft</span></div>
+          <div class="name">Costco Wholesale</div>
+          <div class="stats"><span>982</span><span>RSI 72.1</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce · Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=PG.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="RSI_OVERBOUGHT" data-symbol="pg.us" data-name="procter &amp; gamble">
+        <div class="thumb"><img loading="lazy" src="img/signals/PG_US.png" alt="PG.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">PG.US</span><span class="badge bear">RSI Überkauft</span></div>
+          <div class="name">Procter &amp; Gamble</div>
+          <div class="stats"><span>156.53</span><span>RSI 71.3</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=KO.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="ko.us" data-name="coca-cola co.">
+        <div class="thumb"><img loading="lazy" src="img/signals/KO_US.png" alt="KO.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">KO.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Coca-Cola Co.</div>
+          <div class="stats"><span>91.78</span><span>RSI 70</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=NKE.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="nke.us" data-name="nike inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/NKE_US.png" alt="NKE.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">NKE.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">Nike Inc.</div>
+          <div class="stats"><span>35.3</span><span>RSI 43.8</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=DIS.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="dis.us" data-name="walt disney co.">
+        <div class="thumb"><img loading="lazy" src="img/signals/DIS_US.png" alt="DIS.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">DIS.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Walt Disney Co.</div>
+          <div class="stats"><span>108.99</span><span>RSI 61.7</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=TGT.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="tgt.us" data-name="target corp.">
+        <div class="thumb"><img loading="lazy" src="img/signals/TGT_US.png" alt="TGT.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">TGT.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Target Corp.</div>
+          <div class="stats"><span>155.31</span><span>RSI 49.8</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=MMM.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="MACD_BULL_CROSS" data-symbol="mmm.us" data-name="3m company">
+        <div class="thumb"><img loading="lazy" src="img/signals/MMM_US.png" alt="MMM.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">MMM.US</span><span class="badge bull">MACD Bullish</span></div>
+          <div class="name">3M Company</div>
+          <div class="stats"><span>164.46</span><span>RSI 47.7</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=HON.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="hon.us" data-name="honeywell international">
+        <div class="thumb"><img loading="lazy" src="img/signals/HON_US.png" alt="HON.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">HON.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">Honeywell International</div>
+          <div class="stats"><span>207.61</span><span>RSI 42.6</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=GE.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="ge.us" data-name="general electric">
+        <div class="thumb"><img loading="lazy" src="img/signals/GE_US.png" alt="GE.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">GE.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">General Electric</div>
+          <div class="stats"><span>307.02</span><span>RSI 37.9</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=CAT.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_BREAKOUT_DOWN" data-symbol="cat.us" data-name="caterpillar inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/CAT_US.png" alt="CAT.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">CAT.US</span><span class="badge bear">Bollinger-Breakout ↓</span></div>
+          <div class="name">Caterpillar Inc.</div>
+          <div class="stats"><span>748.98</span><span>RSI 33.7</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=TSLA.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="MACD_BEAR_CROSS" data-symbol="tsla.us" data-name="tesla inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/TSLA_US.png" alt="TSLA.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">TSLA.US</span><span class="badge bear">MACD Bearish</span></div>
+          <div class="name">Tesla Inc.</div>
+          <div class="stats"><span>367.16</span><span>RSI 49.3</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=GM.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="gm.us" data-name="general motors">
+        <div class="thumb"><img loading="lazy" src="img/signals/GM_US.png" alt="GM.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">GM.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">General Motors</div>
+          <div class="stats"><span>83.05</span><span>RSI 51.1</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=RIVN.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="RSI_OVERSOLD" data-symbol="rivn.us" data-name="rivian automotive">
+        <div class="thumb"><img loading="lazy" src="img/signals/RIVN_US.png" alt="RIVN.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">RIVN.US</span><span class="badge bull">RSI Überverkauft</span></div>
+          <div class="name">Rivian Automotive</div>
+          <div class="stats"><span>12.95</span><span>RSI 25.7</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Breakout ↓</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=VZ.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="vz.us" data-name="verizon communications">
+        <div class="thumb"><img loading="lazy" src="img/signals/VZ_US.png" alt="VZ.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">VZ.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Verizon Communications</div>
+          <div class="stats"><span>44.42</span><span>RSI 43</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=T.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="t.us" data-name="at&amp;t inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/T_US.png" alt="T.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">T.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">AT&amp;T Inc.</div>
+          <div class="stats"><span>23.05</span><span>RSI 38.5</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=KMB.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="kmb.us" data-name="kimberly-clark corp.">
+        <div class="thumb"><img loading="lazy" src="img/signals/KMB_US.png" alt="KMB.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">KMB.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Kimberly-Clark Corp.</div>
+          <div class="stats"><span>99.41</span><span>RSI 51.5</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=EL.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="el.us" data-name="estée lauder cos.">
+        <div class="thumb"><img loading="lazy" src="img/signals/EL_US.png" alt="EL.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">EL.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Estée Lauder Cos.</div>
+          <div class="stats"><span>101.59</span><span>RSI 62.8</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=KR.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="kr.us" data-name="kroger co.">
+        <div class="thumb"><img loading="lazy" src="img/signals/KR_US.png" alt="KR.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">KR.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Kroger Co.</div>
+          <div class="stats"><span>63.09</span><span>RSI 62.1</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=CL.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="RSI_OVERBOUGHT" data-symbol="cl.us" data-name="colgate-palmolive">
+        <div class="thumb"><img loading="lazy" src="img/signals/CL_US.png" alt="CL.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">CL.US</span><span class="badge bear">RSI Überkauft</span></div>
+          <div class="name">Colgate-Palmolive</div>
+          <div class="stats"><span>92.78</span><span>RSI 70.3</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Breakout ↑</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=DOX.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="dox.us" data-name="amdocs ltd.">
+        <div class="thumb"><img loading="lazy" src="img/signals/DOX_US.png" alt="DOX.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">DOX.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Amdocs Ltd.</div>
+          <div class="stats"><span>59.25</span><span>RSI 52.8</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce · Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=GLD.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="MACD_BEAR_CROSS" data-symbol="gld.us" data-name="spdr gold shares">
+        <div class="thumb"><img loading="lazy" src="img/signals/GLD_US.png" alt="GLD.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">GLD.US</span><span class="badge bear">MACD Bearish</span></div>
+          <div class="name">SPDR Gold Shares</div>
+          <div class="stats"><span>375.99</span><span>RSI 39.2</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=SLV.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="slv.us" data-name="ishares silver trust">
+        <div class="thumb"><img loading="lazy" src="img/signals/SLV_US.png" alt="SLV.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">SLV.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">iShares Silver Trust</div>
+          <div class="stats"><span>50.22</span><span>RSI 31.1</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Breakout ↓</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=NEM.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="nem.us" data-name="newmont corp.">
+        <div class="thumb"><img loading="lazy" src="img/signals/NEM_US.png" alt="NEM.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">NEM.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Newmont Corp.</div>
+          <div class="stats"><span>111.56</span><span>RSI 37.8</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=GOLD.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="DEATH_CROSS" data-symbol="gold.us" data-name="barrick gold corp.">
+        <div class="thumb"><img loading="lazy" src="img/signals/GOLD_US.png" alt="GOLD.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">GOLD.US</span><span class="badge bear">Death Cross</span></div>
+          <div class="name">Barrick Gold Corp.</div>
+          <div class="stats"><span>38.72</span><span>RSI 34.2</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=BKNG.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="bkng.us" data-name="booking holdings">
+        <div class="thumb"><img loading="lazy" src="img/signals/BKNG_US.png" alt="BKNG.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">BKNG.US</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">Booking Holdings</div>
+          <div class="stats"><span>160.68</span><span>RSI 39.9</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=ABNB.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="abnb.us" data-name="airbnb inc.">
+        <div class="thumb"><img loading="lazy" src="img/signals/ABNB_US.png" alt="ABNB.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">ABNB.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Airbnb Inc.</div>
+          <div class="stats"><span>167.06</span><span>RSI 53.5</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=MAR.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="GOLDEN_CROSS" data-symbol="mar.us" data-name="marriott international">
+        <div class="thumb"><img loading="lazy" src="img/signals/MAR_US.png" alt="MAR.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">MAR.US</span><span class="badge bull">Golden Cross</span></div>
+          <div class="name">Marriott International</div>
+          <div class="stats"><span>371.82</span><span>RSI 67</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce</div>
+        </div>
+      </a>
+      <a class="card" href="../charts-bot.html?sym=DAL.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="dal.us" data-name="delta air lines">
+        <div class="thumb"><img loading="lazy" src="img/signals/DAL_US.png" alt="DAL.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">DAL.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Delta Air Lines</div>
+          <div class="stats"><span>76.435</span><span>RSI 33</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../bonds-terminal.html?sym=IEF.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="ief.us" data-name="ishares 7-10 year treasury bond etf">
+        <div class="thumb"><img loading="lazy" src="img/signals/IEF_US.png" alt="IEF.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">IEF.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">iShares 7-10 Year Treasury Bond ETF</div>
+          <div class="stats"><span>89.71</span><span>RSI 44.9</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../bonds-terminal.html?sym=HYG.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="RSI_OVERSOLD" data-symbol="hyg.us" data-name="ishares iboxx high yield corp bond etf">
+        <div class="thumb"><img loading="lazy" src="img/signals/HYG_US.png" alt="HYG.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">HYG.US</span><span class="badge bull">RSI Überverkauft</span></div>
+          <div class="name">iShares iBoxx High Yield Corp Bond ETF</div>
+          <div class="stats"><span>76.81</span><span>RSI 30</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce · Fibonacci-Bounce</div>
+        </div>
+      </a>
+      <a class="card" href="../bonds-terminal.html?sym=LQD.US&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="lqd.us" data-name="ishares investment grade corp bond etf">
+        <div class="thumb"><img loading="lazy" src="img/signals/LQD_US.png" alt="LQD.US"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">LQD.US</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">iShares Investment Grade Corp Bond ETF</div>
+          <div class="stats"><span>102.66</span><span>RSI 43.2</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../immobilien-terminal.html?sym=LEG.XETRA&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="leg.xetra" data-name="leg immobilien se">
+        <div class="thumb"><img loading="lazy" src="img/signals/LEG_XETRA.png" alt="LEG.XETRA"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">LEG.XETRA</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">LEG Immobilien SE</div>
+          <div class="stats"><span>45.36</span><span>RSI 43.3</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../immobilien-terminal.html?sym=TEG.XETRA&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="RSI_OVERSOLD" data-symbol="teg.xetra" data-name="tag immobilien ag">
+        <div class="thumb"><img loading="lazy" src="img/signals/TEG_XETRA.png" alt="TEG.XETRA"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">TEG.XETRA</span><span class="badge bull">RSI Überverkauft</span></div>
+          <div class="name">TAG Immobilien AG</div>
+          <div class="stats"><span>10.33</span><span>RSI 29.1</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../forex-terminal.html?sym=EURUSD.FOREX&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="eurusd.forex" data-name="euro / us-dollar">
+        <div class="thumb"><img loading="lazy" src="img/signals/EURUSD_FOREX.png" alt="EURUSD.FOREX"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">EURUSD.FOREX</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Euro / US-Dollar</div>
+          <div class="stats"><span>1.1195</span><span>RSI 30.1</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../forex-terminal.html?sym=GBPUSD.FOREX&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="gbpusd.forex" data-name="britisches pfund / us-dollar">
+        <div class="thumb"><img loading="lazy" src="img/signals/GBPUSD_FOREX.png" alt="GBPUSD.FOREX"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">GBPUSD.FOREX</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Britisches Pfund / US-Dollar</div>
+          <div class="stats"><span>1.3253</span><span>RSI 46.3</span><span>2026-10-15</span></div>
+          <div class="extra-tags">Fibonacci-Bounce · Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../forex-terminal.html?sym=USDJPY.FOREX&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="GOLDEN_CROSS" data-symbol="usdjpy.forex" data-name="us-dollar / japanischer yen">
+        <div class="thumb"><img loading="lazy" src="img/signals/USDJPY_FOREX.png" alt="USDJPY.FOREX"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">USDJPY.FOREX</span><span class="badge bull">Golden Cross</span></div>
+          <div class="name">US-Dollar / Japanischer Yen</div>
+          <div class="stats"><span>157.79</span><span>RSI 49.9</span><span>2026-10-15</span></div>
+          <div class="extra-tags">Fibonacci-Bounce · Fibonacci-Bounce · Fibonacci-Bounce · Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../forex-terminal.html?sym=USDCHF.FOREX&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="BB_SQUEEZE" data-symbol="usdchf.forex" data-name="us-dollar / schweizer franken">
+        <div class="thumb"><img loading="lazy" src="img/signals/USDCHF_FOREX.png" alt="USDCHF.FOREX"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">USDCHF.FOREX</span><span class="badge neutral">Bollinger-Squeeze</span></div>
+          <div class="name">US-Dollar / Schweizer Franken</div>
+          <div class="stats"><span>0.8297</span><span>RSI 53.6</span><span>2026-10-15</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../sektor-terminal.html?sym=DJUSBK.INDX&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="FIB_BOUNCE" data-symbol="djusbk.indx" data-name="dow jones banks">
+        <div class="thumb"><img loading="lazy" src="img/signals/DJUSBK_INDX.png" alt="DJUSBK.INDX"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">DJUSBK.INDX</span><span class="badge neutral">Fibonacci-Bounce</span></div>
+          <div class="name">Dow Jones Banks</div>
+          <div class="stats"><span>828.7</span><span>RSI 32.5</span><span>2026-10-14</span></div>
+          
+        </div>
+      </a>
+      <a class="card" href="../sektor-terminal.html?sym=DJUSBT.INDX&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="MACD_BULL_CROSS" data-symbol="djusbt.indx" data-name="dow jones biotechnology">
+        <div class="thumb"><img loading="lazy" src="img/signals/DJUSBT_INDX.png" alt="DJUSBT.INDX"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">DJUSBT.INDX</span><span class="badge bull">MACD Bullish</span></div>
+          <div class="name">Dow Jones Biotechnology</div>
+          <div class="stats"><span>3831.2</span><span>RSI 62.5</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Bollinger-Squeeze</div>
+        </div>
+      </a>
+      <a class="card" href="../sektor-terminal.html?sym=DJUSAU.INDX&num=160&overlays=rsi,macd,bb" target="_blank" rel="noopener" data-tag="MACD_BEAR_CROSS" data-symbol="djusau.indx" data-name="dow jones automobiles">
+        <div class="thumb"><img loading="lazy" src="img/signals/DJUSAU_INDX.png" alt="DJUSAU.INDX"></div>
+        <div class="meta">
+          <div class="sym-row"><span class="sym">DJUSAU.INDX</span><span class="badge bear">MACD Bearish</span></div>
+          <div class="name">Dow Jones Automobiles</div>
+          <div class="stats"><span>1280.01</span><span>RSI 48.4</span><span>2026-10-14</span></div>
+          <div class="extra-tags">Fibonacci-Bounce</div>
+        </div>
+      </a>
+  </div>
+  <div class="empty" id="empty" style="display:none">Keine Treffer für diesen Filter.</div>
+  <a class="back" href="index.html">← Zur Galerie-Übersicht</a>
+</div>
+<script>
+(function(){
+  const chips = document.querySelectorAll('.chip');
+  const cards = document.querySelectorAll('.card');
+  const search = document.getElementById('search');
+  const countEl = document.getElementById('count');
+  const emptyEl = document.getElementById('empty');
+  let activeFilter = 'ALL';
+
+  function apply(){
+    const q = search.value.trim().toLowerCase();
+    let visible = 0;
+    cards.forEach(card => {
+      const tagMatch = activeFilter === 'ALL' || card.dataset.tag === activeFilter;
+      const qMatch = !q || card.dataset.symbol.includes(q) || card.dataset.name.includes(q);
+      const show = tagMatch && qMatch;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    countEl.textContent = visible + ' von ' + cards.length + ' Charts';
+    emptyEl.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeFilter = chip.dataset.filter;
+      apply();
+    });
+  });
+  search.addEventListener('input', apply);
+  apply();
+})();
+</script>
+</body>
+</html>
