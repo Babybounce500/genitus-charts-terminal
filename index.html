@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>GENITUS CHARTS TERMINAL</title>
-<meta name="description" content="14 kuratierte Chart- und Trading-Terminals: Signale, Rotation, Risiko, News-Sentiment und Charts — konsistent zur GENITUS-Dividenden-Terminal-Familie.">
+<meta name="description" content="15 kuratierte Chart- und Trading-Terminals: Signale, Rotation, Risiko, News-Sentiment und Charts — konsistent zur GENITUS-Dividenden-Terminal-Familie. Chart-Galerien und Research-Reports leben jetzt in eigenen, separaten Workshells.">
 <link rel="manifest" href="genitus-charts-terminal.webmanifest">
 <meta name="theme-color" content="#080c10">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%2300d4ff'/%3E%3Ctext x='32' y='44' font-size='28' text-anchor='middle'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
@@ -87,7 +87,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
       <button class="toggle" id="toggle" aria-label="Collapse navigation" aria-controls="appList" aria-expanded="true"><i class="fa-solid fa-chevron-left"></i></button>
     </div>
     <div class="app-list" id="appList"></div>
-    <div class="sidebar-footer">CHARTS TERMINAL<br><small>14 Terminals · konsistent zur Dividenden-Familie</small></div>
+    <div class="sidebar-footer">CHARTS TERMINAL<br><small>15 Terminals · Galerien & Reports in eigenen Workshells</small></div>
   </aside>
   <main class="main">
     <header class="topbar">
@@ -107,7 +107,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
       <div class="welcome" id="welcome">
         <i class="fa-solid fa-chart-line"></i>
         <div>Wähle ein Terminal aus der Navigation.</div>
-        <div class="hint">14 Chart- und Trading-Terminals aus dem ORBITRON-CHARTS-Export, zusammengeführt und auf die GENITUS-Dividenden-Terminal-Optik normiert (Farb-Tokens, Space Mono/Rajdhani, Titel-Branding). Live-Terminals laden Kurse/News vom selben Proxy wie die Dividenden-Tools; die vier Backtest-Terminals (Dachboden, Fibonacci, Tech, Mega-Nasdaq) sind statisch — ihre Ergebnisse sind fest eingebacken.</div>
+        <div class="hint">15 Chart- und Trading-Terminals, zusammengeführt und auf die GENITUS-Dividenden-Terminal-Optik normiert (Farb-Tokens, Space Mono/Rajdhani, Titel-Branding). Live-Terminals laden Kurse/News vom selben Proxy wie die Dividenden-Tools; die vier Backtest-Terminals (Dachboden, Fibonacci, Tech, Mega-Nasdaq) sind statisch — ihre Ergebnisse sind fest eingebacken. Die 10 Chart-Galerien und 10 Research-Reports leben jetzt in eigenen, separaten Workshells (siehe "Andere Workshells" links).</div>
       </div>
       <div id="frames"></div>
     </section>
@@ -117,6 +117,10 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
 const GROUPS=[
   {title:'MASTER-ARCHIV',icon:'fa-sitemap',apps:[
     ['masterarchiv','Master-Archiv','master-archiv.html','Bots × Galerien × Analysen nach 15 Themen querverlinkt — der kombinierte Einstieg in die ganze Suite'],
+  ]},
+  {title:'ANDERE WORKSHELLS',icon:'fa-diagram-project',apps:[
+    ['galleryworkshell','Charts-Bilder-Workshell','gallery/index.html','Eigene Workshell, nur die 10 Chart-Galerien — separat von den Terminals hier'],
+    ['researchworkshell','Reports-Workshell','research/index.html','Eigene Workshell, nur die 10 Research-Reports — separat von den Terminals hier'],
   ]},
   {title:'SIGNALE & TIMING',icon:'fa-bolt',apps:[
     ['signals','Signals-Terminal','signals-terminal.html','RSI-Mean-Reversion + Heikin-Ashi-Monatstrend, live'],
@@ -129,31 +133,6 @@ const GROUPS=[
     ['tech','Tech-Terminal','tech-terminal.html','Fibonacci nur für 107 kuratierte Nasdaq-Tech-Werte + Health-Check'],
     ['meganasdaq','Mega-Nasdaq-Terminal','mega-nasdaq-terminal.html','Fibonacci über die volle offizielle NASDAQ-Liste, 1.185 health-gecheckt von 3.267'],
     ['megaus','Mega-US-Terminal','mega-us-terminal.html','Fibonacci über NYSE+NASDAQ komplett, 2.403 health-gecheckte Symbole — neu aus der kompletten Ticker-Liste kuratiert'],
-  ]},
-  {title:'RESEARCH',icon:'fa-flask',apps:[
-    ['fibresearch','Fibonacci-Report','research/fibonacci-report.html','Methodik & Fazit: 57-60% Trefferquote, robuste positive Erwartung'],
-    ['dachresearch','Dachboden-Report','research/dachboden-relstrength-report.html','Methodik & Fazit: Dach/Boden-Regime + Relative-Stärke-Rotation'],
-    ['signalbacktest','Signal-Backtest-Report','research/signal-backtest-report.html','30 Strategien gegeneinander getestet'],
-    ['backtestdash','Backtest-Dashboard','research/backtest-dashboard.html','30 Strategien × 815 Symbole, volles Dashboard'],
-    ['bullrunreport','Bullrun/Drawdown-Studie','research/bullruns-drawdowns-report.html','Historische Rallye- und Crash-Analyse'],
-    ['bubblereport','Bubble-Aktien-Studie','research/bubble-stocks-report.html','Spekulationsblasen-Fallstudien'],
-    ['divreport','Dividenden-Studie','research/dividend-analysis-report.html','Dividenden-Fokus-Analyse'],
-    ['indicatorbacktest','Indikator-Signal-Backtest','research/indicator-signal-backtest-report.html','Echter Backtest: RSI/Bollinger/SMA-Cross/MACD/Candlesticks über 99 Symbole, 2009-2026 — was wirklich funktioniert'],
-    ['candlehasmabacktest','Candlestick-1-Tag · Heikin-Ashi · SMA-Backtest','research/candle-ha-sma-backtest-report.html','Folge-Backtest: Candlestick nur nächste Kerze, echte Heikin-Ashi-Trendfolge-Equitykurve, SMA über alle Zeitrahmen, + SMA20/Volumen-Filtertest'],
-    ['compositescore','Signal-Score: Walk-Forward validiert','research/composite-score-report.html','Der finale Composite-Score aus der ganzen Backtest-Serie — 4 von 8 Kandidaten überleben Train/Test-Split, jetzt LIVE im Charts-Bot als neues GESAMTSIGNAL'],
-  ]},
-  {title:'CHART-GALERIEN',icon:'fa-images',apps:[
-    ['gallerieshub','Alle Galerien','gallery/index.html','Übersicht aller 10 Chart-Galerien auf einen Blick'],
-    ['signalsgallery','Signal-Charts (neu generiert)','gallery/signals.html','75 Charts, server-seitig frisch generiert (Python/pandas): echte RSI/MACD/Bollinger/Fibonacci-Signale, keine Bestandsbilder — Klick öffnet das Symbol live'],
-    ['legends','Market Legends','gallery/legends.html','159 Charts: Bullruns, Spekulationsblasen, IPO-Raketen & Jahrzehnte der Börsengeschichte'],
-    ['fibsignals','Fibonacci-Signale','gallery/fibonacci-signals.html','80 Charts: Fibonacci-Tranchen-Level + aktuelles Dach/Boden-Regime kombiniert, Light Mode'],
-    ['bestof','Best-Of-Galerie','gallery/best-of.html','Monats-Batches, kuratierte Top-Setups'],
-    ['crises','Krisenarchiv','gallery/crises.html','Bärenmärkte & Crashs'],
-    ['watchlistgallery','Watchlist-Galerie','gallery/watchlist.html','Persönliche Watchlist als Chart-Bibliothek'],
-    ['cryptogallery','Crypto-Galerie','gallery/crypto.html','Top Coins, historische Charts'],
-    ['forexgallery','Forex-Galerie','gallery/forex.html','Währungspaare, Majors & Crosses'],
-    ['fundsgallery','Funds-Galerie','gallery/funds.html','Globale Investmentfonds (ISIN-basiert)'],
-    ['gbondgallery','GBond-Galerie','gallery/gbond.html','Staatsanleihen-Renditen weltweit'],
   ]},
   {title:'RISK & VOLATILITÄT',icon:'fa-triangle-exclamation',apps:[
     ['riskengine','Portfolio-Risk-Engine','portfolio-risk-engine.html','Positionsgröße & Korrelation, live'],

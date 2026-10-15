@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GENITUS RESEARCH</title>
+<meta name="description" content="10 Research-Reports und Backtests, separat von den Terminals: Methodik, Walk-Forward-Validierung und Fazit jeder Signal-/Indikator-Strategie in der GENITUS-Suite.">
+<meta name="theme-color" content="#080c10">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%2300d4ff'/%3E%3Ctext x='32' y='44' font-size='28' text-anchor='middle'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7fb;--bg2:#eaf1f5;--surface:#fff;--panel:rgba(255,255,255,.84);--border:rgba(14,116,144,.2);--accent:#0e7490;--gold:#b45309;--green:#15803d;--red:#b91c1c;--text:#1c2e34;--muted:#5f7277;--mono:'Space Mono',ui-monospace,monospace;--sans:'Rajdhani',system-ui,sans-serif}
+:root.dark{--bg:#080c10;--bg2:#0d1117;--surface:#0d1117;--panel:rgba(13,17,23,.9);--border:#1e2d3d;--accent:#00d4ff;--gold:#f0c040;--green:#00ff88;--red:#ff3b5c;--text:#c8d8e8;--muted:#7d92a8}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}
+body{font-family:var(--sans);background:radial-gradient(circle at 8% 0,rgba(14,116,144,.11),transparent 34%),linear-gradient(135deg,var(--bg),var(--bg2));color:var(--text)}
+button{font:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dashboard{display:flex;width:100%;height:100dvh;overflow:hidden}
+.sidebar{width:280px;flex:none;display:flex;flex-direction:column;overflow-y:auto;background:var(--panel);border-right:1px solid var(--border);backdrop-filter:blur(10px);transition:width .22s ease}
+.sidebar-header{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 16px;border-bottom:1px solid var(--border)}
+.logo{color:var(--accent);font:700 13px var(--mono);letter-spacing:1.4px;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.toggle,.menu{width:34px;height:34px;border:1px solid var(--border);border-radius:4px;background:rgba(14,116,144,.08);color:var(--accent)}
+.menu{display:none}
+.toggle i{transition:transform .22s ease}
+.sidebar.collapsed{width:60px}
+.sidebar.collapsed .logo,.sidebar.collapsed .app-name,.sidebar.collapsed .section-title,.sidebar.collapsed .sidebar-footer{display:none}
+.sidebar.collapsed .sidebar-header{justify-content:center;padding:0}
+.sidebar.collapsed .app-item{justify-content:center;padding:8px 0}
+.sidebar.collapsed .toggle i{transform:rotate(180deg)}
+.sidebar-section{display:flex;flex-direction:column;gap:2px;padding:10px 9px;border-bottom:1px solid var(--border)}
+.section-title{padding:4px 8px 7px;color:var(--muted);font:9px var(--mono);letter-spacing:1.5px;text-transform:uppercase}
+.app-item{display:flex;align-items:center;gap:9px;min-height:48px;padding:8px 9px;border:1px solid transparent;border-radius:4px;color:var(--muted);font:10px var(--mono);cursor:pointer}
+.app-item:hover,.app-item.active{background:rgba(14,116,144,.1);border-color:var(--border);color:var(--accent)}
+.app-icon{width:17px;text-align:center;color:var(--accent)}
+.app-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;flex-direction:column}
+.app-name small{color:var(--muted);font-size:8px;letter-spacing:.5px;margin-top:2px;white-space:normal;line-height:1.4}
+.sidebar-footer{margin-top:auto;padding:12px 10px;color:var(--muted);font:9px var(--mono);text-align:center;line-height:1.6}
+.main{min-width:0;min-height:0;display:flex;flex:1;flex-direction:column}
+.topbar{height:62px;display:flex;align-items:center;gap:10px;padding:0 16px;background:var(--panel);border-bottom:1px solid var(--border);backdrop-filter:blur(10px)}
+.top-title{color:var(--accent);font:700 14px var(--mono);letter-spacing:2px}
+.top-sub{margin-left:2px;color:var(--muted);font:9px var(--mono);letter-spacing:1px}
+.top-actions{display:flex;align-items:center;gap:7px;margin-left:auto}
+.status,.top-btn{height:32px;padding:0 10px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--muted);font:9px var(--mono)}
+.status{display:flex;align-items:center;gap:7px}
+.status i{color:var(--green);font-size:7px}
+.top-btn:hover{color:var(--accent);border-color:var(--accent)}
+.tab-strip{display:flex;gap:3px;min-height:40px;overflow:auto;padding:5px 9px 0;background:rgba(255,255,255,.42);border-bottom:1px solid var(--border)}
+:root.dark .tab-strip{background:rgba(0,0,0,.2)}
+.tab{display:flex;align-items:center;gap:7px;min-width:0;max-width:260px;height:34px;padding:0 8px 0 11px;border:1px solid var(--border);border-bottom:0;border-radius:5px 5px 0 0;background:var(--surface);color:var(--muted);font:9px var(--mono);cursor:pointer}
+.tab.active{color:var(--accent);border-color:var(--accent)}
+.tab-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tab-close{border:0;background:transparent;color:inherit}
+.workspace{position:relative;min-height:0;flex:1;background:rgba(255,255,255,.2)}
+:root.dark .workspace{background:rgba(0,0,0,.15)}
+.welcome{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;color:var(--muted);font:11px var(--mono);text-align:center;padding:20px}
+.welcome i{font-size:28px;color:var(--accent)}
+.welcome .hint{max-width:480px;font-size:10px;line-height:1.8}
+.frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--surface);display:none}
+.frame.active{display:block}
+.frame-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--surface);color:var(--muted);font:10px var(--mono);z-index:1}
+.frame-loading .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:760px){
+  html,body{overflow:auto}
+  .dashboard{height:auto;min-height:100dvh;display:block}
+  .sidebar{width:100%;height:auto;border-right:0;border-bottom:1px solid var(--border)}
+  .sidebar-header{height:52px}
+  .sidebar-section{padding:7px 8px}
+  .section-title,.sidebar-footer{display:none}
+  .app-list{display:flex;gap:4px;overflow:auto;padding:5px 0}
+  .app-item{min-width:max-content}
+  .main{height:calc(100dvh - 53px);min-height:620px}
+  .topbar{height:53px;padding:0 10px}
+  .top-sub,.status{display:none}
+  .menu{display:block}
+  .toggle{display:none}
+  .sidebar.collapsed .app-list{display:none}
+}
+</style>
+</head>
+<body>
+<div class="dashboard">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo"><i class="fa-solid fa-chart-line"></i> GENITUS</div>
+      <button class="toggle" id="toggle" aria-label="Collapse navigation" aria-controls="appList" aria-expanded="true"><i class="fa-solid fa-chevron-left"></i></button>
+    </div>
+    <div class="app-list" id="appList"></div>
+    <div class="sidebar-footer">RESEARCH<br><small>10 Reports · separat von den Terminals</small></div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu" id="menu" aria-label="Open navigation" aria-controls="appList" aria-expanded="true"><i class="fa-solid fa-bars"></i></button>
+      <div>
+        <div class="top-title">GENITUS RESEARCH</div>
+        <div class="top-sub">RESEARCH & BACKTESTS · 10 REPORTS</div>
+      </div>
+      <div class="top-actions">
+        <div class="status"><i class="fa-solid fa-circle"></i>LIVE</div>
+        <button class="top-btn" id="theme" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
+        <button class="top-btn" id="external" aria-label="Open in new tab"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+      </div>
+    </header>
+    <div class="tab-strip" id="tabs" role="tablist"></div>
+    <section class="workspace">
+      <div class="welcome" id="welcome">
+        <i class="fa-solid fa-chart-line"></i>
+        <div>Wähle einen Eintrag aus der Navigation.</div>
+        <div class="hint">10 Research-Reports, separat von den Trading-Terminals. Von der ersten Fibonacci-Tranchen-Validierung bis zum finalen, walk-forward-validierten Composite-Score, der jetzt live im Charts-Bot läuft — jeder Report zeigt Methodik, echte Zahlen und ehrliche Einschränkungen, nicht nur Behauptungen.</div>
+      </div>
+      <div id="frames"></div>
+    </section>
+  </main>
+</div>
+<script>
+const GROUPS=[
+    {
+      "title": "RESEARCH & BACKTESTS",
+      "icon": "fa-flask",
+      "apps": [
+        [
+          "compositescore",
+          "Signal-Score: Walk-Forward validiert",
+          "composite-score-report.html",
+          "Der finale Composite-Score aus der ganzen Backtest-Serie — 4 von 8 Kandidaten überleben Train/Test-Split, jetzt LIVE im Charts-Bot als neues GESAMTSIGNAL"
+        ],
+        [
+          "candlehasmabacktest",
+          "Candlestick-1-Tag · Heikin-Ashi · SMA-Backtest",
+          "candle-ha-sma-backtest-report.html",
+          "Candlestick nur nächste Kerze, echte Heikin-Ashi-Trendfolge-Equitykurve, SMA über alle Zeitrahmen, + SMA20/Volumen-Filtertest"
+        ],
+        [
+          "indicatorbacktest",
+          "Indikator-Signal-Backtest",
+          "indicator-signal-backtest-report.html",
+          "Echter Backtest: RSI/Bollinger/SMA-Cross/MACD/Candlesticks über 99 Symbole, 2009-2026 — was wirklich funktioniert"
+        ],
+        [
+          "fibresearch",
+          "Fibonacci-Report",
+          "fibonacci-report.html",
+          "Methodik & Fazit: 57-60% Trefferquote, robuste positive Erwartung"
+        ],
+        [
+          "dachresearch",
+          "Dachboden-Report",
+          "dachboden-relstrength-report.html",
+          "Methodik & Fazit: Dach/Boden-Regime + Relative-Stärke-Rotation"
+        ],
+        [
+          "signalbacktest",
+          "Signal-Backtest-Report",
+          "signal-backtest-report.html",
+          "30 Strategien gegeneinander getestet"
+        ],
+        [
+          "backtestdash",
+          "Backtest-Dashboard",
+          "backtest-dashboard.html",
+          "30 Strategien × 815 Symbole, volles Dashboard"
+        ],
+        [
+          "bullrunreport",
+          "Bullrun/Drawdown-Studie",
+          "bullruns-drawdowns-report.html",
+          "Historische Rallye- und Crash-Analyse"
+        ],
+        [
+          "bubblereport",
+          "Bubble-Aktien-Studie",
+          "bubble-stocks-report.html",
+          "Spekulationsblasen-Fallstudien"
+        ],
+        [
+          "divreport",
+          "Dividenden-Studie",
+          "dividend-analysis-report.html",
+          "Dividenden-Fokus-Analyse"
+        ]
+      ]
+    }
+  ];
+const catalog=new Map(GROUPS.flatMap(g=>g.apps.map(([id,title,url,sub])=>[id,{id,title,url,sub}])));
+const list=document.getElementById('appList');
+list.innerHTML=GROUPS.map(g=>`<section class="sidebar-section"><div class="section-title"><i class="fa-solid ${g.icon}"></i> ${g.title}</div>${g.apps.map(a=>`<div class="app-item" data-id="${a[0]}" title="${a[1]}"><span class="app-icon"><i class="fa-solid ${g.icon}"></i></span><span class="app-name">${a[1]}<small>${a[3]}</small></span></div>`).join('')}</section>`).join('');
+
+const tabs=document.getElementById('tabs'),frames=document.getElementById('frames'),welcome=document.getElementById('welcome');
+const key='genitus-workshell:tabs:v1';
+let open=[],active=null,frameMap=new Map(),loadingMap=new Map();
+
+function save(){try{sessionStorage.setItem(key,JSON.stringify({tabs:open.map(x=>x.id),active}))}catch(e){}}
+function render(){
+  tabs.innerHTML=open.map(x=>`<div class="tab${x.id===active?' active':''}" data-tab="${x.id}" role="tab" aria-selected="${x.id===active}"><span class="tab-label">${catalog.get(x.id).title}</span><button class="tab-close" data-close="${x.id}" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>`).join('');
+  welcome.style.display=open.length?'none':'flex';
+  document.querySelectorAll('.app-item').forEach(x=>x.classList.toggle('active',x.dataset.id===active));
+}
+function activate(id){
+  if(!catalog.has(id)||!open.some(x=>x.id===id))return;
+  active=id;
+  if(!frameMap.has(id)){
+    const loading=document.createElement('div');
+    loading.className='frame-loading';
+    loading.innerHTML=`<div class="spinner"></div><div>Loading ${catalog.get(id).title}…</div>`;
+    frames.appendChild(loading);
+    loadingMap.set(id,loading);
+    const f=document.createElement('iframe');
+    f.className='frame';
+    f.src=catalog.get(id).url;
+    f.title=catalog.get(id).title;
+    f.onload=()=>{loading.remove();loadingMap.delete(id)};
+    frames.appendChild(f);
+    frameMap.set(id,f);
+  }
+  frameMap.forEach((f,k)=>f.classList.toggle('active',k===id));
+  render();save();
+}
+function openTab(id){if(!open.some(x=>x.id===id))open.push({id});activate(id)}
+function closeTab(id){
+  open=open.filter(x=>x.id!==id);
+  frameMap.get(id)?.remove();frameMap.delete(id);
+  loadingMap.get(id)?.remove();loadingMap.delete(id);
+  if(active===id)active=open[0]?.id||null;
+  if(active)activate(active);else{render();save()}
+}
+list.addEventListener('click',e=>{const x=e.target.closest('.app-item');if(x)openTab(x.dataset.id)});
+tabs.addEventListener('click',e=>{
+  const c=e.target.closest('[data-close]');
+  if(c){e.stopPropagation();closeTab(c.dataset.close);return}
+  const t=e.target.closest('[data-tab]');
+  if(t)activate(t.dataset.tab);
+});
+document.getElementById('external').onclick=()=>active&&window.open(catalog.get(active).url,'_blank','noopener,noreferrer');
+document.getElementById('theme').onclick=()=>{
+  document.documentElement.classList.toggle('dark');
+  localStorage.setItem('genitus-charts-terminal-theme',document.documentElement.classList.contains('dark')?'dark':'light');
+};
+if(localStorage.getItem('genitus-charts-terminal-theme')!=='light')document.documentElement.classList.add('dark');
+
+const sidebarEl=document.querySelector('.sidebar'),collapseKey='genitus-charts-terminal-sidebar-collapsed';
+function setCollapsed(v){
+  sidebarEl.classList.toggle('collapsed',v);
+  document.getElementById('toggle').setAttribute('aria-expanded',String(!v));
+  document.getElementById('menu').setAttribute('aria-expanded',String(!v));
+  try{localStorage.setItem(collapseKey,v?'1':'0')}catch(e){}
+}
+function toggleCollapsed(){setCollapsed(!sidebarEl.classList.contains('collapsed'))}
+document.getElementById('toggle').onclick=toggleCollapsed;
+document.getElementById('menu').onclick=toggleCollapsed;
+if(localStorage.getItem(collapseKey)==='1')setCollapsed(true);
+
+let r=null;
+try{r=JSON.parse(sessionStorage.getItem(key)||'null')}catch(e){}
+(r?.tabs||[]).filter(id=>catalog.has(id)).forEach(id=>open.push({id}));
+if(open.length) openTab(r?.active&&catalog.has(r.active)?r.active:open[0].id);
+else openTab('compositescore');
+</script>
+</body>
+</html>
