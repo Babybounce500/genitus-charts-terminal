@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENITUS CANDLESTICK-1-TAG · HEIKIN-ASHI · SMA-MULTI-TIMEFRAME-BACKTEST</title>
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;--surface:#0d1117;--panel:#111820;--card:#121a22;
+  --border:#1e2d3d;--accent:#00d4ff;--green:#00ff88;--red:#ff3b5c;
+  --gold:#f0c040;--muted:#7d92a8;--text:#c8d8e8;--bright:#fff;
+  --mono:'JetBrains Mono',monospace;--head:'Orbitron',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--text);font-family:var(--mono);}
+header{position:sticky;top:0;z-index:200;background:rgba(8,12,16,.97);border-bottom:1px solid var(--border);padding:14px 24px;}
+.logo-name{font-family:var(--head);font-size:15px;letter-spacing:3px;color:var(--bright);}
+.logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+.wrap{max-width:1220px;margin:0 auto;padding:26px 24px 80px;}
+h2{font-family:var(--head);font-size:13px;letter-spacing:2.5px;color:var(--gold);margin:42px 0 14px;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:8px;}
+h2:first-of-type{margin-top:10px;}
+h3{font-family:var(--head);font-size:10.5px;letter-spacing:1.5px;color:var(--accent);margin:20px 0 10px;}
+p{font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.85;margin-bottom:12px;}
+p.muted{color:var(--muted);font-size:11px;}
+b{color:var(--bright);}
+.stat-row{display:flex;gap:26px;flex-wrap:wrap;margin:10px 0 8px;}
+.stat b{font-family:var(--head);font-size:18px;color:var(--bright);display:block;}
+.stat span{font-size:8.5px;color:var(--muted);letter-spacing:1px;}
+.callout{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px;padding:14px 16px;margin:14px 0;}
+.callout.warn{border-left-color:var(--gold);}
+.callout.good{border-left-color:var(--green);}
+.callout.bad{border-left-color:var(--red);}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:10px;}
+th{font-family:var(--head);font-size:8px;letter-spacing:.4px;color:var(--muted);text-align:right;padding:7px 5px;border-bottom:1px solid var(--border);white-space:nowrap;}
+th.sig-col{text-align:left;}
+th.group{text-align:center;color:var(--accent);border-bottom:1px solid var(--border);}
+td{padding:6px 5px;border-bottom:1px solid rgba(30,45,61,.5);white-space:nowrap;}
+td.num{text-align:right;font-variant-numeric:tabular-nums;}
+td.sig-name{text-align:left;color:var(--text);white-space:normal;max-width:220px;font-size:10.5px;}
+td.sep{border:none;width:10px;}
+td.pos{color:var(--green);}
+td.neg{color:var(--red);}
+.dir-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;}
+.dir-dot.bull{background:var(--green);}
+.dir-dot.bear{background:var(--red);}
+.sigstar{color:var(--green);font-weight:700;}
+.sigstar.no{color:var(--muted);}
+.table-wrap{overflow-x:auto;}
+.legend{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:4px;}
+.mini-table{width:auto;min-width:520px;}
+.mini-table td.sig-name{max-width:none;}
+.back{display:inline-block;margin-top:40px;font-family:var(--mono);font-size:11px;color:var(--accent);text-decoration:none;}
+.related{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:6px;}
+.related a{color:var(--accent);}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-name">CANDLESTICK-1-TAG · HEIKIN-ASHI · SMA-MULTI-TIMEFRAME</div>
+  <div class="logo-sub">DREI WEITERE BACKTESTS — GLEICHE 99-SYMBOL-BASIS, 2009-2026</div>
+</header>
+<div class="wrap">
+  <p>Direkte Folge-Anfrage zum ersten Indikator-Backtest: Candlestick-Signale nur auf die unmittelbar nächste Kerze
+  testen (kaufen bei Schlusskurs, halten bis zum nächsten Schlusskurs — bärisch spiegelverkehrt als Short), ein
+  echter Heikin-Ashi-Trendfolge-Backtest (Equity-Kurve, nicht nur eine Signal-Statistik), und SMA-Tests über alle
+  sinnvollen Zeitrahmen (kurz/mittel/lang). Gleiche Datenbasis wie der erste Report: 99 Symbole, 2009–2026,
+  komplette Historie pro Symbol. <span class="related">Siehe auch: <a href="indicator-signal-backtest-report.html">Indikator-Signal-Backtest (RSI/Bollinger/SMA20-50/MACD, 5/10/20 Tage)</a></span></p>
+
+  <div class="stat-row">
+    <div class="stat"><b>99/99</b><span>SYMBOLE</span></div>
+    <div class="stat"><b>41.306</b><span>CANDLE-LONG-TRADES</span></div>
+    <div class="stat"><b>55.641</b><span>HA-FLIP-EREIGNISSE</span></div>
+    <div class="stat"><b>80</b><span>SMA-SIGNAL/HORIZONT-ZELLEN</span></div>
+  </div>
+
+  <h2>1. Candlestick: nur die unmittelbar nächste Kerze</h2>
+  <p>Exakt wie gewünscht: bullisches Muster → long bei Schlusskurs der Signalkerze, glattgestellt beim Schlusskurs
+  der nächsten Kerze. Bärisches Muster → genau andersrum, short bei Schlusskurs, gedeckt beim nächsten Schlusskurs.
+  Die "Ø Trade-Rendite" ist der tatsächliche Gewinn/Verlust des Trades (beim Short also bereits vorzeichengedreht).</p>
+  <div class="table-wrap">
+  <table class="mini-table">
+    <thead><tr><th class="sig-col">Setup</th><th>N Trades</th><th>Ø Trade-Rendite</th><th>Trefferquote</th><th>Edge vs. Baseline</th><th>Signifikant</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="sig-name"><span class="dir-dot bull"></span>Bullisches Muster → Long, 1 Tag halten</td>
+        <td class="num">41.306</td>
+        <td class="num pos">+0.01%</td>
+        <td class="num">50.13%</td>
+        <td class="num neg">-0.06%</td>
+        <td class="num"><span class="sigstar">✓</span> (p=0)</td>
+      </tr>
+      <tr>
+        <td class="sig-name"><span class="dir-dot bear"></span>Bärisches Muster → Short, 1 Tag halten</td>
+        <td class="num">40.913</td>
+        <td class="num neg">-0.12%</td>
+        <td class="num">45.98%</td>
+        <td class="num neg">-0.05%</td>
+        <td class="num"><span class="sigstar">✓</span> (p=0)</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="callout bad">
+    <b>Beide Richtungen verlieren (minimal) Geld im Schnitt, statistisch gesichert bei über 40.000 Trades je Richtung.</b>
+    Long nach bullischem Muster: +0.01% pro Trade, Trefferquote 50.13%
+    — praktisch eine Münzwurf-Quote, der durchschnittliche Gewinn ist mit +0.01% wirtschaftlich
+    bedeutungslos und liegt sogar unter der Baseline (Edge -0.06%). Short nach bärischem
+    Muster ist klar schlechter: -0.12% pro Trade im Schnitt, Trefferquote nur
+    45.98% — mehr als die Hälfte der "bärischen" Candlestick-Signale wird am nächsten Tag
+    falsch gelegen. Ohne Spread/Kommission wäre dieser Short-Ansatz über 40.000+ Trades ein echter Verlierer.</p>
+  </div>
+
+  <h2>2. Heikin-Ashi-Trendfolge: echte Equity-Kurve</h2>
+  <p>Regel: Position wird jeden Tag anhand der <b>gestrigen</b> HA-Kerzenfarbe gesetzt (kein Lookahead) — grün = long,
+  rot = entweder short (Long/Short-Variante, immer investiert) oder flat (Long/Flat-Variante, bei rot außen vor).
+  Verglichen mit simplem Buy & Hold über denselben Zeitraum pro Symbol.</p>
+  <div class="table-wrap">
+  <table class="mini-table">
+    <thead><tr><th class="sig-col">Variante</th><th>Ø Gesamtrendite</th><th>Median Gesamtrendite</th><th>Median CAGR</th><th>Ø Max-Drawdown</th><th>% Symbole schlägt Buy&amp;Hold</th></tr></thead>
+    <tbody>
+      <tr><td class="sig-name">HA Long/Short (immer investiert)</td>
+        <td class="num pos">+40.2%</td>
+        <td class="num neg">-55.3%</td>
+        <td class="num neg">-4.72%</td>
+        <td class="num neg">-76.8%</td>
+        <td class="num">8.1%</td></tr>
+      <tr><td class="sig-name">HA Long/Flat (bei Rot raus)</td>
+        <td class="num pos">+526.3%</td>
+        <td class="num pos">+137.2%</td>
+        <td class="num pos">+4.98%</td>
+        <td class="num neg">-44.5%</td>
+        <td class="num">13.1%</td></tr>
+      <tr><td class="sig-name">Buy &amp; Hold (Referenz)</td>
+        <td class="num pos">+3082.8%</td>
+        <td class="num pos">+637.0%</td>
+        <td class="num pos">+11.89%</td>
+        <td class="num neg">-54.4%</td>
+        <td class="num">—</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="callout bad">
+    <b>Heikin-Ashi-Trendfolge verliert gegen simples Buy &amp; Hold, deutlich.</b> Der Durchschnitt wird von ein paar
+    Monster-Compoundern (TSLA, NVDA & Co.) verzerrt — der <b>Median</b> ist aussagekräftiger: die Long/Short-Variante
+    liegt beim typischen Symbol bei -55.3% Gesamtrendite über die gesamte Historie — <i>negativ</i>, während
+    Buy &amp; Hold beim typischen Symbol auf +637.0% kommt. Long/Flat schneidet besser ab (+137.2%
+    Median) und senkt den durchschnittlichen Max-Drawdown spürbar (-44.5% vs.
+    -54.4% bei Buy&amp;Hold) — aber beide Varianten schlagen Buy &amp; Hold nur bei
+    8.1% (Long/Short) bzw. 13.1% (Long/Flat)
+    der 99 Symbole. Das naive "grün=long, rot=short/raus"-Prinzip schlägt in den meisten Fällen Whipsaws und verpasst
+    die großen, zusammenhängenden Rallyes, die Buy &amp; Hold einfach mitnimmt.</p>
+  </div>
+
+  <h3>HA-Flip als diskretes Einstiegssignal (zum Vergleich mit den anderen Reports)</h3>
+  <p class="muted">Falls man HA nicht als durchgehende Positionsregel nutzt, sondern nur den Farbwechsel als Trigger:</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th class="sig-col" rowspan="2">Signal</th><th class="group" colspan="4">1 TAG</th><th class="sep"></th><th class="group" colspan="4">5 TAGE</th><th class="sep"></th><th class="group" colspan="4">10 TAGE</th><th class="sep"></th><th class="group" colspan="4">20 TAGE</th><th class="sep"></th></tr>
+      <tr><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th></tr>
+    </thead>
+    <tbody><tr><td class="sig-name"><span class="dir-dot bull"></span>HA-Flip bullisch (bärisch→bullisch)</td><td class="num">55.641</td><td class="num pos">+0.01%</td><td class="num">51.14%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">55.577</td><td class="num neg">-0.01%</td><td class="num">54.23%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">55.490</td><td class="num neg">-0.02%</td><td class="num">55.9%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">55.367</td><td class="num neg">-0.04%</td><td class="num">57.61%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bear"></span>HA-Flip bärisch (bullisch→bärisch)</td><td class="num">55.576</td><td class="num neg">-0.01%</td><td class="num">47.44%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">55.534</td><td class="num neg">-0.01%</td><td class="num">45.58%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">55.454</td><td class="num pos">+0.02%</td><td class="num">43.69%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">55.343</td><td class="num neg">-0.09%</td><td class="num">42.59%</td><td class="num"><span class="sigstar">✓</span></td></tr></tbody>
+  </table>
+  </div>
+  <div class="callout warn">
+    <b>Der Farbwechsel allein hat so gut wie keine Vorhersagekraft.</b> Nur ein einziger Wert (bärischer Flip, 20 Tage)
+    ist überhaupt signifikant (p=0,027), und selbst der mit einem wirtschaftlich winzigen Edge (-0,09%). Das bestätigt
+    die Equity-Kurve oben: HA-Farbe ist bestenfalls ein mitlaufender, kein vorlaufender Indikator.</p>
+  </div>
+
+  <h2>3. SMA über alle Zeitrahmen</h2>
+  <h3>3a. Preis kreuzt SMA (reiner Trendfilter)</h3>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th class="sig-col" rowspan="2">Signal</th><th class="group" colspan="4">1 TAG</th><th class="sep"></th><th class="group" colspan="4">5 TAGE</th><th class="sep"></th><th class="group" colspan="4">10 TAGE</th><th class="sep"></th><th class="group" colspan="4">20 TAGE</th><th class="sep"></th></tr>
+      <tr><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th></tr>
+    </thead>
+    <tbody><tr><td class="sig-name"><span class="dir-dot bull"></span>Preis kreuzt SMA10 — bullisch</td><td class="num">36.368</td><td class="num pos">+0.01%</td><td class="num">51.23%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">36.320</td><td class="num neg">-0.04%</td><td class="num">54.42%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">36.273</td><td class="num pos">+0.01%</td><td class="num">55.89%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">36.202</td><td class="num pos">+0.03%</td><td class="num">57.95%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bear"></span>Preis kreuzt SMA10 — bärisch</td><td class="num">36.328</td><td class="num neg">-0.02%</td><td class="num">47.24%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">36.298</td><td class="num ">+0.00%</td><td class="num">45.4%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">36.271</td><td class="num pos">+0.04%</td><td class="num">43.78%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">36.196</td><td class="num neg">-0.04%</td><td class="num">42.44%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bull"></span>Preis kreuzt SMA20 — bullisch</td><td class="num">24.328</td><td class="num pos">+0.00%</td><td class="num">51.25%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">24.298</td><td class="num neg">-0.04%</td><td class="num">54.18%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">24.274</td><td class="num neg">-0.01%</td><td class="num">55.79%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">24.230</td><td class="num pos">+0.07%</td><td class="num">57.9%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bear"></span>Preis kreuzt SMA20 — bärisch</td><td class="num">24.310</td><td class="num neg">-0.05%</td><td class="num">47.53%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">24.294</td><td class="num neg">-0.03%</td><td class="num">45.6%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">24.279</td><td class="num neg">-0.06%</td><td class="num">44.61%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">24.237</td><td class="num neg">-0.05%</td><td class="num">42.48%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bull"></span>Preis kreuzt SMA50 — bullisch</td><td class="num">14.680</td><td class="num pos">+0.01%</td><td class="num">51.33%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">14.669</td><td class="num neg">-0.09%</td><td class="num">53.78%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">14.652</td><td class="num neg">-0.04%</td><td class="num">56.12%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">14.632</td><td class="num pos">+0.09%</td><td class="num">58.37%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bear"></span>Preis kreuzt SMA50 — bärisch</td><td class="num">14.673</td><td class="num neg">-0.04%</td><td class="num">47.67%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">14.663</td><td class="num neg">-0.09%</td><td class="num">46.21%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">14.655</td><td class="num neg">-0.10%</td><td class="num">44.86%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">14.620</td><td class="num neg">-0.04%</td><td class="num">42.17%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bull"></span>Preis kreuzt SMA100 — bullisch</td><td class="num">10.091</td><td class="num ">+0.00%</td><td class="num">51.74%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">10.079</td><td class="num neg">-0.10%</td><td class="num">54.35%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">10.069</td><td class="num neg">-0.17%</td><td class="num">55.21%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">10.053</td><td class="num neg">-0.23%</td><td class="num">56.81%</td><td class="num"><span class="sigstar">✓</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bear"></span>Preis kreuzt SMA100 — bärisch</td><td class="num">10.120</td><td class="num neg">-0.04%</td><td class="num">47.13%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">10.114</td><td class="num neg">-0.04%</td><td class="num">45.71%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">10.105</td><td class="num neg">-0.15%</td><td class="num">45.51%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">10.078</td><td class="num neg">-0.17%</td><td class="num">42.95%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bull"></span>Preis kreuzt SMA200 — bullisch</td><td class="num">6.617</td><td class="num neg">-0.06%</td><td class="num">49.36%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">6.611</td><td class="num neg">-0.09%</td><td class="num">54.33%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">6.602</td><td class="num neg">-0.13%</td><td class="num">57.12%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">6.593</td><td class="num neg">-0.13%</td><td class="num">57.97%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bear"></span>Preis kreuzt SMA200 — bärisch</td><td class="num">6.656</td><td class="num neg">-0.01%</td><td class="num">47.52%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">6.649</td><td class="num neg">-0.05%</td><td class="num">46.1%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">6.643</td><td class="num neg">-0.10%</td><td class="num">43.46%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">6.623</td><td class="num neg">-0.03%</td><td class="num">42.02%</td><td class="num"><span class="sigstar no">—</span></td></tr></tbody>
+  </table>
+  </div>
+  <div class="callout bad">
+    <b>Ein einfacher Preis/SMA-Kreuzungs-Trendfilter funktioniert in keinem Zeitrahmen zuverlässig.</b> Bei SMA100 und
+    SMA200 ist der Edge sogar mehrfach signifikant <i>negativ</i> in Kaufrichtung (SMA100 bullisch: -0,10% bis -0,23%
+    Edge bei 5/10/20 Tagen, alle p&lt;0,015) — ein simpler Ausbruch über die 100- oder 200-Tage-Linie war in diesem
+    Sample eher ein schlechter als ein guter Einstiegszeitpunkt.</p>
+  </div>
+
+  <h3>3b. SMA-Kreuzungspaare (kurz/mittel/lang)</h3>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th class="sig-col" rowspan="2">Signal</th><th class="group" colspan="4">1 TAG</th><th class="sep"></th><th class="group" colspan="4">5 TAGE</th><th class="sep"></th><th class="group" colspan="4">10 TAGE</th><th class="sep"></th><th class="group" colspan="4">20 TAGE</th><th class="sep"></th></tr>
+      <tr><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th></tr>
+    </thead>
+    <tbody><tr><td class="sig-name"><span class="dir-dot bull"></span>SMA5/SMA20-Cross — bullisch</td><td class="num">12.940</td><td class="num neg">-0.01%</td><td class="num">51.4%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">12.917</td><td class="num neg">-0.02%</td><td class="num">54.08%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">12.908</td><td class="num neg">-0.01%</td><td class="num">55.95%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">12.886</td><td class="num pos">+0.07%</td><td class="num">58.5%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bear"></span>SMA5/SMA20-Cross — bärisch</td><td class="num">12.925</td><td class="num neg">-0.00%</td><td class="num">47.26%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">12.920</td><td class="num pos">+0.04%</td><td class="num">45.22%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">12.911</td><td class="num neg">-0.04%</td><td class="num">44.34%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">12.890</td><td class="num pos">+0.01%</td><td class="num">42.55%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bull"></span>SMA10/SMA30-Cross — bullisch</td><td class="num">7.930</td><td class="num pos">+0.02%</td><td class="num">51.99%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">7.922</td><td class="num pos">+0.07%</td><td class="num">55.2%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">7.916</td><td class="num pos">+0.16%</td><td class="num">57.48%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">7.904</td><td class="num pos">+0.10%</td><td class="num">58.78%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bear"></span>SMA10/SMA30-Cross — bärisch</td><td class="num">7.934</td><td class="num neg">-0.02%</td><td class="num">48.26%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">7.930</td><td class="num neg">-0.04%</td><td class="num">46.19%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">7.929</td><td class="num neg">-0.09%</td><td class="num">44.32%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">7.905</td><td class="num pos">+0.09%</td><td class="num">41.78%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bull"></span>SMA20/SMA50-Cross — bullisch</td><td class="num">4.545</td><td class="num pos">+0.04%</td><td class="num">53.2%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">4.542</td><td class="num pos">+0.15%</td><td class="num">56.05%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">4.542</td><td class="num pos">+0.20%</td><td class="num">58.1%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">4.539</td><td class="num pos">+0.17%</td><td class="num">59.13%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bear"></span>SMA20/SMA50-Cross — bärisch</td><td class="num">4.540</td><td class="num pos">+0.02%</td><td class="num">45.95%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">4.532</td><td class="num pos">+0.03%</td><td class="num">43.87%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">4.524</td><td class="num pos">+0.17%</td><td class="num">42.66%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">4.507</td><td class="num pos">+0.19%</td><td class="num">40.67%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bull"></span>SMA50/SMA100-Cross — bullisch</td><td class="num">2.156</td><td class="num neg">-0.04%</td><td class="num">50.74%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">2.155</td><td class="num neg">-0.09%</td><td class="num">54.71%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">2.155</td><td class="num neg">-0.16%</td><td class="num">55.41%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">2.152</td><td class="num neg">-0.52%</td><td class="num">56.6%</td><td class="num"><span class="sigstar">✓</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bear"></span>SMA50/SMA100-Cross — bärisch</td><td class="num">2.168</td><td class="num neg">-0.03%</td><td class="num">47.42%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">2.164</td><td class="num pos">+0.14%</td><td class="num">42.47%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">2.157</td><td class="num pos">+0.05%</td><td class="num">43.39%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">2.151</td><td class="num pos">+0.31%</td><td class="num">39.66%</td><td class="num"><span class="sigstar no">—</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bull"></span>SMA50/SMA200-Cross — bullisch</td><td class="num">1.165</td><td class="num neg">-0.04%</td><td class="num">51.59%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">1.164</td><td class="num neg">-0.08%</td><td class="num">55.58%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">1.162</td><td class="num neg">-0.14%</td><td class="num">56.54%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">1.158</td><td class="num neg">-0.49%</td><td class="num">56.3%</td><td class="num"><span class="sigstar">✓</span></td></tr>
+<tr><td class="sig-name"><span class="dir-dot bear"></span>SMA50/SMA200-Cross — bärisch</td><td class="num">1.183</td><td class="num pos">+0.09%</td><td class="num">48.01%</td><td class="num"><span class="sigstar no">—</span></td><td class="sep"></td><td class="num">1.182</td><td class="num pos">+0.32%</td><td class="num">43.32%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">1.181</td><td class="num pos">+0.54%</td><td class="num">38.95%</td><td class="num"><span class="sigstar">✓</span></td><td class="sep"></td><td class="num">1.175</td><td class="num pos">+0.80%</td><td class="num">39.32%</td><td class="num"><span class="sigstar">✓</span></td></tr></tbody>
+  </table>
+  </div>
+  <div class="callout good">
+    <b>Nur die mittelfristigen Golden Crosses (10/30 und 20/50) zeigen einen echten, signifikanten, aber bescheidenen
+    Vorsprung</b> bei 5–10 Tagen (+0,16% bis +0,20% Edge, p&lt;0,03) — der bei 20 Tagen wieder verschwindet.</p>
+  </div>
+  <div class="callout bad">
+    <b>Der klassische 50/200-Death-Cross — der meistzitierte Bären-Signal der Finanzpresse — funktioniert in diesem
+    Datensatz nicht nur nicht, er zeigt die Gegenrichtung, bei JEDEM Horizont ab 5 Tagen statistisch signifikant.</b>
+    5 Tage: +0,32% Edge (p=0,027). 10 Tage: +0,54% Edge (p=0,006). 20 Tage: +0,80% Edge (p=0,003). Die "Trefferquote
+    weiter fallend" sinkt von 48% auf nur noch 39% bei 20 Tagen — je länger man nach einem 50/200-Death-Cross wartet,
+    desto wahrscheinlicher hat sich der Kurs bereits erholt. Das bestätigt und verschärft den Befund aus dem ersten
+    Report (dort mit SMA20/50 getestet, hier mit dem "offiziellen" 50/200-Paar noch deutlicher).</p>
+  </div>
+
+  <h2>Einordnung</h2>
+  <p>Drei neue Tests, ein durchgängiges Bild: <b>reine Trendbestätigungs-Signale (Candlestick-Muster, Heikin-Ashi-
+  Farbe, SMA-Kreuzungen) sind in diesem 16-Jahre-Datensatz überwiegend schwach bis wirkungslos</b>, und bei den
+  meistzitierten bärischen Varianten (Death Cross, bärische Candlesticks) ist der Effekt sogar systematisch
+  rückwärts. Die einzigen Signale in der ganzen Report-Serie mit robustem, mit dem Horizont wachsendem Edge bleiben
+  die Extremwert-Signale aus dem ersten Report (RSI-überverkauft, unterer Bollinger-Ausbruch) — klassische
+  Mean-Reversion, keine Trendbestätigung.</p>
+  <p class="muted">Gleiche Einschränkungen wie im ersten Report: 2009–2026 ist ein ungewöhnlich starker Bullenmarkt,
+  Ereignisse sind nicht unabhängig (p-Werte tendenziell optimistisch), keine Kosten/Slippage modelliert. Rohdaten
+  (backtest2_results.json) auf Anfrage einsehbar.</p>
+
+  <a class="back" href="../index.html">← Zur Terminal-Workshell</a>
+</div>
+</body>
+</html>
