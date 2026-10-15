@@ -308,7 +308,7 @@
         <option value="bar">Bar (OHLC)</option>
         <option value="line">Linie</option>
         <option value="area">Fläche</option>
-        <option value="baseline">Baseline (Ø-Niveau)</option>
+        <option value="baseline">Baseline (seit Fensterstart)</option>
       </select>
     </label>
     <button class="ctrl-btn btn-accent" id="load-chart" type="button">Chart laden</button>
@@ -839,7 +839,12 @@
       barSeries.setData(plottedBars);
       activeSeries=barSeries;
     } else if(type==='baseline'){
-      const baseValue=data.reduce((a,d)=>a+d.close,0)/data.length;
+      // Reference = the window's FIRST close, not the window's average.
+      // A Baseline series is meant to answer "am I up or down since a fixed
+      // point" -- anchoring to the period start makes the green/red fill
+      // tell the exact same story as the "Zeitraum +/-" stat in the Analyse
+      // tab, instead of a redundant, less intuitive mean-reversion signal.
+      const baseValue=data[0].close;
       baselineSeries=chart.addBaselineSeries({
         baseValue:{type:'price',price:baseValue},
         topLineColor:'#00ff88',topFillColor1:'rgba(0,255,136,0.28)',topFillColor2:'rgba(0,255,136,0.02)',
