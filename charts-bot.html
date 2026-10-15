@@ -16,6 +16,16 @@
       --muted:#7d92a8;--text:#c8d8e8;--bright:#fff;
       --mono:'JetBrains Mono',monospace;--head:'Orbitron',sans-serif;
     }
+    :root[data-theme="light"]{
+      --bg:#f3f6f9;--surface:#ffffff;--panel:#eef2f6;--card:#ffffff;
+      --border:#d4dde6;--accent:#0090c0;--green:#0f9d58;--red:#d93025;
+      --amber:#b26a00;--purple:#7c3aed;--gold:#9a6b00;
+      --muted:#5c6b7a;--text:#1b2733;--bright:#0a0f14;
+    }
+    :root[data-theme="light"] body::before{display:none;}
+    :root[data-theme="light"] header{background:rgba(255,255,255,.97);}
+    :root[data-theme="light"] .badge-bull{background:rgba(15,157,88,.1);}
+    :root[data-theme="light"] .badge-bear{background:rgba(217,48,37,.1);}
     *{margin:0;padding:0;box-sizing:border-box;}
     html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--mono);overflow-x:hidden;}
     body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,.007) 2px,rgba(0,212,255,.007) 4px);pointer-events:none;z-index:1000;}
@@ -285,6 +295,7 @@
       <span class="logo-sub">MARKTÜBERSICHT · CHARTANALYSE</span>
     </div>
   </div>
+  <button class="ctrl-btn btn-muted" id="theme-toggle" type="button" aria-pressed="false" style="min-height:30px;">🌑 DARK</button>
 </header>
 
 <div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
@@ -742,6 +753,55 @@
   let sma20Series=null, sma50Series=null;
   let chartData=[];
 
+  const THEME_KEY='chartsbot.theme.v1';
+
+  function chartColors(){
+    const light=document.documentElement.getAttribute('data-theme')==='light';
+    return light
+      ? {bg:'#ffffff',text:'#44576b',grid:'#e1e8f0',accent:'#0090c0',green:'#0f9d58',red:'#d93025',gold:'#9a6b00'}
+      : {bg:'#080c10',text:'#718398',grid:'#172230',accent:'#00d4ff',green:'#00ff88',red:'#ff3b5c',gold:'#f0c040'};
+  }
+
+  function hexToRgba(hex,alpha){
+    const h=hex.replace('#','');
+    const r=parseInt(h.substring(0,2),16),g=parseInt(h.substring(2,4),16),b=parseInt(h.substring(4,6),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  function updateThemeButton(){
+    const btn=$('theme-toggle');
+    if(!btn)return;
+    const light=document.documentElement.getAttribute('data-theme')==='light';
+    btn.textContent=light?'☀ LIGHT':'🌑 DARK';
+    btn.setAttribute('aria-pressed',String(light));
+  }
+
+  function applyChartBaseTheme(){
+    if(!chart)return;
+    const c=chartColors();
+    chart.applyOptions({
+      layout:{background:{type:'solid',color:c.bg},textColor:c.text},
+      grid:{vertLines:{color:c.grid},horzLines:{color:c.grid}},
+      crosshair:{vertLine:{color:c.accent,labelBackgroundColor:c.bg},horzLine:{color:c.accent,labelBackgroundColor:c.bg}},
+      rightPriceScale:{borderColor:c.grid},
+      timeScale:{borderColor:c.grid},
+    });
+  }
+
+  function setTheme(theme){
+    document.documentElement.setAttribute('data-theme',theme);
+    try{localStorage.setItem(THEME_KEY,theme);}catch(e){}
+    updateThemeButton();
+    applyChartBaseTheme();
+    if(activeMode==='single'&&chartData.length)redrawSingleChart();
+  }
+
+  (function initTheme(){
+    let saved='dark';
+    try{saved=localStorage.getItem(THEME_KEY)||'dark';}catch(e){}
+    document.documentElement.setAttribute('data-theme',saved);
+  })();
+
   function initChart(){
     const wrap=$('lwChart');
     if(!window.LightweightCharts)throw new Error('Chart-Bibliothek konnte nicht geladen werden.');
@@ -749,15 +809,16 @@
     wrap.replaceChildren();
     const width=Math.max(240,wrap.clientWidth||800);
     const height=Math.max(260,wrap.clientHeight||480);
+    const c=chartColors();
     chart=LightweightCharts.createChart(wrap,{
       width,height,
-      layout:{background:{type:'solid',color:'#080c10'},textColor:'#718398',fontFamily:'Inter, sans-serif'},
-      grid:{vertLines:{color:'#172230'},horzLines:{color:'#172230'}},
+      layout:{background:{type:'solid',color:c.bg},textColor:c.text,fontFamily:'Inter, sans-serif'},
+      grid:{vertLines:{color:c.grid},horzLines:{color:c.grid}},
       crosshair:{mode:LightweightCharts.CrosshairMode.Normal,
-        vertLine:{color:'#00d4ff',labelBackgroundColor:'#0d1117'},
-        horzLine:{color:'#00d4ff',labelBackgroundColor:'#0d1117'}},
-      rightPriceScale:{borderColor:'#1e2d3d',scaleMargins:{top:.08,bottom:.2}},
-      timeScale:{borderColor:'#1e2d3d',timeVisible:true,rightOffset:4},
+        vertLine:{color:c.accent,labelBackgroundColor:c.bg},
+        horzLine:{color:c.accent,labelBackgroundColor:c.bg}},
+      rightPriceScale:{borderColor:c.grid,scaleMargins:{top:.08,bottom:.2}},
+      timeScale:{borderColor:c.grid,timeVisible:true,rightOffset:4},
       handleScroll:true,handleScale:true,
     });
     if(!resizeObserver&&'ResizeObserver' in window){
@@ -811,29 +872,30 @@
     const plottedBars=type==='heikin'?toHeikinAshi(data):data.map(d=>({
       time:d.date,open:d.open,high:d.high,low:d.low,close:d.close
     }));
+    const c=chartColors();
     if(type==='candle'||type==='heikin'){
       candleSeries=chart.addCandlestickSeries({
-        upColor:'#00ff88',downColor:'#ff3b5c',
-        borderUpColor:'#00ff88',borderDownColor:'#ff3b5c',
-        wickUpColor:'#00ff88',wickDownColor:'#ff3b5c',
+        upColor:c.green,downColor:c.red,
+        borderUpColor:c.green,borderDownColor:c.red,
+        wickUpColor:c.green,wickDownColor:c.red,
       });
       candleSeries.setData(plottedBars);
       activeSeries=candleSeries;
     } else if(type==='line'){
-      lineSeries=chart.addLineSeries({color:isUp?'#00ff88':'#ff3b5c',lineWidth:2,crosshairMarkerVisible:true});
+      lineSeries=chart.addLineSeries({color:isUp?c.green:c.red,lineWidth:2,crosshairMarkerVisible:true});
       lineSeries.setData(data.map(d=>({time:d.date,value:d.close})));
       activeSeries=lineSeries;
     } else if(type==='area'){
       areaSeries=chart.addAreaSeries({
-        topColor:isUp?'rgba(0,255,136,0.3)':'rgba(255,59,92,0.3)',
+        topColor:isUp?hexToRgba(c.green,0.3):hexToRgba(c.red,0.3),
         bottomColor:'rgba(0,0,0,0)',
-        lineColor:isUp?'#00ff88':'#ff3b5c',lineWidth:2,
+        lineColor:isUp?c.green:c.red,lineWidth:2,
       });
       areaSeries.setData(data.map(d=>({time:d.date,value:d.close})));
       activeSeries=areaSeries;
     } else if(type==='bar'){
       barSeries=chart.addBarSeries({
-        upColor:'#00ff88',downColor:'#ff3b5c',
+        upColor:c.green,downColor:c.red,
         thinBars:false,
       });
       barSeries.setData(plottedBars);
@@ -847,8 +909,8 @@
       const baseValue=data[0].close;
       baselineSeries=chart.addBaselineSeries({
         baseValue:{type:'price',price:baseValue},
-        topLineColor:'#00ff88',topFillColor1:'rgba(0,255,136,0.28)',topFillColor2:'rgba(0,255,136,0.02)',
-        bottomLineColor:'#ff3b5c',bottomFillColor1:'rgba(255,59,92,0.02)',bottomFillColor2:'rgba(255,59,92,0.28)',
+        topLineColor:c.green,topFillColor1:hexToRgba(c.green,0.28),topFillColor2:hexToRgba(c.green,0.02),
+        bottomLineColor:c.red,bottomFillColor1:hexToRgba(c.red,0.02),bottomFillColor2:hexToRgba(c.red,0.28),
         lineWidth:2,
       });
       baselineSeries.setData(data.map(d=>({time:d.date,value:d.close})));
@@ -859,15 +921,15 @@
       chart.priceScale('vol').applyOptions({scaleMargins:{top:0.82,bottom:0},borderVisible:false});
       volumeSeries.setData(data.map(d=>({
         time:d.date,value:d.volume||0,
-        color:d.close>=d.open?'rgba(0,255,136,0.25)':'rgba(255,59,92,0.25)',
+        color:d.close>=d.open?hexToRgba(c.green,0.25):hexToRgba(c.red,0.25),
       })));
     }
     if($('show-sma20').checked&&data.length>=20){
-      sma20Series=chart.addLineSeries({color:'#f0c040',lineWidth:1,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false,title:'SMA 20'});
+      sma20Series=chart.addLineSeries({color:c.gold,lineWidth:1,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false,title:'SMA 20'});
       sma20Series.setData(movingAverage(data,20));
     }
     if($('show-sma50').checked&&data.length>=50){
-      sma50Series=chart.addLineSeries({color:'#00d4ff',lineWidth:1,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false,title:'SMA 50'});
+      sma50Series=chart.addLineSeries({color:c.accent,lineWidth:1,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false,title:'SMA 50'});
       sma50Series.setData(movingAverage(data,50));
     }
     chart.subscribeCrosshairMove(param=>{
@@ -1664,6 +1726,11 @@
   }
 
   function initializeApp(){
+    updateThemeButton();
+    $('theme-toggle').addEventListener('click',()=>{
+      const next=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+      setTheme(next);
+    });
     renderWatchlist();
     wireMarketBrowser();
     $('load-chart').addEventListener('click',loadChart);
