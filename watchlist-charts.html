@@ -447,8 +447,8 @@
       const days=Math.ceil(num*1.8);
       const from=new Date(Date.now()-days*86400000).toISOString().split('T')[0];
       const [hRes,rRes]=await Promise.all([
-        fetch(`${PROXY}/eod/historical/${sym}?from=${from}`),
-        fetch(`${PROXY}/eod/realtime/${sym}`)
+        fetch(`${PROXY}/eod/historical/${sym}?from=${from}`, {signal:AbortSignal.timeout(15000)}),
+        fetch(`${PROXY}/eod/realtime/${sym}`, {signal:AbortSignal.timeout(15000)})
       ]);
       setProg(65);
       if(!hRes.ok)throw new Error(`HTTP ${hRes.status}`);

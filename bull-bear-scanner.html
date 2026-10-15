@@ -546,7 +546,7 @@
   ───────────────────────────────────────── */
   async function fetchFiveYears(sym){
     const from=new Date(Date.now()-5*365*86400000).toISOString().split('T')[0];
-    const res=await fetch(`${PROXY}/eod/historical/${sym}?from=${from}`);
+    const res=await fetch(`${PROXY}/eod/historical/${sym}?from=${from}`, {signal:AbortSignal.timeout(15000)});
     if(!res.ok)throw new Error(`HTTP ${res.status}`);
     let hist=await res.json();
     if(!Array.isArray(hist)||!hist.length)throw new Error('Keine historischen Daten');

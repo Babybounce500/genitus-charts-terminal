@@ -358,7 +358,7 @@ async function fetchWeeklyBars(symbol){
     if(raw){ const c=JSON.parse(raw); if(Date.now()-c.t<21600000) return c.bars; }
   }catch(e){}
   const from = todayISO(-380);
-  const res = await fetch(`${EOD_PROXY}/eod/historical/${symbol}?from=${from}`);
+  const res = await fetch(`${EOD_PROXY}/eod/historical/${symbol}?from=${from}`, {signal:AbortSignal.timeout(15000)});
   if(!res.ok) throw new Error('HTTP '+res.status);
   let hist = await res.json();
   if(!Array.isArray(hist)||!hist.length) throw new Error('Keine Daten');

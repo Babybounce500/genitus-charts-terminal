@@ -547,7 +547,7 @@ async function fetchBars(symbol, days){
   const key='vsCache:'+symbol+':'+days;
   try{ const raw=sessionStorage.getItem(key); if(raw){ const c=JSON.parse(raw); if(Date.now()-c.t<21600000) return c.bars; } }catch(e){}
   const from = todayISO(-days);
-  const res = await fetch(`${EOD_PROXY}/eod/historical/${symbol}?from=${from}`);
+  const res = await fetch(`${EOD_PROXY}/eod/historical/${symbol}?from=${from}`, {signal:AbortSignal.timeout(15000)});
   if(!res.ok) throw new Error('HTTP '+res.status);
   let hist = await res.json();
   if(!Array.isArray(hist)||!hist.length) throw new Error('Keine Daten');
