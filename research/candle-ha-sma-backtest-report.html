@@ -230,6 +230,93 @@ td.neg{color:var(--red);}
     Report (dort mit SMA20/50 getestet, hier mit dem "offiziellen" 50/200-Paar noch deutlicher).</p>
   </div>
 
+
+  <h2>4. SMA20-Trendfilter &amp; Volumenfilter: hilft das wirklich?</h2>
+  <p>Vorschlag aus dem Chat: SMA20 als Trendfilter für Long-Signale, plus ein Volumenfilter. Statt das anzunehmen,
+  getestet auf den vier Signalen, die in den vorigen Reports echten, signifikanten Edge gezeigt hatten (RSI
+  überverkauft, unterer Bollinger-Ausbruch, Golden Cross 10/30 und 20/50) — unterteilt in Mean-Reversion- und
+  Trendfolge-Signale, weil die beiden Gruppen sich hier komplett unterschiedlich verhalten.</p>
+
+  <div class="callout bad">
+    <b>Bei den Mean-Reversion-Signalen (RSI-überverkauft, unterer Bollinger-Ausbruch) würde "Preis über SMA20" die
+    Stichprobe fast auslöschen.</b> Nur 0.1% aller RSI-Überverkauft-Fälle
+    und 0% aller unteren Bollinger-Ausbrüche passieren überhaupt
+    mit Preis über SMA20 — das liegt in der Natur der Sache: diese Signale lösen aus, <i>weil</i> der Kurs gefallen
+    ist, meist auch unter seinen eigenen 20-Tage-Schnitt. Noch wichtiger: der weichere "SMA20 steigend"-Filter
+    <i>schadet</i> aktiv — bei RSI-Überverkauft fällt der Edge von +0,38% (signifikant, p=0,001) auf -0,35%
+    (nicht signifikant, p=0,355). Der 1,5×-Volumenfilter schadet ebenfalls beiden Signalen: hohes Volumen bei
+    Überverkauft/Ausbruch-Momenten ist eher Panik-/Kapitulations-Volumen, das eher weiterfällt als abprallt.</p>
+  </div>
+
+  <div class="callout good">
+    <b>Bei den Trendfolge-Signalen (Golden Cross) wirkt genau dieselbe Filter-Logik umgekehrt — und hilft.</b>
+    "Preis über SMA20" verbessert beide Golden-Cross-Varianten leicht (20/50: Edge +0,20%→+0,23%, jetzt stärker
+    signifikant mit p=0,014). Der Volumenfilter hilft noch mehr: ein Golden Cross mit überdurchschnittlichem
+    Volumen bringt bei 20/50 einen Edge von +0,36% (p=0,024) statt +0,20% ungefiltert — ein Crossover mit echter
+    Kauf-Überzeugung performt spürbar besser als ein leiser, volumenarmer. "SMA20 bereits steigend" schadet aber
+    auch hier: wenn der 20er-Schnitt zum Zeitpunkt des Crosses schon klar steigt, ist man spät dran und verpasst
+    den profitableren frühen Teil der Bewegung.</p>
+  </div>
+
+<h3>RSI Überverkauft (Mean-Reversion) <span style="color:var(--muted);font-weight:400;">— 0.1% der Vorkommen waren bereits über SMA20</span></h3>
+  <div class="table-wrap">
+  <table class="mini-table">
+    <thead><tr><th class="sig-col">Filter-Variante (10-Tage-Horizont)</th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Signifikant</th></tr></thead>
+    <tbody><tr><td class="sig-name">Ungefiltert</td><td class="num">4.234</td><td class="num pos">+0.384%</td><td class="num">58.95%</td><td class="num"><span class="sigstar">✓</span> (p=0.00104)</td></tr>
+<tr><td class="sig-name">+ Preis über SMA20</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+<tr><td class="sig-name">+ SMA20 steigend</td><td class="num">321</td><td class="num neg">-0.348%</td><td class="num">54.52%</td><td class="num"><span class="sigstar no">—</span> (p=0.35544)</td></tr>
+<tr><td class="sig-name">+ beide SMA20-Filter</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+<tr><td class="sig-name">+ Volumen über 20T-Ø</td><td class="num">3.259</td><td class="num pos">+0.223%</td><td class="num">58.61%</td><td class="num"><span class="sigstar no">—</span> (p=0.10902)</td></tr>
+<tr><td class="sig-name">+ Volumen über 1,5× 20T-Ø</td><td class="num">1.675</td><td class="num neg">-0.413%</td><td class="num">56.36%</td><td class="num"><span class="sigstar">✓</span> (p=0.04766)</td></tr>
+<tr><td class="sig-name">+ SMA20 (beide) + Volumen</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr></tbody>
+  </table>
+  </div>
+<h3>Bollinger-Ausbruch unten (Mean-Reversion) <span style="color:var(--muted);font-weight:400;">— 0% der Vorkommen waren bereits über SMA20</span></h3>
+  <div class="table-wrap">
+  <table class="mini-table">
+    <thead><tr><th class="sig-col">Filter-Variante (10-Tage-Horizont)</th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Signifikant</th></tr></thead>
+    <tbody><tr><td class="sig-name">Ungefiltert</td><td class="num">10.269</td><td class="num pos">+0.328%</td><td class="num">57.7%</td><td class="num"><span class="sigstar">✓</span> (p=0)</td></tr>
+<tr><td class="sig-name">+ Preis über SMA20</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+<tr><td class="sig-name">+ SMA20 steigend</td><td class="num">2.899</td><td class="num neg">-0.016%</td><td class="num">54.43%</td><td class="num"><span class="sigstar no">—</span> (p=0.88912)</td></tr>
+<tr><td class="sig-name">+ beide SMA20-Filter</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+<tr><td class="sig-name">+ Volumen über 20T-Ø</td><td class="num">7.893</td><td class="num pos">+0.254%</td><td class="num">57.22%</td><td class="num"><span class="sigstar">✓</span> (p=0.0014)</td></tr>
+<tr><td class="sig-name">+ Volumen über 1,5× 20T-Ø</td><td class="num">3.265</td><td class="num neg">-0.089%</td><td class="num">56.45%</td><td class="num"><span class="sigstar no">—</span> (p=0.51879)</td></tr>
+<tr><td class="sig-name">+ SMA20 (beide) + Volumen</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr></tbody>
+  </table>
+  </div>
+<h3>Golden Cross SMA10/30 (Trendfolge) <span style="color:var(--muted);font-weight:400;">— 93.3% der Vorkommen waren bereits über SMA20</span></h3>
+  <div class="table-wrap">
+  <table class="mini-table">
+    <thead><tr><th class="sig-col">Filter-Variante (10-Tage-Horizont)</th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Signifikant</th></tr></thead>
+    <tbody><tr><td class="sig-name">Ungefiltert</td><td class="num">7.904</td><td class="num pos">+0.162%</td><td class="num">57.49%</td><td class="num"><span class="sigstar">✓</span> (p=0.02228)</td></tr>
+<tr><td class="sig-name">+ Preis über SMA20</td><td class="num">7.374</td><td class="num pos">+0.172%</td><td class="num">57.61%</td><td class="num"><span class="sigstar">✓</span> (p=0.01932)</td></tr>
+<tr><td class="sig-name">+ SMA20 steigend</td><td class="num">2.166</td><td class="num pos">+0.027%</td><td class="num">56.93%</td><td class="num"><span class="sigstar no">—</span> (p=0.82873)</td></tr>
+<tr><td class="sig-name">+ beide SMA20-Filter</td><td class="num">1.969</td><td class="num pos">+0.046%</td><td class="num">56.73%</td><td class="num"><span class="sigstar no">—</span> (p=0.72929)</td></tr>
+<tr><td class="sig-name">+ Volumen über 20T-Ø</td><td class="num">2.936</td><td class="num pos">+0.252%</td><td class="num">57.9%</td><td class="num"><span class="sigstar">✓</span> (p=0.03598)</td></tr>
+<tr><td class="sig-name">+ Volumen über 1,5× 20T-Ø</td><td class="num">730</td><td class="num pos">+0.082%</td><td class="num">55.34%</td><td class="num"><span class="sigstar no">—</span> (p=0.74868)</td></tr>
+<tr><td class="sig-name">+ SMA20 (beide) + Volumen</td><td class="num">838</td><td class="num pos">+0.357%</td><td class="num">58.59%</td><td class="num"><span class="sigstar no">—</span> (p=0.08959)</td></tr></tbody>
+  </table>
+  </div>
+<h3>Golden Cross SMA20/50 (Trendfolge) <span style="color:var(--muted);font-weight:400;">— 87.5% der Vorkommen waren bereits über SMA20</span></h3>
+  <div class="table-wrap">
+  <table class="mini-table">
+    <thead><tr><th class="sig-col">Filter-Variante (10-Tage-Horizont)</th><th>N</th><th>Edge</th><th>Trefferquote</th><th>Signifikant</th></tr></thead>
+    <tbody><tr><td class="sig-name">Ungefiltert</td><td class="num">4.539</td><td class="num pos">+0.198%</td><td class="num">58.07%</td><td class="num"><span class="sigstar">✓</span> (p=0.02948)</td></tr>
+<tr><td class="sig-name">+ Preis über SMA20</td><td class="num">3.973</td><td class="num pos">+0.234%</td><td class="num">58.7%</td><td class="num"><span class="sigstar">✓</span> (p=0.01417)</td></tr>
+<tr><td class="sig-name">+ SMA20 steigend</td><td class="num">4.261</td><td class="num pos">+0.136%</td><td class="num">57.83%</td><td class="num"><span class="sigstar no">—</span> (p=0.14185)</td></tr>
+<tr><td class="sig-name">+ beide SMA20-Filter</td><td class="num">3.756</td><td class="num pos">+0.186%</td><td class="num">58.52%</td><td class="num"><span class="sigstar no">—</span> (p=0.05531)</td></tr>
+<tr><td class="sig-name">+ Volumen über 20T-Ø</td><td class="num">1.726</td><td class="num pos">+0.356%</td><td class="num">58.98%</td><td class="num"><span class="sigstar">✓</span> (p=0.02397)</td></tr>
+<tr><td class="sig-name">+ Volumen über 1,5× 20T-Ø</td><td class="num">458</td><td class="num pos">+0.061%</td><td class="num">55.02%</td><td class="num"><span class="sigstar no">—</span> (p=0.85812)</td></tr>
+<tr><td class="sig-name">+ SMA20 (beide) + Volumen</td><td class="num">1.395</td><td class="num pos">+0.243%</td><td class="num">58.85%</td><td class="num"><span class="sigstar no">—</span> (p=0.14547)</td></tr></tbody>
+  </table>
+  </div>
+
+  <div class="callout warn">
+    <b>Konsequenz für einen kombinierten Score:</b> ein SMA20/Volumen-Filter gehört auf die Trendfolge-Komponente
+    (Golden Cross), nicht auf die Mean-Reversion-Komponente (RSI-überverkauft, unterer Bollinger-Ausbruch). Ein
+    einziger pauschaler Trendfilter für "alle Long-Signale" würde die bessere Hälfte des Scores kaputt filtern.</p>
+  </div>
+
   <h2>Einordnung</h2>
   <p>Drei neue Tests, ein durchgängiges Bild: <b>reine Trendbestätigungs-Signale (Candlestick-Muster, Heikin-Ashi-
   Farbe, SMA-Kreuzungen) sind in diesem 16-Jahre-Datensatz überwiegend schwach bis wirkungslos</b>, und bei den
