@@ -351,6 +351,8 @@
       <label class="toggle-chip"><input type="checkbox" id="show-bb"> Bollinger (20,2)</label>
       <label class="toggle-chip"><input type="checkbox" id="show-vwap"> VWAP</label>
       <label class="toggle-chip"><input type="checkbox" id="show-rsi"> RSI 14</label>
+      <label class="toggle-chip"><input type="checkbox" id="show-macd"> MACD</label>
+      <label class="toggle-chip"><input type="checkbox" id="show-fib"> Fibonacci-Levels</label>
     </div>
     <div class="preset-list" aria-label="Schnellauswahl">
       <span class="ctrl-lbl">SCHNELL</span>
@@ -757,6 +759,7 @@
   let chart=null, candleSeries=null, volumeSeries=null, lineSeries=null, areaSeries=null, barSeries=null, baselineSeries=null;
   let sma20Series=null, sma50Series=null, ema20Series=null;
   let bbUpperSeries=null, bbMiddleSeries=null, bbLowerSeries=null, vwapSeries=null, rsiSeries=null;
+  let macdLineSeries=null, macdSignalSeries=null, macdHistSeries=null, fibPriceLines=[];
   let chartData=[];
 
   const THEME_KEY='chartsbot.theme.v1';
@@ -919,6 +922,40 @@
     return output;
   }
 
+  function calculateMacd(data,fast=12,slow=26,signalPeriod=9){
+    const emaFast=calculateEma(data,fast), emaSlow=calculateEma(data,slow);
+    const slowStart=slow-1; // emaSlow's first point lines up with data[slowStart]
+    const macdPoints=[];
+    for(let i=slowStart;i<data.length;i++){
+      const fastVal=emaFast[i-(fast-1)]?.value;
+      const slowVal=emaSlow[i-slowStart]?.value;
+      if(fastVal==null||slowVal==null)continue;
+      macdPoints.push({time:data[i].date,value:fastVal-slowVal});
+    }
+    // signal = EMA(signalPeriod) of the MACD line itself
+    const signalPoints=[];
+    if(macdPoints.length>=signalPeriod){
+      const k=2/(signalPeriod+1);
+      let prev=macdPoints.slice(0,signalPeriod).reduce((s,p)=>s+p.value,0)/signalPeriod;
+      signalPoints.push({time:macdPoints[signalPeriod-1].time,value:prev});
+      for(let i=signalPeriod;i<macdPoints.length;i++){
+        prev=macdPoints[i].value*k+prev*(1-k);
+        signalPoints.push({time:macdPoints[i].time,value:prev});
+      }
+    }
+    const signalByTime=new Map(signalPoints.map(p=>[p.time,p.value]));
+    const histogram=macdPoints.filter(p=>signalByTime.has(p.time)).map(p=>({time:p.time,value:p.value-signalByTime.get(p.time)}));
+    return {macdLine:macdPoints,signalLine:signalPoints,histogram};
+  }
+
+  function calculateFibLevels(data){
+    const highs=data.map(d=>d.high),lows=data.map(d=>d.low);
+    const periodHigh=Math.max(...highs),periodLow=Math.min(...lows);
+    const range=periodHigh-periodLow;
+    const ratios=[0,0.236,0.382,0.5,0.618,0.786,1];
+    return ratios.map(r=>({ratio:r,price:periodHigh-range*r}));
+  }
+
   function calculateAtr(data,period=14){
     if(data.length<=period)return null;
     const trs=[];
@@ -957,7 +994,7 @@
   function buildCandle(type,data,isUp){
     candleSeries=null;lineSeries=null;areaSeries=null;barSeries=null;baselineSeries=null;volumeSeries=null;
     sma20Series=null;sma50Series=null;ema20Series=null;bbUpperSeries=null;bbMiddleSeries=null;bbLowerSeries=null;
-    vwapSeries=null;rsiSeries=null;
+    vwapSeries=null;rsiSeries=null;macdLineSeries=null;macdSignalSeries=null;macdHistSeries=null;fibPriceLines=[];
     const plottedBars=type==='heikin'?toHeikinAshi(data):data.map(d=>({
       time:d.date,open:d.open,high:d.high,low:d.low,close:d.close
     }));
@@ -1060,6 +1097,24 @@
       rsiSeries.setData(calculateRsiSeries(data,14));
       rsiSeries.createPriceLine({price:70,color:hexToRgba(c.red,0.5),lineWidth:1,lineStyle:2,axisLabelVisible:true,title:'70'});
       rsiSeries.createPriceLine({price:30,color:hexToRgba(c.green,0.5),lineWidth:1,lineStyle:2,axisLabelVisible:true,title:'30'});
+    }
+    if($('show-macd').checked&&data.length>=35){
+      const macd=calculateMacd(data,12,26,9);
+      const scaleMargins=$('show-rsi').checked?{top:0.55,bottom:0.23}:{top:0.78,bottom:0};
+      macdHistSeries=chart.addHistogramSeries({priceScaleId:'macd',priceLineVisible:false,lastValueVisible:false,title:'MACD-Hist'});
+      macdHistSeries.setData(macd.histogram.map(p=>({time:p.time,value:p.value,color:p.value>=0?hexToRgba(c.green,0.5):hexToRgba(c.red,0.5)})));
+      chart.priceScale('macd').applyOptions({scaleMargins,borderVisible:false});
+      macdLineSeries=chart.addLineSeries({color:c.accent,lineWidth:1,priceScaleId:'macd',priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false,title:'MACD'});
+      macdLineSeries.setData(macd.macdLine);
+      macdSignalSeries=chart.addLineSeries({color:c.gold,lineWidth:1,priceScaleId:'macd',priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false,title:'MACD-Signal'});
+      macdSignalSeries.setData(macd.signalLine);
+    }
+    if($('show-fib').checked&&activeSeries){
+      const fibColor=hexToRgba(c.gold,0.55);
+      fibPriceLines=calculateFibLevels(data).map(lvl=>activeSeries.createPriceLine({
+        price:lvl.price,color:fibColor,lineWidth:1,lineStyle:3,axisLabelVisible:true,
+        title:(lvl.ratio*100).toFixed(1)+'%',
+      }));
     }
     chart.subscribeCrosshairMove(param=>{
       if(!param.time||!activeSeries)return;
@@ -1740,6 +1795,15 @@
     const vwapSeriesData=calculateVwap(data);
     const vwapLast=vwapSeriesData.length?vwapSeriesData[vwapSeriesData.length-1].value:null;
     const vwapDistPct=vwapLast?((lastRt-vwapLast)/vwapLast*100):null;
+    let macdState=null;
+    if(data.length>=35){
+      const macd=calculateMacd(data,12,26,9);
+      const mLast=macd.macdLine[macd.macdLine.length-1]?.value;
+      const sLast=macd.signalLine[macd.signalLine.length-1]?.value;
+      if(mLast!=null&&sLast!=null)macdState=mLast>sLast?'Bullisch (MACD > Signal)':'Bärisch (MACD < Signal)';
+    }
+    const fibLevels=calculateFibLevels(data);
+    const nearestFib=fibLevels.reduce((best,lvl)=>Math.abs(lvl.price-lastRt)<Math.abs(best.price-lastRt)?lvl:best,fibLevels[0]);
     // GESAMTSIGNAL, neu berechnet: die alte Regel (bullPats>bearPats*1.3)
     // zählte jedes Muster über das GESAMTE geladene Fenster gleich, egal wie
     // alt oder wie stark -- und ignorierte dabei, dass Doji/Spinning-Top
@@ -1807,6 +1871,8 @@
         <div class="an-row"><span class="an-lbl">Bollinger-Breite</span><span class="an-val">${bbWidthPct===null?'—':bbWidthPct.toFixed(1)+'%'}</span></div>
         <div class="an-row"><span class="an-lbl">Position im Band</span><span class="an-val ${bbPosPct!=null&&bbPosPct>90?'dn':bbPosPct!=null&&bbPosPct<10?'up':''}">${bbPosPct===null?'—':bbPosPct.toFixed(0)+'%'}</span></div>
         <div class="an-row"><span class="an-lbl">Abstand zu VWAP</span><span class="an-val ${vwapDistPct!=null&&vwapDistPct>=0?'up':'dn'}">${vwapDistPct===null?'—':(vwapDistPct>=0?'+':'')+vwapDistPct.toFixed(2)+'%'}</span></div>
+        <div class="an-row"><span class="an-lbl">MACD(12,26,9)</span><span class="an-val ${macdState&&macdState.startsWith('Bullisch')?'up':macdState?'dn':''}">${macdState||'—'}</span></div>
+        <div class="an-row"><span class="an-lbl">Nächstes Fib-Level</span><span class="an-val gold">${nearestFib?(nearestFib.ratio*100).toFixed(1)+'% ('+fmt(nearestFib.price)+')':'—'}</span></div>
       </div>
       <div class="analysis-block">
         <div class="an-title">WEISHEIT DES REISHÄNDLERS</div>
