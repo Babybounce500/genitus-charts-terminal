@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENITUS MASTER-ARCHIV // Bots × Galerien × Analysen</title>
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;--surface:#0d1117;--panel:#111820;--card:#121a22;
+  --border:#1e2d3d;--accent:#00d4ff;--green:#00ff88;--red:#ff3b5c;
+  --gold:#f0c040;--muted:#7d92a8;--text:#c8d8e8;--bright:#fff;
+  --mono:'JetBrains Mono',monospace;--head:'Orbitron',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--text);font-family:var(--mono);}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,.007) 2px,rgba(0,212,255,.007) 4px);pointer-events:none;z-index:1000;}
+header{position:sticky;top:0;z-index:200;background:rgba(8,12,16,.97);border-bottom:1px solid var(--border);padding:14px 24px;}
+.logo-name{font-family:var(--head);font-size:16px;letter-spacing:5px;color:var(--bright);}
+.logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+.wrap{max-width:1280px;margin:0 auto;padding:28px 24px 70px;}
+.intro{font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.8;max-width:860px;margin-bottom:28px;border-left:2px solid var(--accent);padding-left:14px;}
+.intro b{color:var(--text)}
+.legend{display:flex;gap:18px;margin-bottom:26px;flex-wrap:wrap;}
+.legend span{font-family:var(--mono);font-size:10px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.legend .dot{width:8px;height:8px;border-radius:2px;}
+.sec-title{font-family:var(--head);font-size:11px;letter-spacing:4px;color:var(--gold);margin:34px 0 14px;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:8px;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:620px){.grid{grid-template-columns:1fr;}}
+.theme-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:border-color .15s;}
+.theme-card:hover{border-color:var(--accent);}
+.theme-head{display:flex;align-items:center;gap:10px;}
+.theme-icon{font-size:20px;line-height:1;}
+.theme-name{font-family:var(--head);font-size:12px;letter-spacing:1.5px;color:var(--bright);}
+.theme-desc{font-family:var(--mono);font-size:10.5px;color:var(--muted);line-height:1.6;flex:1;}
+.theme-links{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+.link-pill{font-family:var(--mono);font-size:9px;letter-spacing:.5px;padding:6px 10px;border-radius:3px;text-decoration:none;border:1px solid;transition:all .15s;white-space:nowrap;}
+.link-pill.bot{border-color:var(--accent);color:var(--accent);}
+.link-pill.bot:hover{background:rgba(0,212,255,.1);}
+.link-pill.img{border-color:var(--gold);color:var(--gold);}
+.link-pill.img:hover{background:rgba(240,192,64,.1);}
+.link-pill.doc{border-color:var(--green);color:var(--green);}
+.link-pill.doc:hover{background:rgba(0,255,136,.1);}
+.link-pill.off{border-color:var(--border);color:var(--border);pointer-events:none;cursor:default;}
+.back{display:inline-block;margin-top:40px;font-family:var(--mono);font-size:11px;color:var(--accent);text-decoration:none;}
+.stat-row{display:flex;gap:26px;margin-bottom:30px;flex-wrap:wrap;}
+.stat{font-family:var(--mono);}
+.stat b{font-family:var(--head);font-size:20px;color:var(--bright);display:block;}
+.stat span{font-size:9px;color:var(--muted);letter-spacing:1.5px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-name">MASTER-ARCHIV</div>
+  <div class="logo-sub">BOTS × GALERIEN × ANALYSEN — EIN ARCHIV, 15 THEMEN, QUERVERLINKT</div>
+</header>
+<div class="wrap">
+  <div class="intro">
+    Die GENITUS-Suite hat drei getrennte Content-Typen: <b>interaktive Chart-Bots</b> (live Kurse, Candlestick-Analyse),
+    <b>Chart-Galerien</b> (kuratierte Chart-Bilder aus dem Archiv) und <b>Research-Reports</b> (methodische Analysen, Backtests, Studien).
+    Dieses Archiv verbindet alle drei nach <b>Themen</b> statt nach Tool — zu jedem Thema direkt der passende Bot, die passende Galerie und der passende Report, wo vorhanden.
+    Graue Pills heißen: für dieses Thema existiert (noch) kein Eintrag dieses Typs.
+  </div>
+  <div class="legend">
+    <span><div class="dot" style="background:var(--accent)"></div> Chart-Bot — live, interaktiv</span>
+    <span><div class="dot" style="background:var(--gold)"></div> Galerie — kuratierte Bilder</span>
+    <span><div class="dot" style="background:var(--green)"></div> Report — Methodik & Backtest</span>
+  </div>
+  <div class="stat-row">
+    <div class="stat"><b>21</b><span>CHART-BOTS / TERMINALS</span></div>
+    <div class="stat"><b>9</b><span>CHART-GALERIEN</span></div>
+    <div class="stat"><b>7</b><span>RESEARCH-REPORTS</span></div>
+    <div class="stat"><b>15</b><span>QUERVERLINKTE THEMEN</span></div>
+  </div>
+
+  <div class="sec-title">Signale & Timing</div>
+  <div class="grid">
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">🌀</div><div class="theme-name">FIBONACCI-TRANCHEN</div></div>
+      <div class="theme-desc">Tranchen-Akkumulation an 62/50/38/0%-Retracements, Richtung über 13-Wochen-relative-Stärke. 57–60% Trefferquote über die ganze Watchlist, NASDAQ-Vollliste und NYSE+NASDAQ-Vollliste real backtestet.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="fibonacci-terminal.html">🤖 Fibonacci-Terminal</a>
+        <a class="link-pill bot" href="mega-us-terminal.html">🤖 Mega-US (2.403 Symbole)</a>
+        <a class="link-pill img" href="gallery/fibonacci-signals.html">🖼 80 Charts</a>
+        <a class="link-pill doc" href="research/fibonacci-report.html">📄 Methodik-Report</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">🏔</div><div class="theme-name">DACH/BODEN-REGIME</div></div>
+      <div class="theme-desc">Marktregime-Klassifikation (Dach = Topping, Boden = Bottoming) kombiniert mit relativer Stärke zur Sektor-Rotation.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="dachboden-terminal.html">🤖 Dachboden-Terminal</a>
+        <a class="link-pill img" href="gallery/fibonacci-signals.html">🖼 Regime in Signalen</a>
+        <a class="link-pill doc" href="research/dachboden-relstrength-report.html">📄 Methodik-Report</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">🧪</div><div class="theme-name">STRATEGIE-BACKTESTS</div></div>
+      <div class="theme-desc">30 Strategien gegeneinander getestet über 815 Symbole — welches Signal/Indikator-Setup historisch wirklich eine Edge hatte.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="signals-terminal.html">🤖 Signals-Terminal</a>
+        <a class="link-pill off">🖼 —</a>
+        <a class="link-pill doc" href="research/signal-backtest-report.html">📄 Report</a>
+        <a class="link-pill doc" href="research/backtest-dashboard.html">📄 Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Fundamental × Timing</div>
+  <div class="grid">
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">⚡</div><div class="theme-name">TECH & AI</div></div>
+      <div class="theme-desc">107 kuratierte Nasdaq-Tech-Werte, Fibonacci × Fundamentals. Die KI/Tech-Blase historisch eingeordnet.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="tech-terminal.html">🤖 Tech-Terminal</a>
+        <a class="link-pill img" href="gallery/legends.html">🖼 Legends (IPO-Raketen)</a>
+        <a class="link-pill doc" href="research/bubble-stocks-report.html">📄 Bubble-Report</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">📊</div><div class="theme-name">NASDAQ KOMPLETT</div></div>
+      <div class="theme-desc">Fibonacci über die volle offizielle NASDAQ-Liste — 1.185 von 3.267 Symbolen health-gecheckt.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="mega-nasdaq-terminal.html">🤖 Mega-Nasdaq-Terminal</a>
+        <a class="link-pill off">🖼 —</a>
+        <a class="link-pill off">📄 —</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">🏛</div><div class="theme-name">LEGENDARY (FUNDA×TIMING)</div></div>
+      <div class="theme-desc">Fundamentals und Timing-Signale live kombiniert — der ursprüngliche Terminal der Serie.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="legendary-terminal.html">🤖 Legendary-Terminal</a>
+        <a class="link-pill img" href="gallery/legends.html">🖼 Market Legends (159)</a>
+        <a class="link-pill off">📄 —</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Historie, Krisen & Blasen</div>
+  <div class="grid">
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">🚀</div><div class="theme-name">BULLRUNS & JAHRZEHNTE</div></div>
+      <div class="theme-desc">Historische Rallye-Analysen über ganze Börsenjahrzehnte — von welchen Setups aus welche Bullruns liefen.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="charts-bot.html">🤖 Charts-Bot (frei)</a>
+        <a class="link-pill img" href="gallery/legends.html">🖼 Legends (159)</a>
+        <a class="link-pill doc" href="research/bullruns-drawdowns-report.html">📄 Bullrun/Drawdown-Studie</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">📉</div><div class="theme-name">KRISENARCHIV</div></div>
+      <div class="theme-desc">Bärenmärkte & Crashs als Chart-Archiv — die Drawdown-Seite der Bullrun/Drawdown-Studie.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="charts-bot.html">🤖 Charts-Bot (frei)</a>
+        <a class="link-pill img" href="gallery/crises.html">🖼 Krisenarchiv</a>
+        <a class="link-pill doc" href="research/bullruns-drawdowns-report.html">📄 Drawdown-Studie</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">🎈</div><div class="theme-name">SPEKULATIONSBLASEN</div></div>
+      <div class="theme-desc">Fallstudien echter Blasen-Aktien — Aufbau, Peak, Crash, was danach übrig blieb.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="charts-bot.html">🤖 Charts-Bot (frei)</a>
+        <a class="link-pill img" href="gallery/best-of.html">🖼 Best-Of (kuratiert)</a>
+        <a class="link-pill doc" href="research/bubble-stocks-report.html">📄 Bubble-Report</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Neue Kategorien (Forex · Funds · Sektor · Immo · Bonds)</div>
+  <div class="grid">
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">💱</div><div class="theme-name">FOREX</div></div>
+      <div class="theme-desc">50 Währungspaare, gruppiert USD-Majors / EUR- & GBP-Crosses / Emerging-Exotics. Eigene Terminal-Engine, health-gecheckt.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="forex-terminal.html">🤖 Forex-Terminal</a>
+        <a class="link-pill img" href="gallery/forex.html">🖼 Forex-Galerie</a>
+        <a class="link-pill off">📄 —</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">🌍</div><div class="theme-name">FUNDS</div></div>
+      <div class="theme-desc">104 ISIN-basierte Investmentfonds, nach Anbieter gruppiert (DWS, Allianz, Fidelity, Templeton …).</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="funds-terminal.html">🤖 Funds-Terminal</a>
+        <a class="link-pill img" href="gallery/funds.html">🖼 Funds-Galerie</a>
+        <a class="link-pill off">📄 —</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">🏦</div><div class="theme-name">SEKTOR-ROTATION</div></div>
+      <div class="theme-desc">100 Dow-Jones-US-Branchenindizes — die Rohdaten für Sektor-Rotations-Analyse, konzeptionell verwandt mit der Relative-Stärke-Rotation im Dachboden-Report.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="sektor-terminal.html">🤖 Sektor-Terminal</a>
+        <a class="link-pill off">🖼 —</a>
+        <a class="link-pill doc" href="research/dachboden-relstrength-report.html">📄 Rotations-Methodik</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">🏘</div><div class="theme-name">IMMOBILIEN (DE)</div></div>
+      <div class="theme-desc">14 deutsche Immobilien-AGs & REITs — Vonovia, LEG, TAG, Aroundtown und mehr.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="immobilien-terminal.html">🤖 Immobilien-Terminal</a>
+        <a class="link-pill off">🖼 —</a>
+        <a class="link-pill off">📄 —</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">🏛</div><div class="theme-name">G-BONDS (ETF-PROXY)</div></div>
+      <div class="theme-desc">Staatsanleihen-Renditen: .GBOND-Symbole lösen beim Daten-Proxy nicht auf (geprüft, 500er). Ersatz: 12 echte, liquide Treasury-/Corporate-/EM-Bond-ETFs.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="bonds-terminal.html">🤖 G-Bonds-Terminal</a>
+        <a class="link-pill img" href="gallery/gbond.html">🖼 GBond-Galerie</a>
+        <a class="link-pill off">📄 —</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">🪙</div><div class="theme-name">CRASHED HIGH-YIELD</div></div>
+      <div class="theme-desc">76 abgestürzte Dividendenwerte mit hoher laufender Rendite — der Value/Dividend-Fokus der Dividenden-Studie, als eigener Terminal.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="crashed-highyield-terminal.html">🤖 Crashed-HY-Terminal</a>
+        <a class="link-pill off">🖼 —</a>
+        <a class="link-pill doc" href="research/dividend-analysis-report.html">📄 Dividenden-Studie</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Krypto, Watchlist & Risiko</div>
+  <div class="grid">
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">₿</div><div class="theme-name">CRYPTO</div></div>
+      <div class="theme-desc">Top Coins, historische Charts — frei abrufbar über den generischen Charts-Bot (.CC-Symbole), kuratiert in der Crypto-Galerie.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="charts-bot.html">🤖 Charts-Bot (frei)</a>
+        <a class="link-pill img" href="gallery/crypto.html">🖼 Crypto-Galerie</a>
+        <a class="link-pill off">📄 —</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">📚</div><div class="theme-name">WATCHLIST</div></div>
+      <div class="theme-desc">Die persönliche Watchlist, einmal als Live-Tool und einmal als statische Chart-Bibliothek.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="watchlist-charts.html">🤖 Watchlist-Charts</a>
+        <a class="link-pill img" href="gallery/watchlist.html">🖼 Watchlist-Galerie</a>
+        <a class="link-pill off">📄 —</a>
+      </div>
+    </div>
+    <div class="theme-card">
+      <div class="theme-head"><div class="theme-icon">⚠</div><div class="theme-name">RISK & VOLATILITÄT</div></div>
+      <div class="theme-desc">Positionsgröße, Korrelation, Volatilitäts-Screening und Bull/Bear-Scanner — alle live, alle mit Timeout-Fix.</div>
+      <div class="theme-links">
+        <a class="link-pill bot" href="portfolio-risk-engine.html">🤖 Risk-Engine</a>
+        <a class="link-pill bot" href="volatility-screener.html">🤖 Vola-Screener</a>
+        <a class="link-pill bot" href="bull-bear-scanner.html">🤖 Bull/Bear-Scanner</a>
+      </div>
+    </div>
+  </div>
+
+  <a class="back" href="index.html">← Zur Terminal-Workshell</a>
+</div>
+</body>
+</html>
