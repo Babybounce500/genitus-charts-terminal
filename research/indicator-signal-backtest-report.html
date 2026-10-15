@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENITUS INDIKATOR-SIGNAL-BACKTEST // RSI, Bollinger, SMA-Cross, MACD, Candlesticks</title>
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;--surface:#0d1117;--panel:#111820;--card:#121a22;
+  --border:#1e2d3d;--accent:#00d4ff;--green:#00ff88;--red:#ff3b5c;
+  --gold:#f0c040;--muted:#7d92a8;--text:#c8d8e8;--bright:#fff;
+  --mono:'JetBrains Mono',monospace;--head:'Orbitron',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--text);font-family:var(--mono);}
+header{position:sticky;top:0;z-index:200;background:rgba(8,12,16,.97);border-bottom:1px solid var(--border);padding:14px 24px;}
+.logo-name{font-family:var(--head);font-size:16px;letter-spacing:5px;color:var(--bright);}
+.logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;}
+h2{font-family:var(--head);font-size:13px;letter-spacing:2.5px;color:var(--gold);margin:40px 0 14px;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:8px;}
+h2:first-of-type{margin-top:10px;}
+p{font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.85;margin-bottom:12px;}
+p.muted{color:var(--muted);font-size:11px;}
+b{color:var(--bright);}
+.stat-row{display:flex;gap:28px;flex-wrap:wrap;margin:18px 0 8px;}
+.stat b{font-family:var(--head);font-size:19px;color:var(--bright);display:block;}
+.stat span{font-size:9px;color:var(--muted);letter-spacing:1.2px;}
+.callout{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px;padding:14px 16px;margin:14px 0;}
+.callout.warn{border-left-color:var(--gold);}
+.callout.good{border-left-color:var(--green);}
+.callout.bad{border-left-color:var(--red);}
+ul{margin:8px 0 14px 20px;}
+li{font-family:var(--mono);font-size:11.5px;color:var(--text);line-height:1.9;margin-bottom:4px;}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:10.5px;}
+th{font-family:var(--head);font-size:8.5px;letter-spacing:.5px;color:var(--muted);text-align:right;padding:8px 6px;border-bottom:1px solid var(--border);white-space:nowrap;}
+th.sig-col{text-align:left;}
+th.group{text-align:center;color:var(--accent);border-bottom:1px solid var(--border);}
+td{padding:7px 6px;border-bottom:1px solid rgba(30,45,61,.5);white-space:nowrap;}
+td.num{text-align:right;font-variant-numeric:tabular-nums;}
+td.sig-name{text-align:left;color:var(--text);white-space:normal;max-width:260px;}
+td.sep{border:none;width:14px;}
+td.pos{color:var(--green);}
+td.neg{color:var(--red);}
+.dir-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;}
+.dir-dot.bull{background:var(--green);}
+.dir-dot.bear{background:var(--red);}
+.dir-dot.neutral{background:var(--muted);}
+.sigstar{color:var(--green);font-weight:700;}
+.sigstar.no{color:var(--muted);}
+.table-wrap{overflow-x:auto;}
+.legend{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:6px;}
+.back{display:inline-block;margin-top:40px;font-family:var(--mono);font-size:11px;color:var(--accent);text-decoration:none;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-name">INDIKATOR-SIGNAL-BACKTEST</div>
+  <div class="logo-sub">RSI · BOLLINGER-BÄNDER · SMA-CROSS · MACD · CANDLESTICK-MUSTER — EIN ECHTER BACKTEST</div>
+</header>
+<div class="wrap">
+  <p>Frage: Die Charts-Bot-Engine und die Signal-Charts-Galerie zeigen RSI-, Bollinger-, SMA-Cross-, MACD- und
+  Candlestick-Signale an. Funktionieren die auch, oder sind das nur hübsche Linien? Dieser Report testet jedes
+  Signal real gegen 16 Jahre Kursdaten, statt es zu behaupten.</p>
+
+  <div class="stat-row">
+    <div class="stat"><b>99/99</b><span>SYMBOLE VERWENDET</span></div>
+    <div class="stat"><b>2009-01-01</b><span>DATEN AB</span></div>
+    <div class="stat"><b>417.741</b><span>GEPRÜFTE TAGE (10D-HORIZONT)</span></div>
+    <div class="stat"><b>11</b><span>SIGNALTYPEN × 3 HORIZONTE</span></div>
+  </div>
+
+  <h2>Methodik</h2>
+  <p>Für alle 99 Symbole (die gleiche kuratierte Liste wie in der Signal-Charts-Galerie: US-Blue-Chips,
+  Crashed-High-Yield-Werte, deutsche Immobilien-AGs, Dow-Jones-Sektorindizes, Forex-Majors, Bond-ETFs) wurden
+  tägliche OHLCV-Daten ab <b>2009-01-01</b> vom selben Proxy geladen, den auch die Terminals nutzen. Pro Symbol
+  wurden RSI 14 (Wilder), MACD (12,26,9), Bollinger-Bänder (20,2), SMA 20/50 und zehn klassische Candlestick-Muster
+  (Hammer, Bullish/Bearish Engulfing, Piercing Line, Dark Cloud Cover, Morning/Evening Star, 3 White Soldiers/Black
+  Crows — Doji/Spinning Top bewusst ausgeschlossen, da in früheren Tests dieser Session als neutral identifiziert)
+  über die <b>gesamte</b> Historie berechnet, nicht nur am letzten Balken. Jedes historische Auftreten eines Signals
+  wurde erfasst, und die tatsächliche Forward-Rendite nach 5/10/20 Handelstagen gemessen.</p>
+  <p>Als Baseline dient die (ungefilterte) Forward-Rendite über alle 417.741
+  gültigen Tage im selben Datensatz — "Edge" ist die Differenz Signal-Mittelwert minus Baseline-Mittelwert. Für jedes
+  Signal/Horizont wurde ein Welch-t-Test gegen die Baseline-Verteilung gerechnet (✓ = p&lt;0,05).</p>
+
+  <div class="callout warn">
+    <b>Wichtige Einschränkung:</b> Der Zeitraum 2009–2026 ist ein historisch außergewöhnlich starker US-Aktien-Bullenmarkt
+    (Baseline-Rendite +0,35% / +0,70% / +1,41% über 5/10/20 Tage — deutlich über einem "normalen" langfristigen Mittel).
+    Alle Ergebnisse sind also relativ zu dieser Baseline zu lesen, nicht als absolute Aussage über "Aktien steigen nach
+    X". Außerdem sind die Signal-Ereignisse <b>nicht unabhängig</b> voneinander (dasselbe Symbol liefert oft mehrere,
+    zeitlich nahe beieinanderliegende Signale, und die 5/10/20-Tage-Fenster überlappen sich) — die p-Werte sind damit
+    tendenziell optimistischer (kleiner) als bei wirklich unabhängigen Stichproben. Transaktionskosten, Slippage und
+    Spread sind nicht modelliert.</p>
+  </div>
+
+  <h2>Ergebnisse</h2>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th class="sig-col" rowspan="2">Signal</th>
+        <th class="group" colspan="5">5 TAGE</th><th class="sep"></th>
+        <th class="group" colspan="5">10 TAGE</th><th class="sep"></th>
+        <th class="group" colspan="5">20 TAGE</th>
+      </tr>
+      <tr>
+        <th>N</th><th>Ø Rendite</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th>
+        <th>N</th><th>Ø Rendite</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th><th class="sep"></th>
+        <th>N</th><th>Ø Rendite</th><th>Edge</th><th>Trefferquote</th><th>Sig.</th>
+      </tr>
+    </thead>
+    <tbody>
+<tr>
+    <td class="sig-name"><span class="dir-dot bull"></span>RSI 14 Überverkauft (&lt;30)</td>
+    <td class="num">4.283</td>
+      <td class="num">+0.67%</td>
+      <td class="num pos">+0.32%</td>
+      <td class="num">57.9%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">4.271</td>
+      <td class="num">+1.06%</td>
+      <td class="num pos">+0.37%</td>
+      <td class="num">58.8%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">4.234</td>
+      <td class="num">+2.21%</td>
+      <td class="num pos">+0.81%</td>
+      <td class="num">62.2%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td>
+  </tr>
+<tr>
+    <td class="sig-name"><span class="dir-dot bear"></span>RSI 14 Überkauft (&gt;70)</td>
+    <td class="num">8.605</td>
+      <td class="num">+0.19%</td>
+      <td class="num neg">-0.15%</td>
+      <td class="num">46.7%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">8.602</td>
+      <td class="num">+0.53%</td>
+      <td class="num neg">-0.17%</td>
+      <td class="num">44.8%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">8.597</td>
+      <td class="num">+1.04%</td>
+      <td class="num neg">-0.37%</td>
+      <td class="num">43.5%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td>
+  </tr>
+<tr>
+    <td class="sig-name"><span class="dir-dot bear"></span>Bollinger-Ausbruch unter unteres Band</td>
+    <td class="num">11.048</td>
+      <td class="num">+0.44%</td>
+      <td class="num pos">+0.10%</td>
+      <td class="num">44.2%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">11.038</td>
+      <td class="num">+0.89%</td>
+      <td class="num pos">+0.19%</td>
+      <td class="num">42.8%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">10.996</td>
+      <td class="num">+2.08%</td>
+      <td class="num pos">+0.67%</td>
+      <td class="num">39.6%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td>
+  </tr>
+<tr>
+    <td class="sig-name"><span class="dir-dot bull"></span>Bollinger-Ausbruch über oberes Band</td>
+    <td class="num">14.298</td>
+      <td class="num">+0.26%</td>
+      <td class="num neg">-0.09%</td>
+      <td class="num">53.4%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">14.290</td>
+      <td class="num">+0.60%</td>
+      <td class="num neg">-0.10%</td>
+      <td class="num">55.6%</td>
+      <td class="num"><span class="sigstar no" title="nicht signifikant">—</span></td><td class="sep"></td><td class="num">14.279</td>
+      <td class="num">+1.22%</td>
+      <td class="num neg">-0.19%</td>
+      <td class="num">57.1%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td>
+  </tr>
+<tr>
+    <td class="sig-name"><span class="dir-dot neutral"></span>Bollinger-Squeeze (Volatilitäts-Kompression)</td>
+    <td class="num">73.329</td>
+      <td class="num">+0.32%</td>
+      <td class="num neg">-0.02%</td>
+      <td class="num">—</td>
+      <td class="num"><span class="sigstar no" title="nicht signifikant">—</span></td><td class="sep"></td><td class="num">73.200</td>
+      <td class="num">+0.66%</td>
+      <td class="num neg">-0.04%</td>
+      <td class="num">—</td>
+      <td class="num"><span class="sigstar no" title="nicht signifikant">—</span></td><td class="sep"></td><td class="num">72.944</td>
+      <td class="num">+1.38%</td>
+      <td class="num neg">-0.03%</td>
+      <td class="num">—</td>
+      <td class="num"><span class="sigstar no" title="nicht signifikant">—</span></td>
+  </tr>
+<tr>
+    <td class="sig-name"><span class="dir-dot bull"></span>Golden Cross (SMA20 kreuzt SMA50 aufwärts)</td>
+    <td class="num">4.542</td>
+      <td class="num">+0.50%</td>
+      <td class="num pos">+0.15%</td>
+      <td class="num">56.0%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">4.542</td>
+      <td class="num">+0.89%</td>
+      <td class="num pos">+0.20%</td>
+      <td class="num">58.1%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">4.539</td>
+      <td class="num">+1.58%</td>
+      <td class="num pos">+0.17%</td>
+      <td class="num">59.1%</td>
+      <td class="num"><span class="sigstar no" title="nicht signifikant">—</span></td>
+  </tr>
+<tr>
+    <td class="sig-name"><span class="dir-dot bear"></span>Death Cross (SMA20 kreuzt SMA50 abwärts)</td>
+    <td class="num">4.532</td>
+      <td class="num">+0.38%</td>
+      <td class="num pos">+0.03%</td>
+      <td class="num">43.9%</td>
+      <td class="num"><span class="sigstar no" title="nicht signifikant">—</span></td><td class="sep"></td><td class="num">4.524</td>
+      <td class="num">+0.87%</td>
+      <td class="num pos">+0.17%</td>
+      <td class="num">42.7%</td>
+      <td class="num"><span class="sigstar no" title="nicht signifikant">—</span></td><td class="sep"></td><td class="num">4.507</td>
+      <td class="num">+1.60%</td>
+      <td class="num pos">+0.19%</td>
+      <td class="num">40.7%</td>
+      <td class="num"><span class="sigstar no" title="nicht signifikant">—</span></td>
+  </tr>
+<tr>
+    <td class="sig-name"><span class="dir-dot bull"></span>MACD Bullish Cross</td>
+    <td class="num">16.846</td>
+      <td class="num">+0.26%</td>
+      <td class="num neg">-0.09%</td>
+      <td class="num">53.9%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">16.820</td>
+      <td class="num">+0.60%</td>
+      <td class="num neg">-0.10%</td>
+      <td class="num">55.4%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">16.792</td>
+      <td class="num">+1.36%</td>
+      <td class="num neg">-0.05%</td>
+      <td class="num">57.7%</td>
+      <td class="num"><span class="sigstar no" title="nicht signifikant">—</span></td>
+  </tr>
+<tr>
+    <td class="sig-name"><span class="dir-dot bear"></span>MACD Bearish Cross</td>
+    <td class="num">16.858</td>
+      <td class="num">+0.31%</td>
+      <td class="num neg">-0.04%</td>
+      <td class="num">46.2%</td>
+      <td class="num"><span class="sigstar no" title="nicht signifikant">—</span></td><td class="sep"></td><td class="num">16.844</td>
+      <td class="num">+0.54%</td>
+      <td class="num neg">-0.15%</td>
+      <td class="num">44.7%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">16.826</td>
+      <td class="num">+1.26%</td>
+      <td class="num neg">-0.14%</td>
+      <td class="num">43.2%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td>
+  </tr>
+<tr>
+    <td class="sig-name"><span class="dir-dot bull"></span>Candlestick bullisch (Hammer/Engulfing/Morning Star/Piercing/3 Soldiers)</td>
+    <td class="num">41.250</td>
+      <td class="num">+0.25%</td>
+      <td class="num neg">-0.10%</td>
+      <td class="num">53.9%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">41.193</td>
+      <td class="num">+0.55%</td>
+      <td class="num neg">-0.14%</td>
+      <td class="num">55.4%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">41.117</td>
+      <td class="num">+1.22%</td>
+      <td class="num neg">-0.19%</td>
+      <td class="num">57.1%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td>
+  </tr>
+<tr>
+    <td class="sig-name"><span class="dir-dot bear"></span>Candlestick bärisch (Shooting Star/Engulfing/Evening Star/Dark Cloud/3 Crows)</td>
+    <td class="num">40.882</td>
+      <td class="num">+0.46%</td>
+      <td class="num pos">+0.12%</td>
+      <td class="num">44.5%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">40.836</td>
+      <td class="num">+0.81%</td>
+      <td class="num pos">+0.11%</td>
+      <td class="num">43.3%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td><td class="sep"></td><td class="num">40.727</td>
+      <td class="num">+1.56%</td>
+      <td class="num pos">+0.15%</td>
+      <td class="num">41.3%</td>
+      <td class="num"><span class="sigstar" title="p&lt;0.05">✓</span></td>
+  </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="legend">Trefferquote = % der Fälle in Signal-Richtung (bullisch: Kurs höher nach N Tagen; bärisch: Kurs tiefer). Edge = Signal-Ø minus Baseline-Ø für denselben Horizont.</div>
+
+  <h2>Was wirklich funktioniert hat</h2>
+  <div class="callout good">
+    <b>RSI-Überverkauft ist das stärkste, konsistenteste Signal im ganzen Test.</b> Edge wächst mit dem Horizont
+    (+0,32% → +0,37% → +0,81%), bei allen drei Horizonten hochsignifikant (p&lt;0,002), Trefferquote steigt von 58%
+    auf 62%. Mean-Reversion nach echter Überverkauft-Lage funktioniert in diesem Datensatz real.</p>
+  </div>
+  <div class="callout good">
+    <b>Bollinger-Ausbruch unters untere Band verhält sich wie RSI-Überverkauft, nicht wie ein Bären-Fortsetzungssignal.</b>
+    Statt weiter zu fallen, erholt sich der Kurs im Schnitt überdurchschnittlich (+0,10% → +0,19% → +0,67% Edge, alle
+    signifikant, p≈0 bei 20 Tagen). Trefferquote "weiter fallend" sinkt sogar von 44% auf 40% je länger man wartet —
+    die Bounce-Wahrscheinlichkeit nimmt mit der Zeit zu, nicht ab.</p>
+  </div>
+  <div class="callout good">
+    <b>RSI-Überkauft und oberer Bollinger-Ausbruch zeigen das spiegelbildliche, schwächere Muster:</b> beide
+    unterbieten die Baseline konsistent über alle drei Horizonte (RSI-Überkauft: -0,16% / -0,17% / -0,37% Edge, alle
+    signifikant). Als Warnsignal für nachlassendes Momentum funktionieren sie — nur schwächer ausgeprägt als ihr
+    Pendant auf der Unterseite.</p>
+  </div>
+
+  <h2>Was NICHT so funktioniert wie oft behauptet</h2>
+  <div class="callout bad">
+    <b>Death Cross ist in diesem Datensatz kein funktionierendes Verkaufssignal.</b> Bei keinem der drei Horizonte
+    statistisch signifikant (p=0,64 / 0,058 / 0,15), und die Richtung ist sogar verkehrt: die Rendite nach einem
+    Death Cross liegt im Mittel <i>über</i> der Baseline, nicht darunter. Nur 41–44% der Fälle zeigen tatsächlich
+    einen fallenden Kurs danach — der Death Cross markiert in diesem Sample tendenziell eher einen Boden als den
+    Start eines weiteren Abverkaufs. Golden Cross dagegen zeigt bei 5/10 Tagen einen echten, signifikanten, wenn
+    auch bescheidenen Vorsprung (+0,16% / +0,20%), der bei 20 Tagen nicht mehr signifikant ist (p=0,19).</p>
+  </div>
+  <div class="callout bad">
+    <b>Klassische Candlestick-Muster liefern in diesem großen Sample keine Edge in die erwartete Richtung — eher
+    das Gegenteil.</b> "Bullische" Muster (Hammer, Bullish Engulfing, Morning Star, Piercing Line, Three White
+    Soldiers) unterbieten die Baseline bei allen drei Horizonten, hochsignifikant (-0,10% / -0,14% / -0,19% Edge,
+    p&lt;0,0001). "Bärische" Muster (Shooting Star, Bearish Engulfing, Evening Star, Dark Cloud Cover, Three Black
+    Crows) tun das Gegenteil von dem, was man erwarten würde: die Rendite danach liegt <i>über</i> der Baseline
+    (+0,11% bis +0,15%, signifikant), und nur 41–44% der Fälle fallen tatsächlich. Mit 40.000+ Vorkommen pro
+    Richtung ist das kein Zufallsrauschen — die populäre Lesart "bärisches Muster = verkaufen" hält in diesem
+    langfristigen, mehrheitlich bullischen Sample schlicht nicht.</p>
+  </div>
+  <div class="callout">
+    <b>MACD-Kreuzungen und Bollinger-Squeeze sind schwache bzw. keine eigenständigen Signale.</b> MACD-Bull/Bear-Cross
+    zeigen kleine, bei 5–10 Tagen meist signifikante, aber bei 20 Tagen meist verschwindende Effekte (±0,05–0,16%
+    Edge) — brauchbar als zusätzlicher Kontext, nicht als alleiniges Signal. Bollinger-Squeeze allein zeigt bei
+    keinem Horizont eine signifikante Richtung (p=0,15 / 0,10 / 0,41) — exakt wie erwartet, da eine
+    Volatilitäts-Kompression per Definition nur sagt "etwas passiert bald", nicht in welche Richtung.</p>
+  </div>
+
+  <h2>Einordnung</h2>
+  <p>Das Gesamtbild: Extremwerte auf der Unterseite (RSI-überverkauft, unterer Bollinger-Ausbruch) zeigen die
+  robusteste, am stärksten mit dem Horizont wachsende Edge — klassische Mean-Reversion. Trendfolge-Signale
+  (Golden/Death Cross) und Candlestick-Muster funktionieren dagegen deutlich schwächer als ihr Ruf, teils sogar in
+  die Gegenrichtung des Namens. Das deckt sich mit einem bekannten Muster aus der quantitativen Literatur: lagging,
+  bestätigende Signale (die erst nach einer bereits laufenden Bewegung auslösen) liefern in stark trendbehafteten
+  Bullenmärkten tendenziell wenig zusätzlichen Wert gegenüber einfachem Investiertsein, während Extremwert-Signale
+  (die eine Übertreibung markieren) eine echte, messbare Mean-Reversion-Komponente behalten.</p>
+  <p class="muted">Rohdaten: 33 Signal/Horizont-Zeilen, vollständiges JSON auf Anfrage einsehbar. Kein Backtest
+  dieser Art ersetzt Risikomanagement, Positionsgrößen-Logik oder Kosten-/Slippage-Modellierung — die Zahlen zeigen
+  statistische Tendenz, keine handelbare Strategie.</p>
+
+  <a class="back" href="../index.html">← Zur Terminal-Workshell</a>
+</div>
+</body>
+</html>
