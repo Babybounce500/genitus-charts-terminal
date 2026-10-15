@@ -883,7 +883,22 @@
      MAIN LOAD
   ───────────────────────────────────────── */
   async function fetchJson(url,signal){
-    const response=await fetch(url,{signal});
+    // Hard per-request timeout, independent of the caller's own abort signal.
+    // Without this, one slow/hanging symbol (a bad watchlist entry, a stalled
+    // proxy response) blocks its worker's await forever -- and since
+    // loadMarketCheck's Promise.all waits on every worker, the whole
+    // Marktcheck silently hangs on "wird geladen..." with no error, no
+    // result, ever. Found by actually running this function end-to-end in a
+    // sandboxed DOM rather than just reading the code.
+    const timeoutSignal=AbortSignal.timeout(15000);
+    const combined=signal?AbortSignal.any([signal,timeoutSignal]):timeoutSignal;
+    let response;
+    try{
+      response=await fetch(url,{signal:combined});
+    }catch(error){
+      if(timeoutSignal.aborted&&!signal?.aborted)throw new Error('Zeitüberschreitung — Datenquelle hat nicht rechtzeitig geantwortet.');
+      throw error;
+    }
     if(!response.ok)throw new Error(`Datenquelle antwortet mit HTTP ${response.status}`);
     return response.json();
   }
