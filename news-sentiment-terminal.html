@@ -190,6 +190,8 @@
     <a href="BULL-BEAR-SCANNER.html" class="nav-link">Bull-Bear-Scanner</a>
     <a href="../research/BACKTEST-DASHBOARD.html" class="nav-link">Backtest-Dashboard</a>
     <a href="../index.html" class="nav-link">Workshell</a>
+    <a href="https://babybounce500.github.io/genitus-ticker-terminal/" class="nav-link" target="_blank" rel="noopener noreferrer">Ticker-Terminal (geteilte Watchlist)</a>
+    <a href="https://babybounce500.github.io/goldshield-ai-analysis-archive/master-strategy-terminal.html" class="nav-link" target="_blank" rel="noopener noreferrer">Master-Strategie-Terminal</a>
   </div>
 </nav>
 <div class="nav-overlay" id="navOverlay"></div>
@@ -223,6 +225,12 @@
   <div class="field-group">
     <span class="field-label">Buchstabe</span>
     <div class="alpha-btns" id="alphaBtns"></div>
+  </div>
+  <div class="field-group">
+    <span class="field-label">Geteilte Watchlist</span>
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
+      <input type="checkbox" id="sharedWlOnly" onchange="filterTable()"> Nur meine Watchlist (<span id="sharedWlCount">0</span>)
+    </label>
   </div>
   <button class="btn btn-gold" onclick="clearFilters()">Zurücksetzen</button>
   <div class="custom-sym-row">
@@ -285,6 +293,19 @@ const EOD_PROXY = 'https://theserver-open-ai.replit.app';
 
 let allCoins = [], activeAlpha = null, activeRegion = 'ALL', modalSym = null;
 let currentPage = 1, lastFilteredRows = [];
+
+// Reads the watchlist other GENITUS/GoldShield tools write to the same babybounce500.github.io origin
+// (different repo paths, same localStorage) -- this tool has no watchlist of its own, so it only reads.
+function getSharedTickerSet(){
+  try{
+    const raw = JSON.parse(localStorage.getItem('genitus:tickers') || '[]');
+    return new Set(Array.isArray(raw) ? raw.map(s => String(s).toUpperCase()) : []);
+  }catch{ return new Set(); }
+}
+function refreshSharedWlCount(){
+  const el = document.getElementById('sharedWlCount');
+  if (el) el.textContent = getSharedTickerSet().size;
+}
 let sortMode = 'extreme-desc';
 const PAGE_SIZE = 50;
 
@@ -357,6 +378,7 @@ function toggleTheme(){
   document.getElementById('themeBtn').textContent = next==='light'?'🌙':'☀️';
 }
 initTheme();
+refreshSharedWlCount();
 
 function openNavMenu(){ document.getElementById('navMenu').classList.add('open'); document.getElementById('navOverlay').classList.add('open'); document.getElementById('navMenu').setAttribute('aria-hidden','false'); document.getElementById('burgerBtn').setAttribute('aria-expanded','true'); }
 function closeNavMenu(){ document.getElementById('navMenu').classList.remove('open'); document.getElementById('navOverlay').classList.remove('open'); document.getElementById('navMenu').setAttribute('aria-hidden','true'); document.getElementById('burgerBtn').setAttribute('aria-expanded','false'); }
@@ -419,11 +441,14 @@ function renderBacktestPanel(){
 
 function filterTable(resetPage){
   const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const wlOnly = document.getElementById('sharedWlOnly').checked;
+  const sharedSet = wlOnly ? getSharedTickerSet() : null;
   let rows = allCoins.filter(c=>{
     const ma = !activeAlpha || c.symbol.toUpperCase().startsWith(activeAlpha);
     const mr = activeRegion==='ALL' || c.region===activeRegion;
     const mq = !q || c.symbol.toLowerCase().includes(q) || c.name.toLowerCase().includes(q);
-    return ma && mr && mq;
+    const mw = !sharedSet || sharedSet.has(c.symbol.toUpperCase());
+    return ma && mr && mq && mw;
   });
   rows = sortRows(rows);
   lastFilteredRows = rows;

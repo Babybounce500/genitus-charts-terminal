@@ -226,6 +226,8 @@
     <a href="../viewer/crises/index.html" class="nav-link">Krisenarchiv</a>
     <a href="../viewer/index.html" class="nav-link">Chart-Archiv</a>
     <a href="../index.html" class="nav-link">Workshell</a>
+    <a href="https://babybounce500.github.io/genitus-ticker-terminal/" class="nav-link" target="_blank" rel="noopener noreferrer">Ticker-Terminal (geteilte Watchlist)</a>
+    <a href="https://babybounce500.github.io/goldshield-ai-analysis-archive/master-strategy-terminal.html" class="nav-link" target="_blank" rel="noopener noreferrer">Master-Strategie-Terminal</a>
   </div>
 </nav>
 <div class="nav-overlay" id="navOverlay"></div>
@@ -316,6 +318,9 @@
       <button class="btn btn-gold" onclick="exportWatchlistCSV()">CSV</button>
       <button class="btn btn-accent" onclick="copyAllWL()">Kopieren</button>
       <button class="btn" style="border-color:var(--red);color:var(--red)" onclick="clearWL()">Löschen</button>
+    </div>
+    <div class="wl-footer" style="padding-top:0;">
+      <a class="btn btn-accent" style="text-decoration:none;text-align:center;" href="https://babybounce500.github.io/goldshield-ai-analysis-archive/master-strategy-terminal.html" target="_blank" rel="noopener noreferrer">📊 Strategien auf diese Watchlist anwenden</a>
     </div>
   </div>
 </div>
@@ -1048,11 +1053,15 @@ function copyToClipboard(s){
   else { const t=document.createElement('textarea'); t.value=s; t.style.position='fixed'; t.style.left='-9999px'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch{} document.body.removeChild(t); }
 }
 
+// Shared across the whole babybounce500.github.io origin (same-origin, different repo paths) -- any
+// other GENITUS/GoldShield tool (e.g. Master-Strategie-Terminal) can read this key directly.
+function syncSharedTickers(){ try{ localStorage.setItem('genitus:tickers', JSON.stringify(watchlist.map(fullSym))); }catch{} }
 function toggleWL(sym,btn){
   const idx = watchlist.indexOf(sym);
   if(idx===-1){ watchlist.push(sym); btn.style.borderColor='var(--red)'; btn.style.color='var(--red)'; showToast('♥ '+fullSym(sym)); }
   else { watchlist.splice(idx,1); btn.style.borderColor=''; btn.style.color=''; showToast('✕ '+fullSym(sym)); }
   try{ localStorage.setItem('wl_watchlist', JSON.stringify(watchlist)); }catch{}
+  syncSharedTickers();
   renderWL(); filterTable();
 }
 function renderWL(){
@@ -1068,8 +1077,8 @@ function renderWL(){
     </div>
   </div>`).join('');
 }
-function removeWL(s){ watchlist=watchlist.filter(x=>x!==s); try{localStorage.setItem('wl_watchlist',JSON.stringify(watchlist));}catch{} renderWL(); filterTable(); }
-function clearWL(){ if(!watchlist.length) return; watchlist=[]; try{localStorage.setItem('wl_watchlist',JSON.stringify(watchlist));}catch{} renderWL(); filterTable(); showToast('Watchlist gelöscht'); }
+function removeWL(s){ watchlist=watchlist.filter(x=>x!==s); try{localStorage.setItem('wl_watchlist',JSON.stringify(watchlist));}catch{} syncSharedTickers(); renderWL(); filterTable(); }
+function clearWL(){ if(!watchlist.length) return; watchlist=[]; try{localStorage.setItem('wl_watchlist',JSON.stringify(watchlist));}catch{} syncSharedTickers(); renderWL(); filterTable(); showToast('Watchlist gelöscht'); }
 function copyAllWL(){ if(!watchlist.length) return showToast('Watchlist leer'); copyToClipboard(watchlist.map(fullSym).join(',\n')); showToast('⎘ '+watchlist.length+' Symbole'); }
 function exportWatchlistCSV(){ if(!watchlist.length) return showToast('Watchlist leer'); downloadBlob('Symbol\n'+watchlist.map(fullSym).join('\n'), 'watchlist-aktien.csv', 'text/csv'); showToast('CSV heruntergeladen'); }
 
@@ -1265,6 +1274,7 @@ function showToast(msg, err=false){
 }
 
 renderWL();
+syncSharedTickers();
 loadData();
 function openNavMenu() {
   const menu = document.getElementById('navMenu');
